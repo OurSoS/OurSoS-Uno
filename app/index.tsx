@@ -6,7 +6,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Link href="/news">
-        <Text>View News Feed</Text>
+        <Text>Views News Feed</Text>
       </Link>
       <StatusBar style="auto" />
     </View>
