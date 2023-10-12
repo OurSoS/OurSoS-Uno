@@ -5,9 +5,24 @@ import { Link } from "expo-router";
 import DisasterCard from "../components/DisastersCard";
 import {useState} from "react";
 
+import {
+  useFonts,
+  NotoSans_400Regular,
+} from '@expo-google-fonts/dev';
+
+
 export default function News() {
 
-  const[ screenWidth, setScreenWidth] = useState(Dimensions.get("window").width);
+  let [fontsLoaded] = useFonts({
+    NotoSans_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading2}>My Dashboard</Text>
@@ -74,6 +89,7 @@ const halfScreenWidth = Dimensions.get("window").width / 2 - 20;
 const styles = StyleSheet.create({
   container: {
     margin: 20,
+    fontFamily: "NotoSans_400Regular",
   },
   searchInput: {
     borderRadius: 62,
@@ -91,10 +107,11 @@ const styles = StyleSheet.create({
     elevation: 3, // This adds an elevation for shadow on Android
   },
   heading2: {
-    marginTop: 60,
-    marginBottom: 40,
+    marginTop: 40,
+    marginBottom: 20,
+    margin:20,
     color: "#252525", // Use '#252525' for var(--Black, #252525)
-    fontFamily: "Noto Sans",
+    fontFamily: "NotoSans_400Regular",
     fontSize: 28,
     fontStyle: "normal",
     fontWeight: "500", // Use '500' for font-weight: 500
@@ -131,7 +148,6 @@ const styles = StyleSheet.create({
   },
   disasterCardHeader: {
     color: "#000",
-    fontFamily: "Noto Sans",
     fontSize: 18,
     fontStyle: "normal",
     fontWeight: "500",
@@ -139,7 +155,6 @@ const styles = StyleSheet.create({
   },
   disasterCardText: {
     color: "#000",
-    fontFamily: "Noto Sans",
     fontSize: 12,
     fontStyle: "normal",
     fontWeight: "normal",
