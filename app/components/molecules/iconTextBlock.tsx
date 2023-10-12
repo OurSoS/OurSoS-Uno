@@ -1,5 +1,6 @@
 import AtomIcon from "../atoms/icon";
 import { StyleSheet, Text, View } from "react-native";
+import TextStyles from "../atoms/text";
 
 type IconTextProps = {
     icon: string,
@@ -22,7 +23,7 @@ export default function IconTextBlock({ icon, text, iconLocation }: IconTextProp
     return (
         <View style={[styles.iconContainer, containerStyle]}>
             <AtomIcon icon={icon} />
-            <Text>{text}</Text>
+            <TextStyles textStyle="backButton">{text}</TextStyles>
         </View>
     )
 }
