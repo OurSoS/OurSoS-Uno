@@ -56,7 +56,7 @@ export default function News() {
 
       <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
         {news && news.map((newsItem, i) => {
-          return (
+          return(
             <View id="DisasterCard" style={styles.disasterOuterCard} key={i}>
               <View style={styles.disasterInnerCard}>
                 <Image
