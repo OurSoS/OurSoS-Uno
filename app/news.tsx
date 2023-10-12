@@ -55,9 +55,9 @@ export default function News() {
       ></TextInput>
       
       <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
-        {news && news.map((newsItem) => {
+        {news && news.map((newsItem, i) => {
           return(
-            <View id="DisasterCard" style={styles.disasterOuterCard}>
+            <View key={i} id="DisasterCard" style={styles.disasterOuterCard}>
               <View style={styles.disasterInnerCard}>
                 <Image
                   source={{ uri: newsItem.thumbnail }}
@@ -104,6 +104,44 @@ export default function News() {
         </View>
       </View>
 
+      <View id="FriendsContainer">
+        <View id="FriendsHeader" style={styles.FriendsHeader}>
+          <Text style={{fontSize: 20, fontWeight: "bold"}}>Friends</Text>
+          <Link href={"/friends"}>
+            <Text style={{fontSize: 20}}>View More</Text>
+          </Link>
+        </View>
+        <View id="FriendsContent" style={styles.FriendsContent}>
+          
+          {/* {map goes here} */}
+
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+
+
+        </View>
+      </View>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -145,9 +183,9 @@ const styles = StyleSheet.create({
   },
   disasterCardContainer: {
     flexDirection: "row",
-    backgroundColor: "#F5F5F5", // Choose your preferred background color
-    padding: 10, // Add some padding around the container
-    borderRadius: 10, // Apply rounded corners
+    // backgroundColor: "#F5F5F5", 
+    padding: 10, 
+    borderRadius: 10, 
   },
   disasterOuterCard: {
     width: 300, 
@@ -169,9 +207,7 @@ const styles = StyleSheet.create({
     padding:20,
   },
   disasterCardImage: {
-    // margin: 10,
     borderRadius: 15,
-    // width: "100%",
   },
   disasterCardHeader: {
     color: "#000",
@@ -218,4 +254,36 @@ const styles = StyleSheet.create({
     margin: 10,
     gap: 20
   },
+
+  FriendsContainer: {
+    
+  },
+  FriendsHeader: {
+    flex: 1,
+    flexDirection: "row", 
+    justifyContent: "space-between",
+    margin: 10,
+    height: 1,
+  },
+  FriendsContent: {
+    flex:1,
+    flexDirection: "row",
+  },
+  FriendImage: {
+    width: 100,
+    height: 100,
+    gap: 10,
+    borderRadius: 50,
+  },
+  FriendName: {
+    marginTop:10,
+  },
+  friend: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width:100,
+    // textAlign: "center",
+  }
 });
