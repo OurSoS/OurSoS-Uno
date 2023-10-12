@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { useState, useEffect } from "react"
-import { StyleSheet, Text, View, TextInput, Dimensions,  } from "react-native";
+import { StyleSheet, Text, View, TextInput, Dimensions, } from "react-native";
 import { Image } from "react-native";
 import { Link } from "expo-router";
 import axios from "axios"
@@ -16,27 +16,27 @@ import {
 
 
 type newsItemType = {
-    "date": string,
-    "link": string,
-    "position": number,
-    "snippet": string,
-    "source": string,
-    "thumbnail": string,
-    "title": string
+  "date": string,
+  "link": string,
+  "position": number,
+  "snippet": string,
+  "source": string,
+  "thumbnail": string,
+  "title": string
 }
 
 export default function News() {
 
-  const [news,setNews] = useState<newsItemType[]>([]);
+  const [news, setNews] = useState<newsItemType[]>([]);
 
   useEffect(() => {
     axios.get('https://oursos-backend-production.up.railway.app/news')
-    .then((response) => {
-      setNews(response.data);
-      console.log(response.data);
-    })
-    .catch((error) => console.error(error))
-  },[])
+      .then((response) => {
+        setNews(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => console.error(error))
+  }, [])
 
   let [fontsLoaded] = useFonts({
     NotoSans_400Regular,
@@ -53,7 +53,7 @@ export default function News() {
         placeholder="Search locations and friends"
         style={styles.searchInput}
       ></TextInput>
-      
+
       <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
         {news && news.map((newsItem, i) => {
           return(
@@ -80,9 +80,9 @@ export default function News() {
 
       <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
-          <Text style={{fontSize: 20, fontWeight: "bold"}}>Pins</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Pins</Text>
           <Link href={"/pins"}>
-            <Text style={{fontSize: 20}}>View More</Text>
+            <Text style={{ fontSize: 20 }}>View More</Text>
           </Link>
         </View>
         <View id="PinsContent" style={styles.pinsContent}>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   heading2: {
     marginTop: 40,
     marginBottom: 20,
-    margin:20,
+    margin: 20,
     color: "#252525", // Use '#252525' for var(--Black, #252525)
     fontFamily: "NotoSans_400Regular",
     fontSize: 28,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 10, 
   },
   disasterOuterCard: {
-    width: 300, 
+    width: 300,
     backgroundColor: "white",
     borderRadius: 15,
     shadowOffset: {
@@ -201,10 +201,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     margin: 10,
-    
+
   },
   disasterInnerCard: {
-    padding:20,
+    padding: 20,
   },
   disasterCardImage: {
     borderRadius: 15,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "normal",
     margin: 10,
-    padding:10,
+    padding: 10,
   },
   pin: {
     position: "relative", // Change to "relative" if you don't need absolute positioning
@@ -244,13 +244,13 @@ const styles = StyleSheet.create({
   },
   pinsHeader: {
     flex: 1,
-    flexDirection: "row", 
+    flexDirection: "row",
     justifyContent: "space-between",
     margin: 10,
     height: 1,
   },
   pinsContent: {
-    flexDirection: "row", 
+    flexDirection: "row",
     margin: 10,
     gap: 20
   },

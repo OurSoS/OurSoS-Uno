@@ -1,4 +1,5 @@
 import IconTextBlock from "./iconTextBlock"
+import TextStyles from "../atoms/text"
 
 
 type HeaderProps = {
