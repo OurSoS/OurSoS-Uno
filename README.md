@@ -5,6 +5,7 @@
 Dear developers, to contribute to the OurSoS front-end, follow these guidelines:
 
 1. **Fork the Repository:** Before you start making changes, fork the OurSoS front-end repository on GitHub. Make sure to uncheck the "main branch" checkmark when forking.
+    After forking, clone the forked repository locally.
 
 ## GitHub Workflow
 
