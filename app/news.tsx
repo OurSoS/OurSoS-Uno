@@ -1,9 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TextInput, Dimensions } from "react-native";
+import { useState, useEffect } from "react"
+import { StyleSheet, Text, View, TextInput, Dimensions,  } from "react-native";
 import { Image } from "react-native";
 import { Link } from "expo-router";
+import axios from "axios"
 import DisasterCard from "../components/DisastersCard";
-import {useState} from "react";
+// import {useState} from "react";
+//! TODO: implement - https://github.com/meliorence/react-native-snap-carousel#react-native-snap-carousel
+// import Carousel from 'react-native-snap-carousel';
 
 import {
   useFonts,
@@ -11,7 +15,28 @@ import {
 } from '@expo-google-fonts/dev';
 
 
+type newsItemType = {
+    "date": string,
+    "link": string,
+    "position": number,
+    "snippet": string,
+    "source": string,
+    "thumbnail": string,
+    "title": string
+}
+
 export default function News() {
+
+  const [news,setNews] = useState<newsItemType[]>([]);
+
+  useEffect(() => {
+    axios.get('https://oursos-backend-production.up.railway.app/news')
+    .then((response) => {
+      setNews(response.data);
+      console.log(response.data);
+    })
+    .catch((error) => console.error(error))
+  },[])
 
   let [fontsLoaded] = useFonts({
     NotoSans_400Regular,
@@ -21,8 +46,6 @@ export default function News() {
     return null;
   }
 
-
-
   return (
     <View style={styles.container}>
       <Text style={styles.heading2}>My Dashboard</Text>
@@ -30,24 +53,22 @@ export default function News() {
         placeholder="Search locations and friends"
         style={styles.searchInput}
       ></TextInput>
-
+      
       <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
-        <View id="DisasterCard" style={styles.disasterCard}>
-          <Image
-            source={{ uri: "https://loremflickr.com/320/240/wildfireforest" }}
-            style={[{ width: 160, height: 100 }, styles.disasterCardImage]}
-          />
-          <Text style={styles.disasterCardHeader}>Emergency</Text>
-          <Text>Kelowna Wildfire Live Updates</Text>
-        </View>
-        <View id="DisasterCard" style={styles.disasterCard}>
-          <Image
-            source={{ uri: "https://loremflickr.com/320/240/poweroutage" }}
-            style={[{ width: 160, height: 100 }, styles.disasterCardImage]}
-          />
-          <Text style={styles.disasterCardHeader}>Power Outage</Text>
-          <Text></Text>
-        </View>
+        {news && news.map((newsItem) => {
+          return(
+            <View id="DisasterCard" style={styles.disasterOuterCard}>
+              <View style={styles.disasterInnerCard}>
+                <Image
+                  source={{ uri: newsItem.thumbnail }}
+                  style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
+                />
+                <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
+                <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
+              </View>
+            </View>
+          )
+        })}
       </View>
 
       <View id="Map">
@@ -59,8 +80,10 @@ export default function News() {
 
       <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
-          <Text>Pins</Text>
-          <Text>View More</Text>
+          <Text style={{fontSize: 20, fontWeight: "bold"}}>Pins</Text>
+          <Link href={"/pins"}>
+            <Text style={{fontSize: 20}}>View More</Text>
+          </Link>
         </View>
         <View id="PinsContent" style={styles.pinsContent}>
           <View id="Pin" style={styles.pin}>
@@ -122,15 +145,14 @@ const styles = StyleSheet.create({
   },
   disasterCardContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between", // Distribute space evenly between items
-    margin: 10,
+    backgroundColor: "#F5F5F5", // Choose your preferred background color
+    padding: 10, // Add some padding around the container
+    borderRadius: 10, // Apply rounded corners
   },
-  disasterCard: {
-    width: "48%", // Set width to 48% to fit two cards on the screen horizontally
+  disasterOuterCard: {
+    width: 300, 
     backgroundColor: "white",
     borderRadius: 15,
-    height: 200,
     shadowOffset: {
       width: 0,
       height: 5,
@@ -140,11 +162,16 @@ const styles = StyleSheet.create({
     elevation: 3,
     alignItems: "center",
     marginVertical: 10,
+    margin: 10,
+    
+  },
+  disasterInnerCard: {
+    padding:20,
   },
   disasterCardImage: {
-    margin: 10,
+    // margin: 10,
     borderRadius: 15,
-    width: "100%",
+    // width: "100%",
   },
   disasterCardHeader: {
     color: "#000",
@@ -155,10 +182,11 @@ const styles = StyleSheet.create({
   },
   disasterCardText: {
     color: "#000",
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: "normal",
     fontWeight: "normal",
     margin: 10,
+    padding:10,
   },
   pin: {
     position: "relative", // Change to "relative" if you don't need absolute positioning
@@ -180,13 +208,13 @@ const styles = StyleSheet.create({
   },
   pinsHeader: {
     flex: 1,
-    flexDirection: "row", // Change this to 'row'
+    flexDirection: "row", 
     justifyContent: "space-between",
     margin: 10,
     height: 1,
   },
   pinsContent: {
-    flexDirection: "row", // Change this to 'row'
+    flexDirection: "row", 
     margin: 10,
     gap: 20
   },
