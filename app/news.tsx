@@ -55,9 +55,9 @@ export default function News() {
       ></TextInput>
       
       <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
-        {news && news.map((newsItem) => {
+        {news && news.map((newsItem, i) => {
           return(
-            <View id="DisasterCard" style={styles.disasterOuterCard}>
+            <View id="DisasterCard" style={styles.disasterOuterCard} key={i}>
               <View style={styles.disasterInnerCard}>
                 <Image
                   source={{ uri: newsItem.thumbnail }}

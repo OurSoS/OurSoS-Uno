@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View, TextStyle } from "react-native";
+import { remToPixel } from "./remToPixel";
 
 interface TextStylesProps {
     children: React.ReactNode;
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     backButton: {
-        fontSize: 16,
+        fontSize: remToPixel(1),
         color: 'black',
     }
 });
