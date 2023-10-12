@@ -1,4 +1,4 @@
-# Guidelines for Front-End Development on SOS
+# Guidelines for Front-End Development on OurSOS
 
 ## Fork the Repository
 
