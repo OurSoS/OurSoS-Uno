@@ -11,6 +11,7 @@ import AtomIcon from "./components/atoms/icon";
 import Header from "./components/molecules/header";
 import React, { useState, useEffect } from "react";
 import * as Location from "expo-location";
+import IntroLayout from "./intro/_layout";
 
 const backgroundImage = {
   uri: "./assets/Intro/Map.png",
@@ -45,23 +46,22 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {/* <AtomIcon icon="home" /> */}
-      <StatusBar style="auto" />
-      <ImageBackground source={backgroundImage} style={styles.image} />
-      <Header
-        title="Welcome to OurSoS!"
-        hasBackButton={false}
-        hasToggleSwitch={false}
-        hasLocation={false}
-        hasSearchbar={false}
-        hasLogo={true}
-      ></Header>
+      <IntroLayout>
+        <Header
+          title="Welcome to OurSoS!"
+          hasBackButton={false}
+          hasToggleSwitch={false}
+          hasLocation={false}
+          hasSearchbar={false}
+          hasLogo={true}
+        ></Header>
 
-      <Link href="/intro-select-language">
-        <Pressable style={styles.button}>
-          <Text style={styles.text}>Select Language</Text>
-        </Pressable>
-      </Link>
+        <Link href="/intro-select-language">
+          <Pressable style={styles.button}>
+            <Text style={styles.text}>Select Language</Text>
+          </Pressable>
+        </Link>
+      </IntroLayout>
     </View>
   );
 }
