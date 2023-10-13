@@ -1,4 +1,4 @@
-import {StyleSheet} from "react-native"
+import { StyleSheet, ScrollView } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -53,8 +53,9 @@ const styles = StyleSheet.create({
       shadowColor: "rgba(0, 0, 0, 0.15)",
       elevation: 3,
       alignItems: "center",
-      marginVertical: 10,
-      margin: 10,
+    //   marginVertical: 10,
+      marginRight: 10,
+      
   
     },
     disasterInnerCard: {
