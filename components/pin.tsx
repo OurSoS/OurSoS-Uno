@@ -1,18 +1,19 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 
-import Pin from "../components/pin";
+interface PinProps {
+  imageUrl: string;
+  pinName: string;
+}
 
-export default function Pins() {
+const Pin: React.FC<PinProps> = ({ imageUrl, pinName }) => {
   return (
-    <View style={styles.pinsContent}>
-      <Pin imageUrl={"https://www.google.com"} pinName={"Vancouver"}/>
-      <Pin imageUrl={"https://www.google.com"} pinName={"Vancouver"}/>
-      <Pin imageUrl={"https://www.google.com"} pinName={"Vancouver"}/>
-      
+    <View style={styles.pin}>
+      <Image source={{ uri: imageUrl }} style={styles.pinImage} />
+      <Text style={styles.pinName}>{pinName}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   pin: {
@@ -40,9 +41,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10,
   },
-  pinsContent: {
-    justifyContent: "center",
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
 });
+
+export default Pin;
