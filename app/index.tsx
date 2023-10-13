@@ -1,10 +1,20 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+} from "react-native";
 import { Link } from "expo-router";
 import AtomIcon from "./components/atoms/icon";
 import Header from "./components/molecules/header";
 import React, { useState, useEffect } from "react";
 import * as Location from "expo-location";
+
+const backgroundImage = {
+  uri: "./assets/Intro/Map.png",
+};
 
 export default function App() {
   const [location, setLocation] = useState({});
@@ -37,6 +47,7 @@ export default function App() {
     <View style={styles.container}>
       {/* <AtomIcon icon="home" /> */}
       <StatusBar style="auto" />
+      <ImageBackground source={backgroundImage} style={styles.image} />
       <Header
         title="Welcome to OurSoS!"
         hasBackButton={false}
@@ -61,6 +72,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "column",
+    width: "100%",
   },
   button: {
     alignItems: "center",
@@ -69,13 +82,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "black",
+    backgroundColor: "gray",
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
+    objectFit: "cover",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    position: "absolute",
   },
   text: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
-    color: "white",
+    color: "black",
   },
 });
