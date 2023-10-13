@@ -1,35 +1,30 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import Header from "./components/molecules/header";
-import * as Location from "expo-location";
-
-const backgroundImage = {
-  uri: "./assets/Intro/Map.png",
-};
+import IntroLayout from "./intro/_layout";
 
 export default function SelectLanguage() {
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
-      <ImageBackground source={backgroundImage} style={styles.image} />
-      <Text style={styles.text}>Select Language</Text>
-      <Link style={styles.text} href="/intro-newsfeed">
-        <Pressable>
-          <Text>Continue</Text>
-        </Pressable>
-      </Link>
+      <IntroLayout>
+        <Text style={styles.header}>Select your language</Text>
+        <Link href="/intro-newsfeed">
+          <Pressable style={styles.button}>
+            <Text style={styles.text}>Continue</Text>
+          </Pressable>
+        </Link>
+      </IntroLayout>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
+  header: {
+    fontSize: 36,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 24,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -43,9 +38,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 32,
-    borderRadius: 4,
+    borderRadius: 20,
     elevation: 3,
-    backgroundColor: "black",
+    backgroundColor: "rgba(125, 125, 125, .6)",
+    marginTop: 24,
   },
   image: {
     flex: 1,
@@ -59,7 +55,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: "bold",
     letterSpacing: 0.25,
     color: "black",
   },

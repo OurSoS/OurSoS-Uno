@@ -1,21 +1,8 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import AtomIcon from "./components/atoms/icon";
-import Header from "./components/molecules/header";
 import React, { useState, useEffect } from "react";
 import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
-
-const backgroundImage = {
-  uri: "./assets/Intro/Map.png",
-};
 
 export default function App() {
   const [location, setLocation] = useState({});
@@ -47,15 +34,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Header
-          title="Welcome to OurSoS!"
-          hasBackButton={false}
-          hasToggleSwitch={false}
-          hasLocation={false}
-          hasSearchbar={false}
-          hasLogo={true}
-        ></Header>
-
+        <Text style={styles.header}>Welcome to OurSoS!</Text>
         <Link href="/intro-select-language">
           <Pressable style={styles.button}>
             <Text style={styles.text}>Select Language</Text>
@@ -67,6 +46,12 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    fontSize: 36,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 24,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -80,9 +65,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 32,
-    borderRadius: 4,
+    borderRadius: 20,
     elevation: 3,
-    backgroundColor: "gray",
+    backgroundColor: "rgba(125, 125, 125, .6)",
+    marginTop: 24,
   },
   image: {
     flex: 1,
@@ -96,7 +82,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: "bold",
     letterSpacing: 0.25,
     color: "black",
   },
