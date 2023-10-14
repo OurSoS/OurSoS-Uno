@@ -1,18 +1,26 @@
 import React from "react";
-import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
 import IntroLayout from "./intro/_layout";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as langs from "./languages.json";
+
 type LanguageType = {
   name: string;
   tag: string;
 };
 
 export default function SelectLanguage() {
-  const [languages, setLanguages] = useState([]);
+  const [languages, setLanguages] = useState<LanguageType[]>([
+    {
+      name: "English",
+      tag: "en",
+    },
+  ]);
+  const [checkLangauge, setCheckLangauge] = useState(0);
+  const [languageTag, setLanguageTag] = useState(languages[0].tag || "");
   useEffect(() => {
     axios
       .get("https://oursos-backend-production.up.railway.app/languages")
@@ -21,6 +29,34 @@ export default function SelectLanguage() {
       });
   }, []);
 
+  useEffect(() => {}, [languageTag]);
+
+  const setUserLanguage = () => {
+    const updateUserRequest = {
+      username: "cunt",
+      location: ["(40.7128,-74.006)"],
+      languagepreference: languageTag, // Ensure that languageTag is defined and has a valid value
+      friends: [2, 3],
+    };
+    if (languageTag) {
+      console.log({ languageTag });
+      //get the real language Tag from the the backend boobs
+
+      // axios
+      //   .put(
+      //     "https://oursos-backend-production.up.railway/updateuser/1",
+      //     updateUserRequest
+      //   )
+      //   .then((response) => {
+      //     console.log("User updated successfully", response.data);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error updating user:", error);
+      //   });
+    } else {
+      console.log("No user language tag");
+    }
+  };
   return (
     <View style={styles.container}>
       <IntroLayout>
@@ -28,18 +64,52 @@ export default function SelectLanguage() {
         <FlatList
           style={styles.languageList}
           data={languages}
-          renderItem={({ item }: { item: LanguageType }) => (
-            <Pressable style={styles.languageBtn}>
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: LanguageType;
+            index: number;
+          }) => (
+            <Pressable
+              onPress={() => {
+                setCheckLangauge(index);
+              }}
+              style={styles.languageBtn}
+            >
               <Text style={styles.text}>{item.name}</Text>
+              {index == checkLangauge && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  width={30}
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              )}
             </Pressable>
           )}
         />
 
-        <Link href="/intro-newsfeed">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Continue</Text>
-          </Pressable>
-        </Link>
+        {/* <Link href="/intro-newsfeed"> */}
+        <Pressable
+          onPress={() => {
+            setUserLanguage();
+            setLanguageTag(languages[checkLangauge]?.tag);
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.text}>Continue</Text>
+        </Pressable>
+        {/* </Link> */}
       </IntroLayout>
     </View>
   );
@@ -58,6 +128,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+    flexWrap: "nowrap",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   languageList: {
     padding: 52,
