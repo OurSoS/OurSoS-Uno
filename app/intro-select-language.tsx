@@ -40,7 +40,7 @@ export default function SelectLanguage() {
     };
     if (languageTag) {
       console.log({ languageTag });
-      //get the real language Tag from the the backend boobs
+      //get the real language Tag from the the backend boobs 00
 
       // axios
       //   .put(
