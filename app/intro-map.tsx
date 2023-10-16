@@ -1,45 +1,27 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
+import Header from "./components/molecules/header";
 import React, { useState, useEffect } from "react";
-import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 
-export default function App() {
-  const [location, setLocation] = useState({});
-  const [errorMsg, setErrorMsg] = useState("");
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
-  useEffect(() => {
-    console.log("Location", location);
-  }, [location]);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
+export default function IntroMap() {
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Text style={styles.header}>Welcome to OurSoS!</Text>
-        <Link href="/intro-select-language">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
-          </Pressable>
-        </Link>
+        <Text style={styles.header}>Map</Text>
+        <View style={styles.innercontainer}>
+          <Text style={styles.text}>
+            Visualizing crisis information is crucial. OurSOS offers an
+            interactive map view that displays crises and dangers in your area.
+            This user-friendly interface helps you understand the proximity of
+            threats and aids in making quick and informed decisions.
+          </Text>
+          <Link href="/intro-friends">
+            <Pressable style={styles.button}>
+              <Text style={styles.text}>Continue</Text>
+            </Pressable>
+          </Link>
+        </View>
       </IntroLayout>
     </View>
   );
@@ -51,6 +33,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 24,
+  },
+  innercontainer: {
+    padding: 36,
+    transparent: true,
+    alignItems: "center",
+    backgroundColor: "rgba(125, 125, 125, .3)",
+    borderRadius: 10,
   },
   container: {
     flex: 1,

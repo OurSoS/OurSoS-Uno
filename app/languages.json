@@ -1,0 +1,546 @@
+[
+  {
+    "name": "বাংলা",
+    "tag": "bn"
+  },
+  {
+    "name": "മലയാളം",
+    "tag": "മില്ലി"
+  },
+  {
+    "name": "English",
+    "tag": "in"
+  },
+  {
+    "name": "ಕನ್ನಡ",
+    "tag": "kn"
+  },
+  {
+    "name": "मराठी",
+    "tag": "श्री"
+  },
+  {
+    "name": "dansk",
+    "tag": "og"
+  },
+  {
+    "name": "Maori",
+    "tag": "ahau"
+  },
+  {
+    "name": "ខ្មែរ",
+    "tag": "គីឡូម៉ែត្រ"
+  },
+  {
+    "name": "မြန်မာ (ဗမာ)၊",
+    "tag": "ငါ့"
+  },
+  {
+    "name": "简体中文）",
+    "tag": "zh-CN"
+  },
+  {
+    "name": "íslenskur",
+    "tag": "er"
+  },
+  {
+    "name": "Hrvatski",
+    "tag": "hr"
+  },
+  {
+    "name": "українська",
+    "tag": "uk"
+  },
+  {
+    "name": "Chichewa",
+    "tag": "ndi"
+  },
+  {
+    "name": "অসমীয়া",
+    "tag": "যেনেকৈ"
+  },
+  {
+    "name": "Mizo",
+    "tag": "thumalte"
+  },
+  {
+    "name": "भोजपुरी",
+    "tag": "से"
+  },
+  {
+    "name": "Lingala",
+    "tag": "ln"
+  },
+  {
+    "name": "latviski",
+    "tag": "lv"
+  },
+  {
+    "name": "Oromo",
+    "tag": "waa&#39;ee"
+  },
+  {
+    "name": "Aymara",
+    "tag": "ukawa"
+  },
+  {
+    "name": "U b&#39;a don",
+    "tag": "bm"
+  },
+  {
+    "name": "አማርኛ",
+    "tag": "እኔ"
+  },
+  {
+    "name": "Igbo",
+    "tag": "ig"
+  },
+  {
+    "name": "Somali",
+    "tag": "sidaas"
+  },
+  {
+    "name": "Español",
+    "tag": "es"
+  },
+  {
+    "name": "bahasa Indonesia",
+    "tag": "pengenal"
+  },
+  {
+    "name": "euskara",
+    "tag": "eu"
+  },
+  {
+    "name": "Esperanto",
+    "tag": "tie"
+  },
+  {
+    "name": "Malti",
+    "tag": "mt"
+  },
+  {
+    "name": "اردو",
+    "tag": "یو آر"
+  },
+  {
+    "name": "ગુજરાતી",
+    "tag": "પ્રતિ"
+  },
+  {
+    "name": "Afrikaans",
+    "tag": "van"
+  },
+  {
+    "name": "čeština",
+    "tag": "cs"
+  },
+  {
+    "name": "Français",
+    "tag": "fr"
+  },
+  {
+    "name": "Hmong",
+    "tag": "hmo"
+  },
+  {
+    "name": "ʻŌlelo Hawaiʻi",
+    "tag": "haw"
+  },
+  {
+    "name": "Cebuano",
+    "tag": "ceb"
+  },
+  {
+    "name": "Samoa",
+    "tag": "sm"
+  },
+  {
+    "name": "Malagasy",
+    "tag": "levitra"
+  },
+  {
+    "name": "Sundanese",
+    "tag": "nyaéta"
+  },
+  {
+    "name": "తెలుగు",
+    "tag": "ది"
+  },
+  {
+    "name": "basa jawa",
+    "tag": "jv"
+  },
+  {
+    "name": "日本語",
+    "tag": "そして"
+  },
+  {
+    "name": "Azərbaycan",
+    "tag": "the"
+  },
+  {
+    "name": "Кыргызча",
+    "tag": "бул"
+  },
+  {
+    "name": "Монгол",
+    "tag": "mn"
+  },
+  {
+    "name": "عربي",
+    "tag": "مع"
+  },
+  {
+    "name": "тоҷикӣ",
+    "tag": "тг"
+  },
+  {
+    "name": "Melayu",
+    "tag": "Cik"
+  },
+  {
+    "name": "isiXhosa",
+    "tag": "xh"
+  },
+  {
+    "name": "Shona",
+    "tag": "sn"
+  },
+  {
+    "name": "Türkçe",
+    "tag": "TR"
+  },
+  {
+    "name": "简体中文）",
+    "tag": "zh"
+  },
+  {
+    "name": "lietuvių",
+    "tag": "lt"
+  },
+  {
+    "name": "Magyar",
+    "tag": "HU"
+  },
+  {
+    "name": "slovenský",
+    "tag": "sk"
+  },
+  {
+    "name": "bosanski",
+    "tag": "bs"
+  },
+  {
+    "name": "Српски",
+    "tag": "ср"
+  },
+  {
+    "name": "Tsonga",
+    "tag": "ts"
+  },
+  {
+    "name": "डोगरी",
+    "tag": "दोई"
+  },
+  {
+    "name": "Runasimi",
+    "tag": "chayta"
+  },
+  {
+    "name": "Kreyòl ayisyen",
+    "tag": "ht"
+  },
+  {
+    "name": "संस्कृत",
+    "tag": "इत्युपरि"
+  },
+  {
+    "name": "Sesotho sa Leboa",
+    "tag": "kgauswi"
+  },
+  {
+    "name": "galego",
+    "tag": "gl"
+  },
+  {
+    "name": "Corsu",
+    "tag": "co"
+  },
+  {
+    "name": "Русский",
+    "tag": "RU"
+  },
+  {
+    "name": "Română",
+    "tag": "ro"
+  },
+  {
+    "name": "svenska",
+    "tag": "sv"
+  },
+  {
+    "name": "norsk",
+    "tag": "Nei"
+  },
+  {
+    "name": "עִברִית",
+    "tag": "הוא"
+  },
+  {
+    "name": "shqiptare",
+    "tag": "sq"
+  },
+  {
+    "name": "ქართული",
+    "tag": "The"
+  },
+  {
+    "name": "Ελληνικά",
+    "tag": "αυτός"
+  },
+  {
+    "name": "Gàidhlig na h-Alba",
+    "tag": "gd"
+  },
+  {
+    "name": "հայերեն",
+    "tag": "նա"
+  },
+  {
+    "name": "Nederlands",
+    "tag": "nl"
+  },
+  {
+    "name": "แบบไทย",
+    "tag": "ไทย"
+  },
+  {
+    "name": "Kinyarwanda",
+    "tag": "rw"
+  },
+  {
+    "name": "Татар",
+    "tag": "tt"
+  },
+  {
+    "name": "Português",
+    "tag": "ponto"
+  },
+  {
+    "name": "Türkmenler",
+    "tag": "tk"
+  },
+  {
+    "name": "ଓଡିଆ (ଓଡିଆ)",
+    "tag": "କିମ୍ବା"
+  },
+  {
+    "name": "ئۇيغۇر",
+    "tag": "ۋە"
+  },
+  {
+    "name": "Polski",
+    "tag": "pl"
+  },
+  {
+    "name": "नहीं",
+    "tag": "नमस्ते"
+  },
+  {
+    "name": "български",
+    "tag": "бг"
+  },
+  {
+    "name": "Slovenščina",
+    "tag": "sl"
+  },
+  {
+    "name": "नेपाली",
+    "tag": "यो छ"
+  },
+  {
+    "name": "سنڌي",
+    "tag": "ايس ڊي"
+  },
+  {
+    "name": "پښتو",
+    "tag": "ps"
+  },
+  {
+    "name": "ਪੰਜਾਬੀ",
+    "tag": "ਨਾਲ ਨਾਲ"
+  },
+  {
+    "name": "беларускі",
+    "tag": "быць"
+  },
+  {
+    "name": "Latinus",
+    "tag": "the"
+  },
+  {
+    "name": "فارسی",
+    "tag": "ولی"
+  },
+  {
+    "name": "македонски",
+    "tag": "mk"
+  },
+  {
+    "name": "Kurdî (Kurmancî)",
+    "tag": "ber"
+  },
+  {
+    "name": "eesti keel",
+    "tag": "Ja"
+  },
+  {
+    "name": "Zulu",
+    "tag": "ku"
+  },
+  {
+    "name": "kiswahili",
+    "tag": "sw"
+  },
+  {
+    "name": "қазақ",
+    "tag": "кк"
+  },
+  {
+    "name": "Senyesemane",
+    "tag": "St"
+  },
+  {
+    "name": "guarani",
+    "tag": "gn"
+  },
+  {
+    "name": "Uneg",
+    "tag": "ilo"
+  },
+  {
+    "name": "Obulungi",
+    "tag": "lg"
+  },
+  {
+    "name": "ꯃꯦꯏꯇꯦꯏꯂꯣꯟ (ꯃꯅꯤꯄꯨꯔꯤ) ꯴.",
+    "tag": "mni-Mtei ꯍꯥꯌꯅꯥ ꯀꯧꯏ꯫"
+  },
+  {
+    "name": "basa jawa",
+    "tag": "jv"
+  },
+  {
+    "name": "कोंकणी",
+    "tag": "एकठांय करप"
+  },
+  {
+    "name": "Filipino",
+    "tag": "sa"
+  },
+  {
+    "name": "Aŋgba",
+    "tag": "Ɛ̃"
+  },
+  {
+    "name": "Italiano",
+    "tag": "Esso"
+  },
+  {
+    "name": "lëtzebuergesch",
+    "tag": "lb"
+  },
+  {
+    "name": "עִברִית",
+    "tag": "הוא"
+  },
+  {
+    "name": "Frysk",
+    "tag": "myn"
+  },
+  {
+    "name": "Tiếng Việt",
+    "tag": "chúng tôi"
+  },
+  {
+    "name": "Hausa",
+    "tag": "ha"
+  },
+  {
+    "name": "Yoruba",
+    "tag": "won"
+  },
+  {
+    "name": "தமிழ்",
+    "tag": "எதிர்கொள்ளும்"
+  },
+  {
+    "name": "Cymraeg",
+    "tag": "cy"
+  },
+  {
+    "name": "Deutsch",
+    "tag": "von"
+  },
+  {
+    "name": "TB",
+    "tag": "ມັນ"
+  },
+  {
+    "name": "o&#39;zbek",
+    "tag": "uchun"
+  },
+  {
+    "name": "יידיש",
+    "tag": "טאָן"
+  },
+  {
+    "name": "català",
+    "tag": "això"
+  },
+  {
+    "name": "Suomalainen",
+    "tag": "olla"
+  },
+  {
+    "name": "ދިވެހި...",
+    "tag": "ޑީވީ"
+  },
+  {
+    "name": "मैथिली",
+    "tag": "सकत"
+  },
+  {
+    "name": "Kryo we de na di wɔl",
+    "tag": "blɔd"
+  },
+  {
+    "name": "Twi",
+    "tag": "ne"
+  },
+  {
+    "name": "کوردی (سۆرانی)",
+    "tag": "ckb"
+  },
+  {
+    "name": "ትግሪኛ",
+    "tag": "ካብ"
+  },
+  {
+    "name": "한국인",
+    "tag": "~이다"
+  },
+  {
+    "name": "Irish Gaelic",
+    "tag": "ga"
+  },
+  {
+    "name": "සිංහල",
+    "tag": "සහ"
+  },
+  {
+    "name": "中國傳統的）",
+    "tag": "zh-TW"
+  }
+]

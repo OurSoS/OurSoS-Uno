@@ -5,10 +5,9 @@ import { Image } from "react-native";
 import { Link } from "expo-router";
 import axios from "axios"
 import DisasterCard from "../components/DisastersCard";
-// import {useState} from "react";
-//! TODO: implement - https://github.com/meliorence/react-native-snap-carousel#react-native-snap-carousel
-// import Carousel from 'react-native-snap-carousel';
-import {styles} from "./styles/newsStyles";
+import {styles} from "./styles/newsStyles"
+
+import Swiper from 'react-native-swiper';
 import {
   useFonts,
   NotoSans_400Regular,
@@ -53,24 +52,39 @@ export default function News() {
         placeholder="Search locations and friends"
         style={styles.searchInput}
       ></TextInput>
-      <ScrollView horizontal={true}>
-        <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
-          {news && news.map((newsItem, i) => {
-            return(
-              <View key={i} id="DisasterCard" style={styles.disasterOuterCard}>
-                <View style={styles.disasterInnerCard}>
-                  <Image
-                    source={{ uri: newsItem.thumbnail }}
-                    style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
-                  />
-                  <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
-                  <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
-                </View>
+
+      <Swiper style={{ height: 500 }} showsPagination={false}>
+        {news && news.map((newsItem, i) => {
+          return(
+            <View key={i} id="DisasterCard" style={styles.disasterOuterCard}>
+              <View style={styles.disasterInnerCard}>
+                <Image
+                  source={{ uri: newsItem.thumbnail }}
+                  style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
+                />
+                <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
+                <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
               </View>
-            )
-          })}
-        </View>
-      </ScrollView>
+            </View>
+          )
+        })}
+      </Swiper>
+      {/* <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
+        {news && news.map((newsItem, i) => {
+          return (
+            <View id="DisasterCard" style={styles.disasterOuterCard} key={i}>
+              <View style={styles.disasterInnerCard}>
+                <Image
+                  source={{ uri: newsItem.thumbnail }}
+                  style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
+                />
+                <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
+                <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
+              </View>
+            </View>
+          )
+        })}
+        Carousel</View> */}
 
       <View id="Map">
         <Image

@@ -1,45 +1,26 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
 import React, { useState, useEffect } from "react";
-import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 
-export default function App() {
-  const [location, setLocation] = useState({});
-  const [errorMsg, setErrorMsg] = useState("");
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
-  useEffect(() => {
-    console.log("Location", location);
-  }, [location]);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
+export default function IntroNewsFeed() {
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Text style={styles.header}>Welcome to OurSoS!</Text>
-        <Link href="/intro-select-language">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
-          </Pressable>
-        </Link>
+        <Text style={styles.header}>News Feed</Text>
+        <View style={styles.innercontainer}>
+          <Text style={styles.text}>
+            Staying informed goes beyond crisis alerts. That's why we've
+            included a local news dashboard for your saved locales. OurSOS keeps
+            you up-to-date with relevant news and developments, helping you
+            navigate through any situation effectively.
+          </Text>
+          <Link href="/intro-map">
+            <Pressable style={styles.button}>
+              <Text style={styles.text}>Continue</Text>
+            </Pressable>
+          </Link>
+        </View>
       </IntroLayout>
     </View>
   );
@@ -52,9 +33,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24,
   },
+  innercontainer: {
+    padding: 36,
+    transparent: true,
+    alignItems: "center",
+    backgroundColor: "rgba(125, 125, 125, .3)",
+    borderRadius: 10,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",

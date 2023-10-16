@@ -1,43 +1,20 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
+import Header from "./components/molecules/header";
 import React, { useState, useEffect } from "react";
-import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 
-export default function App() {
-  const [location, setLocation] = useState({});
-  const [errorMsg, setErrorMsg] = useState("");
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
-  useEffect(() => {
-    console.log("Location", location);
-  }, [location]);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
+export default function IntroLocation() {
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Text style={styles.header}>Welcome to OurSoS!</Text>
-        <Link href="/intro-select-language">
+        <Text style={styles.header}>Allow use of location?</Text>
+        <Link href="/news">
           <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
+            <Text style={styles.text}>Yes</Text>
+          </Pressable>
+          <Pressable style={styles.button}>
+            <Text style={styles.text}>No</Text>
           </Pressable>
         </Link>
       </IntroLayout>
@@ -69,6 +46,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: "rgba(125, 125, 125, .6)",
     marginTop: 24,
+    marginHorizontal: 5,
   },
   image: {
     flex: 1,
