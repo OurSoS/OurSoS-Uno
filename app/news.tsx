@@ -1,41 +1,44 @@
 import { StatusBar } from "expo-status-bar";
-import { useState, useEffect } from "react"
-import { StyleSheet, Text, View, TextInput, Dimensions, ScrollView, } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import { Image } from "react-native";
 import { Link } from "expo-router";
-import axios from "axios"
+import axios from "axios";
 import DisasterCard from "../components/DisastersCard";
-import {styles} from "./styles/newsStyles"
+import { styles } from "./styles/newsStyles";
 
-import Swiper from 'react-native-swiper';
-import {
-  useFonts,
-  NotoSans_400Regular,
-} from '@expo-google-fonts/dev';
-
+import Swiper from "react-native-swiper";
+import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 
 type newsItemType = {
-  "date": string,
-  "link": string,
-  "position": number,
-  "snippet": string,
-  "source": string,
-  "thumbnail": string,
-  "title": string
-}
+  date: string;
+  link: string;
+  position: number;
+  snippet: string;
+  source: string;
+  thumbnail: string;
+  title: string;
+};
 
 export default function News() {
-
   const [news, setNews] = useState<newsItemType[]>([]);
 
   useEffect(() => {
-    axios.get('https://oursos-backend-production.up.railway.app/news')
+    axios
+      .get("https://oursos-backend-production.up.railway.app/news")
       .then((response) => {
         setNews(response.data);
         console.log(response.data);
       })
-      .catch((error) => console.error(error))
-  }, [])
+      .catch((error) => console.error(error));
+  }, []);
 
   let [fontsLoaded] = useFonts({
     NotoSans_400Regular,
@@ -53,56 +56,65 @@ export default function News() {
         style={styles.searchInput}
       ></TextInput>
 
-<Swiper style={{ height: 500 }} showsPagination={false}>
-  {news && news.map((newsItem, i) => {
-    if (i % 2 === 0) {
-      return (
-        <View key={i} style={{ flexDirection: 'row' }}>
-          <View id="DisasterCard" style={[styles.disasterOuterCard, { flex: 1, marginRight: 10 }]}>
-            <View style={styles.disasterInnerCard}>
-              <Image
-                source={{ uri: newsItem.thumbnail }}
-                style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
-              />
-              <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
-              <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
-            </View>
-          </View>
-          {i + 1 < news.length && (
-            <View id="DisasterCard" style={[styles.disasterOuterCard, { flex: 1, marginLeft: 10 }]}>
-              <View style={styles.disasterInnerCard}>
-                <Image
-                  source={{ uri: news[i + 1].thumbnail }}
-                  style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
-                />
-                <Text style={styles.disasterCardHeader}>{news[i + 1].title}</Text>
-                <Text style={styles.disasterCardText}>{news[i + 1].snippet}</Text>
-              </View>
-            </View>
-          )}
-        </View>
-      );
-    }
-  })}
-</Swiper>
-
-      {/* <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
-        {news && news.map((newsItem, i) => {
-          return (
-            <View id="DisasterCard" style={styles.disasterOuterCard} key={i}>
-              <View style={styles.disasterInnerCard}>
-                <Image
-                  source={{ uri: newsItem.thumbnail }}
-                  style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
-                />
-                <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
-                <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
-              </View>
-            </View>
-          )
-        })}
-        Carousel</View> */}
-
+      <Swiper style={{ height: 380 }} showsPagination={false}>
+        {news &&
+          news.map((newsItem, i) => {
+            if (i % 2 === 0) {
+              return (
+                <View key={i} style={{ flexDirection: "row" }}>
+                  <View
+                    id="DisasterCard"
+                    style={[
+                      styles.disasterOuterCard,
+                      { flex: 1, marginRight: 10 },
+                    ]}
+                  >
+                    <View style={styles.disasterInnerCard}>
+                      <Image
+                        source={{ uri: newsItem.thumbnail }}
+                        style={[
+                          { height: 120, objectFit: "cover" },
+                          styles.disasterCardImage,
+                        ]}
+                      />
+                      <Text style={styles.disasterCardHeader}>
+                        {newsItem.title}
+                      </Text>
+                      <Text style={styles.disasterCardText}>
+                        {newsItem.snippet}
+                      </Text>
+                    </View>
+                  </View>
+                  {i + 1 < news.length && (
+                    <View
+                      id="DisasterCard"
+                      style={[
+                        styles.disasterOuterCard,
+                        { flex: 1, marginLeft: 10 },
+                      ]}
+                    >
+                      <View style={styles.disasterInnerCard}>
+                        <Image
+                          source={{ uri: news[i + 1].thumbnail }}
+                          style={[
+                            { height: 120, objectFit: "cover" },
+                            styles.disasterCardImage,
+                          ]}
+                        />
+                        <Text style={styles.disasterCardHeader}>
+                          {news[i + 1].title}
+                        </Text>
+                        <Text style={styles.disasterCardText}>
+                          {news[i + 1].snippet}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              );
+            }
+          })}
+      </Swiper>
       <View id="Map">
         <Image
           source={{ uri: "../assets/TEMP_map.png" }}
@@ -138,13 +150,12 @@ export default function News() {
 
       <View id="FriendsContainer">
         <View id="FriendsHeader" style={styles.FriendsHeader}>
-          <Text style={{fontSize: 20, fontWeight: "bold"}}>Friends</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Friends</Text>
           <Link href={"/friends"}>
-            <Text style={{fontSize: 20}}>View More</Text>
+            <Text style={{ fontSize: 20 }}>View More</Text>
           </Link>
         </View>
         <View id="FriendsContent" style={styles.FriendsContent}>
-          
           {/* {map goes here} */}
 
           <View id="Friend" style={styles.friend}>
@@ -169,8 +180,6 @@ export default function News() {
             />
             <Text style={styles.FriendName}>Sarah</Text>
           </View>
-
-
         </View>
       </View>
 
