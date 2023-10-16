@@ -53,22 +53,39 @@ export default function News() {
         style={styles.searchInput}
       ></TextInput>
 
-      <Swiper style={{ height: 500 }} showsPagination={false}>
-        {news && news.map((newsItem, i) => {
-          return(
-            <View key={i} id="DisasterCard" style={styles.disasterOuterCard}>
+<Swiper style={{ height: 500 }} showsPagination={false}>
+  {news && news.map((newsItem, i) => {
+    if (i % 2 === 0) {
+      return (
+        <View key={i} style={{ flexDirection: 'row' }}>
+          <View id="DisasterCard" style={[styles.disasterOuterCard, { flex: 1, marginRight: 10 }]}>
+            <View style={styles.disasterInnerCard}>
+              <Image
+                source={{ uri: newsItem.thumbnail }}
+                style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
+              />
+              <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
+              <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
+            </View>
+          </View>
+          {i + 1 < news.length && (
+            <View id="DisasterCard" style={[styles.disasterOuterCard, { flex: 1, marginLeft: 10 }]}>
               <View style={styles.disasterInnerCard}>
                 <Image
-                  source={{ uri: newsItem.thumbnail }}
+                  source={{ uri: news[i + 1].thumbnail }}
                   style={[{ height: 120, objectFit: "cover" }, styles.disasterCardImage]}
                 />
-                <Text style={styles.disasterCardHeader}>{newsItem.title}</Text>
-                <Text style={styles.disasterCardText}>{newsItem.snippet}</Text>
+                <Text style={styles.disasterCardHeader}>{news[i + 1].title}</Text>
+                <Text style={styles.disasterCardText}>{news[i + 1].snippet}</Text>
               </View>
             </View>
-          )
-        })}
-      </Swiper>
+          )}
+        </View>
+      );
+    }
+  })}
+</Swiper>
+
       {/* <View id="DisasterCardsContainer" style={styles.disasterCardContainer}>
         {news && news.map((newsItem, i) => {
           return (
