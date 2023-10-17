@@ -95,7 +95,7 @@ export default function News() {
                         { flex: 1, marginLeft: 10 },
                       ]}
                     >
-                      <Link href={`/news/article/${news[i+1].title}`}>
+                      <Link href={`/news/article/${news[i + 1].title}`}>
                         <View style={styles.disasterInnerCard}>
                           <Image
                             source={{ uri: news[i + 1].thumbnail }}
