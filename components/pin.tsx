@@ -35,8 +35,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   pinName: {
-    color: "black",
+    color: "white",
     fontSize: 24,
+    fontWeight: "bold",
+    textShadowColor: "black",
+    textShadowOffset: 0,
+    textShadowRadius: 30,
     position: "absolute",
     bottom: 10,
     left: 10,
