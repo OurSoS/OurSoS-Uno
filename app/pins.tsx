@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     left: 10,
   },
   pinsContent: {
+    color:"white",
     justifyContent: "center",
     flexDirection: "row",
     flexWrap: "wrap",

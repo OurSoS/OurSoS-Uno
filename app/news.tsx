@@ -69,21 +69,23 @@ export default function News() {
                       { flex: 1, marginRight: 10 },
                     ]}
                   >
-                    <View style={styles.disasterInnerCard}>
-                      <Image
-                        source={{ uri: newsItem.thumbnail }}
-                        style={[
-                          { height: 120, objectFit: "cover" },
-                          styles.disasterCardImage,
-                        ]}
-                      />
-                      <Text style={styles.disasterCardHeader}>
-                        {newsItem.title}
-                      </Text>
-                      <Text style={styles.disasterCardText}>
-                        {newsItem.snippet}
-                      </Text>
-                    </View>
+                    <Link href={`/news/article/${newsItem.title}`}>
+                      <View style={styles.disasterInnerCard}>
+                        <Image
+                          source={{ uri: newsItem.thumbnail }}
+                          style={[
+                            { height: 120, objectFit: "cover" },
+                            styles.disasterCardImage,
+                          ]}
+                        />
+                        <Text style={styles.disasterCardHeader}>
+                          {newsItem.title}
+                        </Text>
+                        <Text style={styles.disasterCardText}>
+                          {newsItem.snippet}
+                        </Text>
+                      </View>
+                    </Link>
                   </View>
                   {i + 1 < news.length && (
                     <View
@@ -93,21 +95,23 @@ export default function News() {
                         { flex: 1, marginLeft: 10 },
                       ]}
                     >
-                      <View style={styles.disasterInnerCard}>
-                        <Image
-                          source={{ uri: news[i + 1].thumbnail }}
-                          style={[
-                            { height: 120, objectFit: "cover" },
-                            styles.disasterCardImage,
-                          ]}
-                        />
-                        <Text style={styles.disasterCardHeader}>
-                          {news[i + 1].title}
-                        </Text>
-                        <Text style={styles.disasterCardText}>
-                          {news[i + 1].snippet}
-                        </Text>
-                      </View>
+                      <Link href={`/news/article/${news[i+1].title}`}>
+                        <View style={styles.disasterInnerCard}>
+                          <Image
+                            source={{ uri: news[i + 1].thumbnail }}
+                            style={[
+                              { height: 120, objectFit: "cover" },
+                              styles.disasterCardImage,
+                            ]}
+                          />
+                          <Text style={styles.disasterCardHeader}>
+                            {news[i + 1].title}
+                          </Text>
+                          <Text style={styles.disasterCardText}>
+                            {news[i + 1].snippet}
+                          </Text>
+                        </View>
+                      </Link>
                     </View>
                   )}
                 </View>
