@@ -6,33 +6,6 @@ import IntroLayout from "./intro/_layout";
 
 export default function App() {
 
-  const [location, setLocation] = useState({});
-  const [errorMsg, setErrorMsg] = useState("");
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
-
-  useEffect(() => {
-    console.log("Location", location);
-  }, [location]);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
   return (
     <View style={styles.container}>
       <IntroLayout>
