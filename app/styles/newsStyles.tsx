@@ -109,10 +109,6 @@ const styles = StyleSheet.create({
       margin: 10,
       gap: 20
     },
-  
-    FriendsContainer: {
-      
-    },
     FriendsHeader: {
       flex: 1,
       flexDirection: "row", 
