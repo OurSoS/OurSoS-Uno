@@ -5,8 +5,10 @@ import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 
 export default function App() {
+  
   const [location, setLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState("");
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();

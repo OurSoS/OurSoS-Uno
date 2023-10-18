@@ -5,10 +5,7 @@ export default function friend(friend: { name: string; image: string }) {
   return (
     <>
       <View id="Friend" style={styles.friend}>
-        <Image
-          source={{ uri: friend.image }}
-          style={styles.FriendImage}
-        />
+        <Image source={{ uri: friend.image }} style={styles.FriendImage} />
         <Text style={styles.FriendName}>{friend.name}</Text>
       </View>
     </>
