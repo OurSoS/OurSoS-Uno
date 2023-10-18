@@ -6,13 +6,15 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as langs from "./languages.json";
-
+import { useRouter } from 'expo-router';
 type LanguageType = {
   name: string;
   tag: string;
 };
 
 export default function SelectLanguage() {
+
+  const router = useRouter();
   const [languages, setLanguages] = useState<LanguageType[]>([
     {
       name: "English",
@@ -20,39 +22,38 @@ export default function SelectLanguage() {
     },
   ]);
   const [checkLangauge, setCheckLangauge] = useState(0);
-  const [languageTag, setLanguageTag] = useState(languages[0].tag || "");
+  const [languageTag, setLanguageTag] = useState("en");
   useEffect(() => {
     axios
-      .get("https://oursos-backend-production.up.railway.app/languages")
+      .get("https://oursos-backend-production.up.railway.app/languagelistenglish")
       .then((res) => {
         setLanguages(res.data);
       });
   }, []);
 
-  useEffect(() => {}, [languageTag]);
-
   const setUserLanguage = () => {
     const updateUserRequest = {
-      username: "cunt",
-      location: ["(40.7128,-74.006)"],
-      languagepreference: languageTag, // Ensure that languageTag is defined and has a valid value
-      friends: [2, 3],
+      "username": "cunt",
+      "locations": ["(40.7128,-74.006)"],
+      "languagepreference": languageTag, // Ensure that languageTag is defined and has a valid value
+      "friends": [2, 3],
     };
     if (languageTag) {
       console.log({ languageTag });
       //get the real language Tag from the the backend boobs 00
 
-      // axios
-      //   .put(
-      //     "https://oursos-backend-production.up.railway/updateuser/1",
-      //     updateUserRequest
-      //   )
-      //   .then((response) => {
-      //     console.log("User updated successfully", response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error updating user:", error);
-      //   });
+      axios
+        .put(
+          "https://oursos-backend-production.up.railway.app/updateuser/1",
+          updateUserRequest
+        )
+        .then((response) => {
+          console.log("User updated successfully", response.data);
+          router.replace("/intro-newsfeed")
+        })
+        .catch((error) => {
+          console.error("Error updating user:", error);
+        });
     } else {
       console.log("No user language tag");
     }
@@ -74,6 +75,8 @@ export default function SelectLanguage() {
             <Pressable
               onPress={() => {
                 setCheckLangauge(index);
+                setLanguageTag(languages[index]?.tag);
+                console.log({ languageTag });
               }}
               style={styles.languageBtn}
             >
@@ -99,17 +102,17 @@ export default function SelectLanguage() {
           )}
         />
 
-        <Link href="/intro-newsfeed">
-          <Pressable
-            onPress={() => {
-              setUserLanguage();
-              setLanguageTag(languages[checkLangauge]?.tag);
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.text}>Continue</Text>
-          </Pressable>
-        </Link>
+        {/* <Link > */}
+        <Pressable
+          onPress={() => {
+            setUserLanguage();
+
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.text}>Continue</Text>
+        </Pressable>
+        {/* </Link> */}
       </IntroLayout>
     </View>
   );
