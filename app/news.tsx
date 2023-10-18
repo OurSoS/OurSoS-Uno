@@ -97,7 +97,7 @@ export default function News() {
                       ]}
                     >
 
-                      <Link href={`/news-article/${news[i + 1].position}`}>
+                      <Link href={`/news-article/${news[i+1].position}`}>
 
                         <Link href={`/news/article/${news[i + 1].title}`}>
 
