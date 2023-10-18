@@ -102,19 +102,6 @@ export default function SelectLanguage() {
           )}
         />
 
-<<<<<<< HEAD
-        <Link href="/intro-newsfeed">
-          <Pressable
-            onPress={() => {
-              setUserLanguage();
-              setLanguageTag(languages[checkLangauge]?.tag);
-            }}
-            style={styles.button}
-          >
-            <Text style={styles.text}>Continue</Text>
-          </Pressable>
-        </Link>
-=======
         {/* <Link > */}
         <Pressable
           onPress={() => {
@@ -126,7 +113,6 @@ export default function SelectLanguage() {
           <Text style={styles.text}>Continue</Text>
         </Pressable>
         {/* </Link> */}
->>>>>>> c2215ad3f3b199d3da30dcfa3624fc5487eb4371
       </IntroLayout>
     </View>
   );

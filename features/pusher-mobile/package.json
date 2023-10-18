@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@pusher/pusher-websocket-react-native": "^1.2.2",
-    "pusher": "^5.1.3"
-  }
-}
