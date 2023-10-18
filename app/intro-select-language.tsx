@@ -7,12 +7,40 @@ import { useState, useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import * as langs from "./languages.json";
 import { useRouter } from 'expo-router';
+import * as Location from 'expo-location';
 type LanguageType = {
   name: string;
   tag: string;
 };
 
 export default function SelectLanguage() {
+
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  useEffect(() => {
+    console.log("Location", location);
+  }, [location]);
+
+  let text = "Waiting..";
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
 
   const router = useRouter();
   const [languages, setLanguages] = useState<LanguageType[]>([
