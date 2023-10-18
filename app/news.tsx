@@ -51,6 +51,7 @@ export default function News() {
   return (
     <View style={styles.container}>
       <Text style={styles.heading2}>My Dashboard</Text>
+      {/* replace this code with the actual search input */}
       <TextInput
         placeholder="Search locations and friends"
         style={styles.searchInput}

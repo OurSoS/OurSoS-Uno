@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import IntroLayout from "./intro/_layout";
 import { UserLanguageContext } from "./context/language-context";
 import axios from "axios";
+
 type UserType = {
   id: number;
   username: string;
@@ -11,10 +12,12 @@ type UserType = {
   languagepreference: string;
   friends: number[];
 }
+
 export default function IntroNewsFeed() {
   const [userLang, setUserLang] = useState("en");
   const [newsHeading, setNewsHeading] = useState("News Feed");
   const [newsText, setNewsText] = useState("");
+
   useEffect(() => {
     axios.get<UserType>("https://oursos-backend-production.up.railway.app/users/1").then((user) => {
       setUserLang(user.data.languagepreference);
@@ -23,6 +26,7 @@ export default function IntroNewsFeed() {
   }, []);
 
   useEffect(() => {
+
     const data = {
       "text": "Staying informed goes beyond crisis alerts.That's why we've included a local news dashboard for your saved locales.OurSOS keeps you up-to-date with relevant news and developments, helping you navigate through any situation effectively.",
       "lang": userLang
@@ -43,6 +47,7 @@ export default function IntroNewsFeed() {
       .then((res) => {
         setNewsHeading(res.data);
       });
+
   }, [userLang]);
 
 
