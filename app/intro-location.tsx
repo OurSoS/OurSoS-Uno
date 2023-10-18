@@ -58,12 +58,12 @@ export default function IntroLocation() {
           <View style={styles.innercontainer}>
             <Text style={styles.text}>{newsText}</Text>
             <Link href="/news">
-              <Pressable style={styles.button}>
+              <View style={styles.button}>
                 <Text style={styles.text}>Yes</Text>
-              </Pressable>
-              <Pressable style={styles.button}>
+              </View>
+              <View style={styles.button}>
                 <Text style={styles.text}>No</Text>
-              </Pressable>
+              </View>
             </Link>
           </View>
         </IntroLayout>

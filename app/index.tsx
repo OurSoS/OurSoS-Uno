@@ -11,9 +11,9 @@ export default function App() {
       <IntroLayout>
         <Text style={styles.header}>Welcome to OurSoS!</Text>
         <Link href="/intro-select-language">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
-          </Pressable>
+          {/* <Pressable style={styles.button}> */}
+          <Text style={styles.text}>Select Language</Text>
+          {/* </Pressable> */}
         </Link>
       </IntroLayout>
     </View>

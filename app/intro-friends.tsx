@@ -58,9 +58,9 @@ export default function IntroFriends() {
           <View style={styles.innercontainer}>
             <Text style={styles.text}>{newsText}</Text>
             <Link href="/intro-location">
-              <Pressable style={styles.button}>
+              <View style={styles.button}>
                 <Text style={styles.text}>Continue</Text>
-              </Pressable>
+              </View>
             </Link>
           </View>
         </IntroLayout>
