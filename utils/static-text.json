@@ -27,6 +27,12 @@
         "friends-header": "Friends",
         "view-more": "View More"
     },
+    "friends": {    
+        "search-placeholder": "Search for friends"
+    },
+    "article": {
+        "details": "Read the full article here"
+    },
     "button-text": {
         "continue": "Continue",
         "back-button": "Go Back"
