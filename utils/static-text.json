@@ -27,10 +27,8 @@
         "friends-header": "Friends",
         "view-more": "View More"
     },
-    "pins": {
-        "back-button": "Go Back"
-    },
     "button-text": {
-        "continue": "Continue"
+        "continue": "Continue",
+        "back-button": "Go Back"
     }
 }
