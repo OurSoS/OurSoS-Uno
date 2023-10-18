@@ -98,9 +98,6 @@ export default function News() {
                     >
 
                       <Link href={`/news-article/${news[i+1].position}`}>
-
-                        <Link href={`/news/article/${news[i + 1].title}`}>
-
                           <View style={styles.disasterInnerCard}>
                             <Image
                               source={{ uri: news[i + 1].thumbnail }}
@@ -116,7 +113,6 @@ export default function News() {
                               {news[i + 1].snippet}
                             </Text>
                           </View>
-                        </Link>
                       </Link>
                     </View>
                   )}
