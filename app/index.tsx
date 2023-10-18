@@ -5,7 +5,7 @@ import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 
 export default function App() {
-  
+
   const [location, setLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -38,9 +38,9 @@ export default function App() {
       <IntroLayout>
         <Text style={styles.header}>Welcome to OurSoS!</Text>
         <Link href="/intro-select-language">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
-          </Pressable>
+          {/* <Pressable style={styles.button}> */}
+          <Text style={styles.text}>Select Language</Text>
+          {/* </Pressable> */}
         </Link>
       </IntroLayout>
     </View>

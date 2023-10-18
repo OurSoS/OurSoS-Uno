@@ -61,9 +61,9 @@ export default function IntroNewsFeed() {
               {newsText}
             </Text>
             <Link href="/intro-map">
-              <Pressable style={styles.button}>
-                <Text style={styles.text}>Continue</Text>
-              </Pressable>
+              {/* <Pressable style={styles.button}> */}
+              <Text style={styles.text}>Continue</Text>
+              {/* </Pressable> */}
             </Link>
           </View>
         </IntroLayout>
