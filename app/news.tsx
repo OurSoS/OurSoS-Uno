@@ -51,6 +51,7 @@ export default function News() {
   return (
     <View style={styles.container}>
       <Text style={styles.heading2}>My Dashboard</Text>
+      {/* replace this code with the actual search input */}
       <TextInput
         placeholder="Search locations and friends"
         style={styles.searchInput}
@@ -96,25 +97,26 @@ export default function News() {
                       ]}
                     >
 
-                      <Link href={`/news-article/${news[i+1].position}`}>
+                      <Link href={`/news-article/${news[i + 1].position}`}>
 
-                      <Link href={`/news/article/${news[i + 1].title}`}>
+                        <Link href={`/news/article/${news[i + 1].title}`}>
 
-                        <View style={styles.disasterInnerCard}>
-                          <Image
-                            source={{ uri: news[i + 1].thumbnail }}
-                            style={[
-                              { height: 120, objectFit: "cover" },
-                              styles.disasterCardImage,
-                            ]}
-                          />
-                          <Text style={styles.disasterCardHeader}>
-                            {news[i + 1].title}
-                          </Text>
-                          <Text style={styles.disasterCardText}>
-                            {news[i + 1].snippet}
-                          </Text>
-                        </View>
+                          <View style={styles.disasterInnerCard}>
+                            <Image
+                              source={{ uri: news[i + 1].thumbnail }}
+                              style={[
+                                { height: 120, objectFit: "cover" },
+                                styles.disasterCardImage,
+                              ]}
+                            />
+                            <Text style={styles.disasterCardHeader}>
+                              {news[i + 1].title}
+                            </Text>
+                            <Text style={styles.disasterCardText}>
+                              {news[i + 1].snippet}
+                            </Text>
+                          </View>
+                        </Link>
                       </Link>
                     </View>
                   )}
