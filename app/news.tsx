@@ -12,6 +12,7 @@ import { Link } from "expo-router";
 import axios from "axios";
 import { styles } from "./styles/newsStyles";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
+import Footer from "../components/Footer";
 
 type newsItemType = {
   date: string;
@@ -36,7 +37,7 @@ export default function News() {
         .get("https://oursos-backend-production.up.railway.app/news")
         .then((response) => {
           setNews(response.data);
-          console.log(response.data);
+          // console.log(response.data);
         })
         .catch((error) => console.error(error));
     })();
@@ -50,7 +51,7 @@ export default function News() {
     return null;
   }
 
-  return (
+  return (<>
 
     <ScrollView>
       <View>
@@ -172,7 +173,12 @@ export default function News() {
       </View>
 
       <StatusBar style="auto" />
+
+
+
+
     </ScrollView>
-  );
+      
+      <Footer />
+  </>);
 }
-// const halfScreenWidth = Dimensions.get("window").width / 2 - 20;
