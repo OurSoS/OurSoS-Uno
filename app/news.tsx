@@ -36,7 +36,7 @@ export default function News() {
         .get("https://oursos-backend-production.up.railway.app/news")
         .then((response) => {
           setNews(response.data);
-          console.log(response.data);
+          // console.log(response.data);
         })
         .catch((error) => console.error(error));
     })();
