@@ -15,6 +15,7 @@ export default function App() {
           <Text style={styles.text}>Select Language</Text>
           {/* </Pressable> */}
         </Link>
+        <Link href="/map"><Text>Go Map</Text></Link>
       </IntroLayout>
     </View>
   );
