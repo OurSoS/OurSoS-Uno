@@ -16,6 +16,7 @@ export default function App() {
           {/* </Pressable> */}
         </Link>
         <Link href="/map"><Text>Go Map</Text></Link>
+        <Link href="/news"><Text>Go News</Text></Link>
       </IntroLayout>
     </View>
   );
