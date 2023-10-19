@@ -19,6 +19,11 @@ const settingsArray = [
   "Accessibility",
 ];
 
+const fakeUser = {
+  username: "John123",
+  profileImage: {uri:"https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=60&w=500&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZG9nfGVufDB8fDB8fHww"},
+}
+
 export default function Settings() {
   return (
     <>
@@ -28,11 +33,8 @@ export default function Settings() {
       >
         <View style={styles.container}>
           <View style={styles.userContainer}>
-            <Image
-              style={styles.profileImage}
-              source={require("../assets/favicon.png")}
-            />
-            <Text style={styles.profileUsername}>My Username</Text>
+          <Image style={styles.profileImage} source={fakeUser.profileImage} />
+            <Text style={styles.profileUsername}>{fakeUser.username}</Text>
           </View>
           <ScrollView style={styles.scrollView}>
           {settingsArray.map((setting, i) => {
