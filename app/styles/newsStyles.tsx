@@ -24,18 +24,19 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: 62,
-    backgroundColor: "white", // Use 'white' for #FFF
-    // Dashboard/Card
+    backgroundColor: "white", 
+    padding: 10,
+    marginBottom: 0,
+    marginHorizontal: 10,
+    elevation: 3, 
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 5,
+      height: 2,
     },
-    shadowRadius: 15,
-    shadowColor: "rgba(0, 0, 0, 0.15)",
-    padding: 10,
-    marginBottom: 15,
-    marginHorizontal: 10,
-    elevation: 3, // This adds an elevation for shadow on Android
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginRight: 10,
   },
   heading2: {
     marginTop: 40,
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     height: "auto",
     backgroundColor: "white",
     borderRadius: 15,
+
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -69,8 +71,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 10,
-    marginRight: 10,
-    marginBottom: 20,
+    margin: 20,
+
     alignItems: "center",
   },
   disasterInnerCard: {
@@ -104,6 +106,15 @@ const styles = StyleSheet.create({
     position: "relative", // Change to "relative" if you don't need absolute positioning
     flex: 1,
     flexDirection: "row",
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 10,
+    // margin: 20,
     
   },
   pinImage: {
