@@ -122,7 +122,7 @@ export default function News() {
             <Text style={styles.pinName}>Vancouver</Text>
           </View>
 
-          <View id="Pin" style={styles.pin}>
+          <View id="Pin">
             <Image
               source={{ uri: "https://loremflickr.com/320/240/kelowna" }}
               style={[{ width: 160, height: 100 }, styles.pinImage]}
