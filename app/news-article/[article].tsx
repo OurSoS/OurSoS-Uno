@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, Button } from "react-native";
+import { Text, View, Image, StyleSheet, Button, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
@@ -16,7 +16,7 @@ type newsItemType = {
 export default function Article() {
   const router = useRouter();
   const { article } = useLocalSearchParams();
-  
+
   // Ensure that article is always treated as a number for matching the position.
   const articleNumber = article;
 
@@ -40,7 +40,7 @@ export default function Article() {
 
   return (
     <>
-      <View style={s.container}>
+      <ScrollView>
         <Button onPress={() => router.back()} title="Go Back" />
         <Text style={s.title}>{news?.title}</Text>
         <Text style={s.date}>{news?.source} - {news?.date}</Text>
@@ -51,11 +51,11 @@ export default function Article() {
         {/* <Text style={s.source} >{news?.source}</Text> */}
         {/* TODO: we need to web scrape more body content here, that will be copyright content though so maybe AI can change the wording? no clue */}
         <Text style={s.bodyText}>{news?.snippet}</Text>
-        
-        
-        
+
+
+
         <Text>{articleNumber}</Text>
-      </View>
+      </ScrollView>
     </>
   );
 }
@@ -71,7 +71,7 @@ const s = StyleSheet.create({
     gap: 10,
     backgroundColor: "#fff",
     alignItems: "center",
-    padding:40,
+    padding: 40,
   },
   title: {
     fontSize: 24,
