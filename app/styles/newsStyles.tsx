@@ -1,12 +1,12 @@
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from "react-native";
 
 const styles = StyleSheet.create({
   viewPager: {
     flex: 1,
   },
   page: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   languageList: {
     padding: 52,
@@ -53,33 +53,35 @@ const styles = StyleSheet.create({
   },
   disasterCardContainer: {
     flexDirection: "row",
-
     padding: 10,
     borderRadius: 10,
   },
   disasterOuterCard: {
-    width: 200,
-    height: 350,
+    width: "auto",
+    height: "auto",
     backgroundColor: "white",
     borderRadius: 15,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 5,
+      height: 2,
     },
-    shadowRadius: 15,
-    shadowColor: "rgba(0, 0, 0, 0.15)",
-    elevation: 3,
-    alignItems: "center",
-    //   marginVertical: 10,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
     marginRight: 10,
-
-
+    marginBottom: 20,
+    alignItems: "center",
   },
   disasterInnerCard: {
     padding: 20,
   },
   disasterCardImage: {
     borderRadius: 15,
+    // height:100,
+    width: "auto",
+    height: 160,
+    objectFit: "cover",
   },
   disasterCardHeader: {
     color: "#000",
@@ -87,12 +89,14 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "500",
     margin: 10,
+    width: 250,
   },
   disasterCardText: {
     color: "#000",
     fontSize: 10,
     fontStyle: "normal",
     fontWeight: "normal",
+    width: 250,
     //   margin: 10,
     //   padding: 10,
   },
@@ -100,9 +104,10 @@ const styles = StyleSheet.create({
     position: "relative", // Change to "relative" if you don't need absolute positioning
     flex: 1,
     flexDirection: "row",
+    
   },
   pinImage: {
-    width: '100%',
+    width: "100%",
     height: 200,
     gap: 10,
     borderRadius: 15,
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
   pinsContent: {
     flexDirection: "row",
     margin: 10,
-    gap: 20
+    gap: 20,
   },
   FriendsHeader: {
     flex: 1,
@@ -153,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 100,
     // textAlign: "center",
-  }
+  },
 });
 
 export { styles };

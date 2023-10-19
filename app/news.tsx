@@ -1,23 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useState, useEffect } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
-  Dimensions,
   ScrollView,
   Animated
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import PagerView from 'react-native-pager-view';
 import { Image } from "react-native";
 import { Link } from "expo-router";
 import axios from "axios";
-import DisasterCard from "../components/DisastersCard";
 import { styles } from "./styles/newsStyles";
-
-import Swiper from "react-native-swiper";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 
 type newsItemType = {
@@ -60,11 +53,22 @@ export default function News() {
   return (
 
     <ScrollView>
+      <View>
+        <Text style={styles.heading2}>My Dashboard</Text>
+          <Image source={{uri: "../assets/searchIcon.png"}} />
+          <TextInput
+
+            placeholder="Search locations and friends"
+            style={styles.searchInput}
+          ></TextInput>
+        </View>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={10}
         pagingEnabled
+        style={{padding:10}}
       >
         {
           news.map((newsItem, i) => {

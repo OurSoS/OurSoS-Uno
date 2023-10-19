@@ -3,129 +3,34 @@ import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View, Text, TextInput } from "react-native";
 import axios from "axios";
 
+
+type alert = {
+  id: number;
+  message: string;
+  category: string;
+  latitude: string;
+  longitude: string;
+  radius: string;
+  time: string;
+  severity: string;
+}
+
+
 export default function App() {
   const [pins, setPins] = useState([]);
-  const [fakeAlerts, setFakeAlerts] = useState([
-    {
-      id: 1,
-      category: "Traffic Update",
-      location: "Downtown Vancouver",
-      severity: "low",
-      time: "1:23 PM 2023-10-02",
-      latitude: 49.2827,
-      longitude: -123.1207,
-    },
-    {
-      id: 2,
-      category: "Weather Alert",
-      location: "North Vancouver",
-      severity: "med",
-      time: "2:45 PM 2023-10-02",
-      latitude: 49.3197,
-      longitude: -123.0722,
-    },
-    {
-      id: 3,
-      category: "Emergency Evacuation",
-      location: "West End Vancouver",
-      severity: "high",
-      time: "3:30 PM 2023-10-02",
-      latitude: 49.2879,
-      longitude: -123.1377,
-    },
-    {
-      id: 4,
-      category: "Community Event",
-      location: "Kitsilano Beach",
-      severity: "low",
-      time: "4:15 PM 2023-10-02",
-      latitude: 49.2711,
-      longitude: -123.1552,
-    },
-    {
-      id: 5,
-      category: "Power Outage",
-      location: "Yaletown",
-      severity: "med",
-      time: "5:00 PM 2023-10-02",
-      latitude: 49.2748,
-      longitude: -123.1214,
-    },
-    {
-      id: 6,
-      category: "Fire Alert",
-      location: "Gastown",
-      severity: "high",
-      time: "6:30 PM 2023-10-02",
-      latitude: 49.2839,
-      longitude: -123.1044,
-    },
-    {
-      id: 7,
-      category: "Construction Update",
-      location: "East Vancouver",
-      severity: "low",
-      time: "7:45 PM 2023-10-02",
-      latitude: 49.2783,
-      longitude: -123.0695,
-    },
-    {
-      id: 8,
-      category: "Public Health Advisory",
-      location: "South Vancouver",
-      severity: "med",
-      time: "8:15 PM 2023-10-02",
-      latitude: 49.2029,
-      longitude: -123.1306,
-    },
-    {
-      id: 9,
-      category: "Road Closure",
-      location: "Commercial Drive",
-      severity: "high",
-      time: "9:10 PM 2023-10-02",
-      latitude: 49.2704,
-      longitude: -123.0693,
-    },
-    {
-      id: 10,
-      category: "Community Event",
-      location: "Stanley Park",
-      severity: "low",
-      time: "10:20 PM 2023-10-02",
-      latitude: 49.3027,
-      longitude: -123.1417,
-    },
-    {
-      id: 11,
-      category: "Traffic Update",
-      location: "Granville Street",
-      severity: "med",
-      time: "11:05 PM 2023-10-02",
-      latitude: 49.282,
-      longitude: -123.1211,
-    },
-    {
-      id: 12,
-      category: "Emergency Evacuation",
-      location: "Coal Harbour",
-      severity: "high",
-      time: "11:45 PM 2023-10-02",
-      latitude: 49.2892,
-      longitude: -123.1216,
-    },
-  ]);
+  const [alerts, setAlerts] = useState<alert[]>([]);
 
   useEffect(() => {
-    // axios
-    // .get("https://oursos-backend-production.up.railway.app/news")
-    // .then((response) => {
-    //   // setNews(response.data);
-    //   console.log(response.data);
-    // })
-    // .catch((error) => console.error(error));
+    axios
+    .get("https://oursos-backend-production.up.railway.app/alerts")
+    .then((response) => {
+      setAlerts(response.data);
+      console.log(response.data);
+    })
+    .catch((error) => console.error(error));
   }, []);
 
+  // TODO: update these with user location
   const [mapState, setMapState] = useState({
     latitude: 49.28346247273308,
     longitude: -123.11525937277163,
@@ -172,16 +77,16 @@ export default function App() {
           longitudeDelta: mapState.longitudeDelta,
         }}
       >
-        {fakeAlerts &&
-          fakeAlerts.map((a, i) => {
+        {alerts &&
+          alerts.map((a, i) => {
             return (
               <Marker
                 key={i}
                 coordinate={{
-                  latitude: a.latitude,
-                  longitude: a.longitude,
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
                 }}
-                title={a.category + " - " + a.location + " - " + a.severity}
+              title={a.category + " - " + a.severity+'\n'+a.message}
               />
             );
           })}
@@ -205,15 +110,19 @@ const styles = StyleSheet.create({
     borderRadius: 62,
     backgroundColor: "white", // Use 'white' for #FFF
     // Dashboard/Card
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowRadius: 15,
-    shadowColor: "rgba(0, 0, 0, 0.15)",
+    
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 0,
     marginHorizontal: 10,
     elevation: 3, // This adds an elevation for shadow on Android
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    // elevation: 10,
+    marginRight: 10,
   },
 });
