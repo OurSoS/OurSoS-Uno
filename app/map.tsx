@@ -113,13 +113,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: 62,
-    backgroundColor: "white", // Use 'white' for #FFF
-    // Dashboard/Card
-    
+    backgroundColor: "white", 
     padding: 10,
     marginBottom: 0,
     marginHorizontal: 10,
-    elevation: 3, // This adds an elevation for shadow on Android
+    elevation: 3, 
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -127,7 +125,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    // elevation: 10,
     marginRight: 10,
   },
 });
