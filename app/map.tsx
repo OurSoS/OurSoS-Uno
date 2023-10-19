@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, Button } from "react-native";
 import axios from "axios";
 import IconTextBlock from "./components/molecules/iconTextBlock";
 import { useRouter } from "expo-router";
+import Footer from "../components/Footer";
 
 type alert = {
   id: number;
@@ -41,7 +42,7 @@ export default function App() {
     longitudeDelta: 0.0421,
   });
 
-  return (
+  return (<>
     <View style={styles.container}>
 
       <Button onPress={() => router.back()} title="Go Back" />
@@ -100,7 +101,8 @@ export default function App() {
         <Marker coordinate={mapState} title={"jack"} />
       </MapView>
     </View>
-  );
+    <Footer />
+ </> );
 }
 
 const styles = StyleSheet.create({
