@@ -7,7 +7,10 @@ import {
   TextInput,
   Dimensions,
   ScrollView,
+  Animated
 } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import PagerView from 'react-native-pager-view';
 import { Image } from "react-native";
 import { Link } from "expo-router";
 import axios from "axios";
@@ -28,16 +31,22 @@ type newsItemType = {
 };
 
 export default function News() {
-  const [news, setNews] = useState<newsItemType[]>([]);
+  const [news, setNews] = useState<newsItemType[]>([
+    { date: "2021-05-01", link: "https://www.cbc.ca/news/canada/british-columbia/indigenous-land-defenders-1.6014161", position: 0, snippet: "Indigenous land defenders in B.C. are calling for action after a recent report found that Indigenous Peoples are 2.5 times more likely to be victims of violent crime than non-Indigenous people.", source: "CBC News", thumbnail: "https://i.cbc.ca/1.6014162.1619823869!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_780/land-defenders.jpg", title: "Indigenous land defenders in B.C. call for action after report finds they're 2.5 times more likely to be victims of violent crime" }
+  ]);
+
+  const [animVal, setAnimVal] = useState(0);
 
   useEffect(() => {
-    axios
-      .get("https://oursos-backend-production.up.railway.app/news")
-      .then((response) => {
-        setNews(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => console.error(error));
+    (async () => {
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/news")
+        .then((response) => {
+          setNews(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => console.error(error));
+    })();
   }, []);
 
   let [fontsLoaded] = useFonts({
@@ -49,84 +58,53 @@ export default function News() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading2}>My Dashboard</Text>
-      {/* replace this code with the actual search input */}
-      <TextInput
-        placeholder="Search locations and friends"
-        style={styles.searchInput}
-      ></TextInput>
 
-      <Swiper style={{ height: 380 }} showsPagination={false}>
-        {news &&
+    <ScrollView>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={10}
+        pagingEnabled
+      >
+        {
           news.map((newsItem, i) => {
-            if (i % 2 === 0) {
-              return (
-                <View key={i} style={{ flexDirection: "row" }}>
-                  <View
-                    id="DisasterCard"
-                    style={[
-                      styles.disasterOuterCard,
-                      { flex: 1, marginRight: 10 },
-                    ]}
-                  >
-                    <Link href={`/news-article/${newsItem.position}`}>
-                      <View style={styles.disasterInnerCard}>
-                        <Image
-                          source={{ uri: newsItem.thumbnail }}
-                          style={[
-                            { height: 120, objectFit: "cover" },
-                            styles.disasterCardImage,
-                          ]}
-                        />
-                        <Text style={styles.disasterCardHeader}>
-                          {newsItem.title}
-                        </Text>
-                        <Text style={styles.disasterCardText}>
-                          {newsItem.snippet}
-                        </Text>
-                      </View>
-                    </Link>
-                  </View>
-                  {i + 1 < news.length && (
-                    <View
-                      id="DisasterCard"
+            return (<View key={i} style={{ flexDirection: "row" }}>
+              <View
+                id="DisasterCard"
+                style={[
+                  styles.disasterOuterCard,
+                  { flex: 1, marginRight: 10 },
+                ]}
+              >
+                <Link href={`/news-article/${newsItem.position}`}>
+                  <View style={styles.disasterInnerCard}>
+                    <Image
+                      source={{ uri: newsItem.thumbnail }}
                       style={[
-                        styles.disasterOuterCard,
-                        { flex: 1, marginLeft: 10 },
+                        { height: 120, objectFit: "cover" },
+                        styles.disasterCardImage,
                       ]}
-                    >
-
-                      <Link href={`/news-article/${news[i+1].position}`}>
-                          <View style={styles.disasterInnerCard}>
-                            <Image
-                              source={{ uri: news[i + 1].thumbnail }}
-                              style={[
-                                { height: 120, objectFit: "cover" },
-                                styles.disasterCardImage,
-                              ]}
-                            />
-                            <Text style={styles.disasterCardHeader}>
-                              {news[i + 1].title}
-                            </Text>
-                            <Text style={styles.disasterCardText}>
-                              {news[i + 1].snippet}
-                            </Text>
-                          </View>
-                      </Link>
-                    </View>
-                  )}
-                </View>
-              );
-            }
-          })}
-      </Swiper>
-      <View id="Map">
+                    />
+                    <Text style={styles.disasterCardHeader}>
+                      {newsItem.title}
+                    </Text>
+                    <Text style={styles.disasterCardText}>
+                      {newsItem.snippet}
+                    </Text>
+                  </View>
+                </Link>
+              </View>
+            </View>
+            )
+          })
+        }
+      </ScrollView>
+      {/* <View id="Map">
         <Image
           source={{ uri: "../assets/TEMP_map.png" }}
           style={[{ width: "100%", height: 200 }, styles.disasterCardImage]}
         />
-      </View>
+      </View> */}
 
       <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
@@ -190,7 +168,7 @@ export default function News() {
       </View>
 
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
-const halfScreenWidth = Dimensions.get("window").width / 2 - 20;
+// const halfScreenWidth = Dimensions.get("window").width / 2 - 20;
