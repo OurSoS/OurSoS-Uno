@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, Text, TextInput } from "react-native";
+import { StyleSheet, View, Text, TextInput, Button } from "react-native";
 import axios from "axios";
-
+import IconTextBlock from "./components/molecules/iconTextBlock";
+import { useRouter } from "expo-router";
 
 type alert = {
   id: number;
@@ -17,6 +18,8 @@ type alert = {
 
 
 export default function App() {
+  const router = useRouter();
+
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
 
@@ -40,6 +43,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+
+      <Button onPress={() => router.back()} title="Go Back" />
       <View style={{ padding: 15 }}>
         <View
           style={{
