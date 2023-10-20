@@ -105,7 +105,17 @@ const styles = StyleSheet.create({
   pin: {
     position: "relative", // Change to "relative" if you don't need absolute positioning
     flex: 1,
-    flexDirection: "row",    
+    flexDirection: "row",
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 10,
+    // margin: 20,
+    
   },
   pinImage: {
     width: "100%",
@@ -116,7 +126,7 @@ const styles = StyleSheet.create({
   pinName: {
     color: "white", // Set text color to black
     fontSize: 24,
-    position: "absolute",
+    position: "absolute", // Use "absolute" positioning
     bottom: 10, // Adjust the position as needed
     left: 10, // Adjust the position as needed
   },
