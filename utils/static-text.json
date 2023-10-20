@@ -3,12 +3,6 @@
         "details": "We recognize that your circle of loved ones extends far and wide, beyond just your immediate location. With approximate location data, we can provide you with information about the safety of your family and friends around the world.",
         "heading": "Friends and Family"
     },
-    "intro-location": {
-        "details": "Allow use of location?",
-        "heading": "Location",
-        "yes-button": "Yes",
-        "no-button": "No"
-    },
     "intro-map": {
         "details": "Visualizing crisis information is crucial. OurSOS offers an interactive map view that displays crises and dangers in your area. This user-friendly interface helps you understand the proximity of threats and aids in making quick and informed decisions.",
         "heading": "Map"
