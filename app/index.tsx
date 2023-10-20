@@ -11,10 +11,12 @@ export default function App() {
       <IntroLayout>
         <Text style={styles.header}>Welcome to OurSoS!</Text>
         <Link href="/intro-select-language">
-          <Pressable style={styles.button}>
-            <Text style={styles.text}>Select Language</Text>
-          </Pressable>
+          {/* <Pressable style={styles.button}> */}
+          <Text style={styles.text}>Select Language</Text>
+          {/* </Pressable> */}
         </Link>
+        <Link href="/map"><Text>Go Map</Text></Link>
+        <Link href="/news"><Text>Go News</Text></Link>
       </IntroLayout>
     </View>
   );

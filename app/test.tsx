@@ -22,9 +22,9 @@ export default function SelectLanguage() {
       <ImageBackground source={backgroundImage} style={styles.image}>
         <Text style={styles.text}>Select Language</Text>
         <Link style={styles.text} href="/intro-newsfeed">
-          <Pressable>
+          <View>
             <Text>Continue</Text>
-          </Pressable>
+          </View>
         </Link>
       </ImageBackground>
     </View>

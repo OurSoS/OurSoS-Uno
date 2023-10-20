@@ -1,8 +1,40 @@
-import React, { useState } from "react";
-import { View, Text, Platform } from "react-native";
-import MapView, { Marker } from "react-native-maps"; // Import the map component (assuming you have installed it)
+import React, { useState, useEffect } from "react";
+import MapView, { Marker } from "react-native-maps";
+import { StyleSheet, View, Text, TextInput, Button } from "react-native";
+import axios from "axios";
+import IconTextBlock from "./components/molecules/iconTextBlock";
+import { useRouter } from "expo-router";
+import Footer from "../components/Footer";
 
-export default function MapPage() {
+type alert = {
+  id: number;
+  message: string;
+  category: string;
+  latitude: string;
+  longitude: string;
+  radius: string;
+  time: string;
+  severity: string;
+}
+
+
+export default function App() {
+  const router = useRouter();
+
+  const [pins, setPins] = useState([]);
+  const [alerts, setAlerts] = useState<alert[]>([]);
+
+  useEffect(() => {
+    axios
+    .get("https://oursos-backend-production.up.railway.app/alerts")
+    .then((response) => {
+      setAlerts(response.data);
+      console.log(response.data);
+    })
+    .catch((error) => console.error(error));
+  }, []);
+
+  // TODO: update these with user location
   const [mapState, setMapState] = useState({
     latitude: 49.28346247273308,
     longitude: -123.11525937277163,
@@ -10,27 +42,91 @@ export default function MapPage() {
     longitudeDelta: 0.0421,
   });
 
-  return (
-    <View>
-      <View>
-        <Text>Map</Text>
-      </View>
-    
-      {Platform.OS === "ios" || Platform.OS === "android" ? (
-        <MapView
-          style={{ flex: 1, height: 300 }} // Adjust the style as needed
-          initialRegion={{
-            latitude: mapState.latitude,
-            longitude: mapState.longitude,
-            latitudeDelta: mapState.latitudeDelta,
-            longitudeDelta: mapState.longitudeDelta,
+  return (<>
+    <View style={styles.container}>
+
+      <Button onPress={() => router.back()} title="Go Back" />
+      <View style={{ padding: 15 }}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            margin: 10,
           }}
         >
-          <Marker coordinate={mapState} title={"jack"} />
-        </MapView>
-      ) : (
-        <Text>The map does not work on Web yet... Sorry!</Text>
-      )}
+          <Text style={{ fontSize: 22 }}>Vancouver</Text>
+          <Text
+            style={{
+              backgroundColor: "lightgrey",
+              paddingHorizontal: 40,
+              paddingVertical: 10,
+            }}
+          >
+            logo
+          </Text>
+        </View>
+        <View>
+          <TextInput
+            placeholder="Search locations and friends"
+            style={styles.searchInput}
+          ></TextInput>
+        </View>
+      </View>
+
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: mapState.latitude,
+          longitude: mapState.longitude,
+          latitudeDelta: mapState.latitudeDelta,
+          longitudeDelta: mapState.longitudeDelta,
+        }}
+      >
+        {alerts &&
+          alerts.map((a, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
+                }}
+              title={a.category + " - " + a.severity+'\n'+a.message}
+              />
+            );
+          })}
+
+        {/* MY MARKER */}
+        <Marker coordinate={mapState} title={"jack"} />
+      </MapView>
     </View>
-  );
+    <Footer />
+ </> );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+  searchInput: {
+    borderRadius: 62,
+    backgroundColor: "white", 
+    padding: 10,
+    marginBottom: 0,
+    marginHorizontal: 10,
+    elevation: 3, 
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginRight: 10,
+  },
+});
