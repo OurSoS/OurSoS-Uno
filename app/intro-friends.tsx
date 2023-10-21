@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import IntroLayout from "./intro/_layout";
 import { UserLanguageContext } from "./context/language-context";
 import axios from "axios";
+import { StaticTextContext } from "./context/language-context";
+
 type UserType = {
   id: number;
   username: string;
@@ -12,6 +14,7 @@ type UserType = {
   friends: number[];
 };
 export default function IntroFriends() {
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const [userLang, setUserLang] = useState("en");
   const [newsHeading, setNewsHeading] = useState("Friends and Family");
   const [newsText, setNewsText] = useState("");

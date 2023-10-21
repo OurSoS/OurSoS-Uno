@@ -1,11 +1,14 @@
 import { View, StyleSheet, TextInput, Button } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { styles } from "../app/styles/newsStyles";
 import Friend from "../components/friend";
 import {useRouter } from "expo-router";
+import { StaticTextContext } from "./context/language-context";
 
 export default function friends() {
   const router = useRouter();
+
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
 
   const [friends, setFriends] = useState([
     { name: "John Doe", image: "https://i.imgur.com/0LKZQYM.png" },
@@ -25,9 +28,9 @@ export default function friends() {
 
   return (
     <View>
-      <Button onPress={() => router.back()} title="Go Back" />
+      <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
       <TextInput
-        placeholder="Search for friends"
+        placeholder={translatedStaticContent.friends["search-placeholder"]}
         style={styles.searchInput}
       ></TextInput>
 
