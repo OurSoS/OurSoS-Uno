@@ -1,8 +1,9 @@
 import { Text, View, Image, StyleSheet, Button, ScrollView } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
+import { StaticTextContext } from "../context/language-context";
 
 
 type newsItemType = {
@@ -17,6 +18,7 @@ type newsItemType = {
 
 export default function Article() {
   const router = useRouter();
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const { article } = useLocalSearchParams();
 
   // Ensure that article is always treated as a number for matching the position.
@@ -43,12 +45,12 @@ export default function Article() {
   return (
     <>
       <ScrollView style={s.container}>
-        <Button onPress={() => router.back()} title="Go Back" />
+        <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
         <Text style={s.title}>{news?.title}</Text>
         <Text style={s.date}>{news?.source} - {news?.date}</Text>
         <Image style={s.image} source={{ uri: news?.thumbnail }} />
         <Link href={news?.link || ""}>
-          <Text style={s.caption}>Read the full article here</Text>
+          <Text style={s.caption}>{translatedStaticContent.article.details}</Text>
         </Link>
         {/* TODO: we need to web scrape more body content here, that will be copyright content though so maybe AI can change the wording? no clue */}
         <Text style={s.bodyText}>{news?.snippet}</Text>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,12 +9,16 @@ import {
 } from "react-native";
 import Pin from "../components/pin";
 import { useRouter } from "expo-router";
+import { StaticTextContext } from "./context/language-context";
+
 export default function Pins() {
   const router = useRouter();
+  
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
 
   return (
     <View>
-      <Button onPress={() => router.back()} title="Go Back" />
+      <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
       <View style={styles.pinsContent}>
         <Pin
           imageUrl={

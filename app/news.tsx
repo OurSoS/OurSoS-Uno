@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Text,
   View,
@@ -13,6 +13,7 @@ import axios from "axios";
 import { styles } from "./styles/newsStyles";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 import Footer from "../components/Footer";
+import { StaticTextContext } from "./context/language-context";
 
 type newsItemType = {
   date: string;
@@ -25,6 +26,7 @@ type newsItemType = {
 };
 
 export default function News() {
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const [news, setNews] = useState<newsItemType[]>([
     { date: "2021-05-01", link: "https://www.cbc.ca/news/canada/british-columbia/indigenous-land-defenders-1.6014161", position: 0, snippet: "Indigenous land defenders in B.C. are calling for action after a recent report found that Indigenous Peoples are 2.5 times more likely to be victims of violent crime than non-Indigenous people.", source: "CBC News", thumbnail: "https://i.cbc.ca/1.6014162.1619823869!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_780/land-defenders.jpg", title: "Indigenous land defenders in B.C. call for action after report finds they're 2.5 times more likely to be victims of violent crime" }
   ]);
@@ -55,11 +57,10 @@ export default function News() {
 
     <ScrollView>
       <View>
-        <Text style={styles.heading2}>My Dashboard</Text>
+        <Text style={styles.heading2}>{translatedStaticContent.news.heading}</Text>
           <Image source={{uri: "../assets/searchIcon.png"}} />
           <TextInput
-
-            placeholder="Search locations and friends"
+            placeholder={translatedStaticContent.news["search-placeholder"]}
             style={styles.searchInput}
           ></TextInput>
         </View>
@@ -113,9 +114,9 @@ export default function News() {
 
       <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Pins</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{translatedStaticContent.news["pins-header"]}</Text>
           <Link href={"/pins"}>
-            <Text style={{ fontSize: 20 }}>View More</Text>
+            <Text style={{ fontSize: 20 }}>{translatedStaticContent.news["view-more"]}</Text>
           </Link>
         </View>
         <View id="PinsContent" style={styles.pinsContent}>
@@ -139,9 +140,9 @@ export default function News() {
 
       <View id="FriendsContainer">
         <View id="FriendsHeader" style={styles.FriendsHeader}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Friends</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{translatedStaticContent.news["friends-header"]}</Text>
           <Link href={"/friends"}>
-            <Text style={{ fontSize: 20 }}>View More</Text>
+            <Text style={{ fontSize: 20 }}>{translatedStaticContent.news["view-more"]}</Text>
           </Link>
         </View>
         <View id="FriendsContent" style={styles.FriendsContent}>

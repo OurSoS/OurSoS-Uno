@@ -16,8 +16,6 @@ type UserType = {
 export default function IntroFriends() {
   const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const [userLang, setUserLang] = useState("en");
-  const [newsHeading, setNewsHeading] = useState("Friends and Family");
-  const [newsText, setNewsText] = useState("");
   useEffect(() => {
     axios
       .get<UserType>("https://oursos-backend-production.up.railway.app/users/1")
@@ -27,42 +25,16 @@ export default function IntroFriends() {
       });
   }, []);
 
-  useEffect(() => {
-    const data = {
-      text: "We recognize that your circle of loved ones extends far and wide, beyond just your immediate location. With approximate location data, we can provide you with information about the safety of your family and friends around the world.",
-      lang: userLang,
-    };
-    const headingData = {
-      text: "Friends and Family",
-      lang: userLang,
-    };
-
-    axios
-      .post("https://oursos-backend-production.up.railway.app/translate", data)
-      .then((res) => {
-        setNewsText(res.data);
-      });
-
-    axios
-      .post(
-        "https://oursos-backend-production.up.railway.app/translate",
-        headingData
-      )
-      .then((res) => {
-        setNewsHeading(res.data);
-      });
-  }, [userLang]);
-
   return (
     <UserLanguageContext.Provider value={[userLang, setUserLang]}>
       <View style={styles.container}>
         <IntroLayout>
-          <Text style={styles.header}>{newsHeading}</Text>
+          <Text style={styles.header}>{translatedStaticContent["intro-friends"].heading}</Text>
           <View style={styles.innercontainer}>
-            <Text style={styles.text}>{newsText}</Text>
+            <Text style={styles.text}>{translatedStaticContent["intro-friends"].details}</Text>
             <Link href="/intro-location">
               <View style={styles.button}>
-                <Text style={styles.text}>Continue</Text>
+                <Text style={styles.text}>{translatedStaticContent["button-text"].continue}</Text>
               </View>
             </Link>
           </View>

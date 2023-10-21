@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View, Text, TextInput, Button } from "react-native";
 import axios from "axios";
 import IconTextBlock from "./components/molecules/iconTextBlock";
 import { useRouter } from "expo-router";
 import Footer from "../components/Footer";
+import { StaticTextContext } from "./context/language-context";
 
 type alert = {
   id: number;
@@ -20,6 +21,8 @@ type alert = {
 
 export default function App() {
   const router = useRouter();
+  
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -45,7 +48,7 @@ export default function App() {
   return (<>
     <View style={styles.container}>
 
-      <Button onPress={() => router.back()} title="Go Back" />
+      <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
       <View style={{ padding: 15 }}>
         <View
           style={{
@@ -68,7 +71,7 @@ export default function App() {
         </View>
         <View>
           <TextInput
-            placeholder="Search locations and friends"
+            placeholder={translatedStaticContent.map["search-placeholder"]}
             style={styles.searchInput}
           ></TextInput>
         </View>

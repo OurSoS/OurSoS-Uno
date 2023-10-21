@@ -1,7 +1,8 @@
 import { Text, View, Image, StyleSheet, Button } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { StaticTextContext } from "../context/language-context";
 
 type coordinate = {
   lat: number;
@@ -18,6 +19,7 @@ type userType = {
 
 export default function User() {
   const router = useRouter();
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const { user } = useLocalSearchParams();
 
   const [u, setU] = useState<userType | undefined>();
@@ -41,7 +43,7 @@ export default function User() {
   return (
     <>
       <View style={s.container}>
-        <Button onPress={() => router.back()} title="Go Back" />
+        <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
         <Text style={s.title}>{u?.username}</Text>
       </View>
     </>

@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import IntroLayout from "./intro/_layout";
 import { UserLanguageContext } from "./context/language-context";
 import axios from "axios";
+import { StaticTextContext } from "./context/language-context";
 
 type UserType = {
   id: number;
@@ -14,9 +15,8 @@ type UserType = {
 }
 
 export default function IntroNewsFeed() {
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext);
   const [userLang, setUserLang] = useState("en");
-  const [newsHeading, setNewsHeading] = useState("News Feed");
-  const [newsText, setNewsText] = useState("");
 
   useEffect(() => {
     axios.get<UserType>("https://oursos-backend-production.up.railway.app/users/1").then((user) => {
@@ -25,44 +25,18 @@ export default function IntroNewsFeed() {
     })
   }, []);
 
-  useEffect(() => {
-
-    const data = {
-      "text": "Staying informed goes beyond crisis alerts.That's why we've included a local news dashboard for your saved locales.OurSOS keeps you up-to-date with relevant news and developments, helping you navigate through any situation effectively.",
-      "lang": userLang
-    }
-    const headingData = {
-      "text": "NewsFeed",
-      "lang": userLang
-    }
-
-    axios
-      .post("https://oursos-backend-production.up.railway.app/translate", data)
-      .then((res) => {
-        setNewsText(res.data);
-      });
-
-    axios
-      .post("https://oursos-backend-production.up.railway.app/translate", headingData)
-      .then((res) => {
-        setNewsHeading(res.data);
-      });
-
-  }, [userLang]);
-
-
   return (
     <UserLanguageContext.Provider value={[userLang, setUserLang]} >
       <View style={styles.container}>
         <IntroLayout>
-          <Text style={styles.header}>{newsHeading}</Text>
+          <Text style={styles.header}>{translatedStaticContent["intro-newsfeed"].heading}</Text>
           <View style={styles.innercontainer}>
             <Text style={styles.text}>
-              {newsText}
+              {translatedStaticContent["intro-newsfeed"].details}
             </Text>
             <Link href="/intro-map">
               {/* <Pressable style={styles.button}> */}
-              <Text style={styles.text}>Continue</Text>
+              <Text style={styles.text}>{translatedStaticContent["button-text"].continue}</Text>
               {/* </Pressable> */}
             </Link>
           </View>

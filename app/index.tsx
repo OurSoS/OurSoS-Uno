@@ -22,6 +22,7 @@ export type staticType = {
   },
   "map": {
       "heading": string,
+      "search-placeholder": string,
   },
   "news": {
       "heading": string,

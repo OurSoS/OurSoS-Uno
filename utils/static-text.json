@@ -12,7 +12,8 @@
         "heading": "NewsFeed"
     },
     "map": {
-        "heading": "Map"
+        "heading": "Map",
+        "search-placeholder": "Search locations and friends"
     },
     "news": {
         "heading": "My Dashboard",
