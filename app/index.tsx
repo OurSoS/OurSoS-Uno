@@ -41,17 +41,17 @@ export type staticType = {
       "continue": string,
       "back-button": string,
   }
-}
+};
 
 export default function App() {
 
   // Setting app context to match the staticType data type so that context can be ref on other pgs
-  const [translatedStaticContent, setTranslatedStaticContent] = useState<staticType>(staticText);
+  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
 
   // Axios call returns a translated object in type staticType for reference in remaining app
-  axios.post<staticType>("https://oursos-backend-production.up.railway.app/translateobject", staticText)
+  axios.post<{"translateObject": staticType}>("https://oursos-backend-production.up.railway.app/translateobject", {"translateObject": staticText})
   .then(res => {
-    setTranslatedStaticContent(res.data);
+    setTranslatedStaticContent(res.data.translateObject);
   })
 
   return (
