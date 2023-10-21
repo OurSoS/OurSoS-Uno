@@ -52,7 +52,7 @@ export default function News() {
 
         // Translate the news based on user's language preference
         const translations = await Promise.all(
-          originalNews.map((newsItem) => {
+          originalNews.map((newsItem: { title: any; snippet: any }) => {
             const data = {
               text: `${newsItem.title}. ${newsItem.snippet}`,
               lang: userLang,
@@ -65,15 +65,17 @@ export default function News() {
         );
 
         // Merge the translations with the original news
-        const translatedNews = originalNews.map((newsItem, index) => {
-          const [translatedTitle, translatedSnippet] =
-            translations[index].data.split(". ");
-          return {
-            ...newsItem,
-            title: translatedTitle,
-            snippet: translatedSnippet,
-          };
-        });
+        const translatedNews = originalNews.map(
+          (newsItem: any, index: number) => {
+            const [translatedTitle, translatedSnippet] =
+              translations[index].data.split(". ");
+            return {
+              ...newsItem,
+              title: translatedTitle,
+              snippet: translatedSnippet,
+            };
+          }
+        );
 
         // Set the state
         setNews(translatedNews);
