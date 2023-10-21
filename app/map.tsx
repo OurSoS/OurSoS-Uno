@@ -6,6 +6,8 @@ import IconTextBlock from "./components/molecules/iconTextBlock";
 import { useRouter } from "expo-router";
 import Footer from "../components/Footer";
 
+import * as Location from 'expo-location';
+
 type alert = {
   id: number;
   message: string;
@@ -17,30 +19,65 @@ type alert = {
   severity: string;
 }
 
-
 export default function App() {
   const router = useRouter();
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
 
+  const [location, setLocation] = useState<Location.LocationObject>();
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const mapRef = React.useRef<MapView>(null);
+
+
+  useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      console.log(location)
+    })();
+  }, []);
+
   useEffect(() => {
     axios
     .get("https://oursos-backend-production.up.railway.app/alerts")
     .then((response) => {
       setAlerts(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     })
     .catch((error) => console.error(error));
   }, []);
 
-  // TODO: update these with user location
-  const [mapState, setMapState] = useState({
-    latitude: 49.28346247273308,
-    longitude: -123.11525937277163,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+  
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+  
+      if (mapRef.current) {
+        mapRef.current.animateToRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }, 1000);
+      }
+    })();
+  }, []);
+  
 
   return (<>
     <View style={styles.container}>
@@ -73,16 +110,18 @@ export default function App() {
           ></TextInput>
         </View>
       </View>
-
+      
       <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: mapState.latitude,
-          longitude: mapState.longitude,
-          latitudeDelta: mapState.latitudeDelta,
-          longitudeDelta: mapState.longitudeDelta,
-        }}
-      >
+  ref={mapRef}
+  style={styles.map}
+  initialRegion={{
+    latitude: location?.coords.latitude || 49.28346247273308,
+    longitude: location?.coords.longitude || -123.11525937277163,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  }}
+>
+
         {alerts &&
           alerts.map((a, i) => {
             return (
@@ -96,9 +135,17 @@ export default function App() {
               />
             );
           })}
-
+{/* if users location is set on, use location of user device, if not then dont show marker */}
         {/* MY MARKER */}
-        <Marker coordinate={mapState} title={"jack"} />
+        {location && 
+          <Marker 
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude
+            }} 
+            title={"You are here"} 
+          />
+        }
       </MapView>
     </View>
     <Footer />
