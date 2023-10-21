@@ -140,8 +140,69 @@ export default function News() {
           ))}
         </ScrollView>
 
-        {/* The rest of your code here... */}
-        <StatusBar style="auto" />
+        <View id="PinsContainer">
+        <View id="PinsHeader" style={styles.pinsHeader}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Pins</Text>
+          <Link href={"/pins"}>
+            <Text style={{ fontSize: 20 }}>View More</Text>
+          </Link>
+        </View>
+        <View id="PinsContent" style={styles.pinsContent}>
+          <View id="Pin" style={styles.pin}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/vancouver" }}
+              style={styles.pinImage}
+            />
+            <Text style={styles.pinName}>Vancouver</Text>
+          </View>
+
+          <View id="Pin" style={styles.pin}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/kelowna" }}
+              style={[{ width: 160, height: 100 }, styles.pinImage]}
+            />
+            <Text style={styles.pinName}>Kelowna</Text>
+          </View>
+        </View>
+      </View>
+
+      <View id="FriendsContainer">
+        <View id="FriendsHeader" style={styles.FriendsHeader}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Friends</Text>
+          <Link href={"/friends"}>
+            <Text style={{ fontSize: 20 }}>View More</Text>
+          </Link>
+        </View>
+        <View id="FriendsContent" style={styles.FriendsContent}>
+          {/* {map goes here} */}
+
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+
+          <View id="Friend" style={styles.friend}>
+            <Image
+              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+              style={styles.FriendImage}
+            />
+            <Text style={styles.FriendName}>Sarah</Text>
+          </View>
+        </View>
+      </View>
+
+      <StatusBar style="auto" />
+
       </ScrollView>
 
       <Footer />
