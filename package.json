@@ -7,12 +7,15 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "postinstall": "node postinstall.js"
+    "postinstall": "node postinstall.js",
+    "buildandroid": "eas build -p android --profile preview",
+    "buildios": "eas build -p ios --profile preview"
   },
   "dependencies": {
     "@expo-google-fonts/dev": "^0.2.3",
     "@expo/webpack-config": "^19.0.0",
     "axios": "^1.5.1",
+    "eas": "^0.1.0",
     "expo": "~49.0.13",
     "expo-app-loading": "^2.1.1",
     "expo-constants": "~14.4.2",
