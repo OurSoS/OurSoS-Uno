@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
 import * as staticText from "../utils/static-text.json";
@@ -48,12 +48,16 @@ export default function App() {
 
   // Setting app context to match the staticType data type so that context can be ref on other pgs
   const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
+  const [userLang, setUserLang] = useContext(UserLanguageContext);
 
-  // Axios call returns a translated object in type staticType for reference in remaining app
-  axios.post<{"translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", {"translateObject": staticText, "lang": UserLanguageContext})
-  .then(res => {
-    setTranslatedStaticContent(res.data.translateObject);
-  })
+  useEffect(() => {
+    // Axios call returns a translated object in type staticType for reference in remaining app
+    axios.post<{"translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", {"translateObject": staticText, "lang": userLang})
+    .then(res => {
+      setTranslatedStaticContent(res.data.translateObject);
+    })
+
+  },[])
 
   return (
     <StaticTextContext.Provider value={[translatedStaticContent, setTranslatedStaticContent]} >
