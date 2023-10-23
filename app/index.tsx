@@ -6,6 +6,7 @@ import IntroLayout from "./intro/_layout";
 import * as staticText from "../utils/static-text.json";
 import axios from "axios";
 import { StaticTextContext } from "./context/language-context";
+import { UserLanguageContext } from "./context/language-context";
 
 export type staticType = {
   "intro-friends": {
@@ -49,7 +50,7 @@ export default function App() {
   const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
 
   // Axios call returns a translated object in type staticType for reference in remaining app
-  axios.post<{"translateObject": staticType}>("https://oursos-backend-production.up.railway.app/translateobject", {"translateObject": staticText})
+  axios.post<{"translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", {"translateObject": staticText, "lang": UserLanguageContext})
   .then(res => {
     setTranslatedStaticContent(res.data.translateObject);
   })
