@@ -5,7 +5,6 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 import { StaticTextContext } from "../context/language-context";
 
-
 type newsItemType = {
   date: string;
   link: string;
@@ -25,40 +24,73 @@ export default function Article() {
   const articleNumber = article;
 
   const [news, setNews] = useState<newsItemType | undefined>();
+  const [userLang, setUserLang] = useState("en");
+
+  useEffect(() => {
+    axios
+      .get("https://oursos-backend-production.up.railway.app/users/1")
+      .then((user) => {
+        setUserLang(user.data.languagepreference);
+      })
+      .catch((error) => console.error("Error fetching user data:", error));
+  }, []);
 
   useEffect(() => {
     axios
       .get("https://oursos-backend-production.up.railway.app/news")
       .then((response) => {
-        // Find the news article that matches the article number
         const foundNews = response.data.find(
-          (newsItem: newsItemType) => newsItem.position.toString() === articleNumber
+          (newsItem: newsItemType) =>
+            newsItem.position.toString() === articleNumber
         );
 
         if (foundNews) {
-          setNews(foundNews);
+          const data = {
+            text: `${foundNews.title}. ${foundNews.snippet}`,
+            lang: userLang,
+          };
+
+          axios
+            .post(
+              "https://oursos-backend-production.up.railway.app/translate",
+              data
+            )
+            .then((translation) => {
+              const [translatedTitle, translatedSnippet] =
+                translation.data.split(". ");
+              setNews({
+                ...foundNews,
+                title: translatedTitle,
+                snippet: translatedSnippet,
+              });
+            })
+            .catch((error) =>
+              console.error("Error translating the news:", error)
+            );
         }
       })
-      .catch((error) => console.error(error));
-  }, [articleNumber]);
+      .catch((error) => console.error("Error fetching the news:", error));
+  }, [articleNumber, userLang]);
 
   return (
     <>
       <ScrollView style={s.container}>
         <Button onPress={() => router.back()} title={translatedStaticContent["button-text"]["back-button"]} />
         <Text style={s.title}>{news?.title}</Text>
-        <Text style={s.date}>{news?.source} - {news?.date}</Text>
+        <Text style={s.date}>
+          {news?.source} - {news?.date}
+        </Text>
         <Image style={s.image} source={{ uri: news?.thumbnail }} />
         <Link href={news?.link || ""}>
           <Text style={s.caption}>{translatedStaticContent.article.details}</Text>
         </Link>
-        {/* TODO: we need to web scrape more body content here, that will be copyright content though so maybe AI can change the wording? no clue */}
         <Text style={s.bodyText}>{news?.snippet}</Text>
-        {/* <Text>{articleNumber}</Text> */}
       </ScrollView>
     </>
   );
 }
+
+// ... (Styles remain unchanged)
 
 const s = StyleSheet.create({
   backbutton: {
@@ -68,7 +100,6 @@ const s = StyleSheet.create({
     // marginBottom: 10,
   },
   container: {
-
     flex: 1,
     gap: 10,
     backgroundColor: "#fff",
@@ -80,8 +111,8 @@ const s = StyleSheet.create({
   },
   image: {
     width: "100%", // Take maximum width
-    height: 300,     // Fixed height of 300 at mobile, for desktop we should increase..
-    resizeMode: 'contain',
+    height: 300, // Fixed height of 300 at mobile, for desktop we should increase..
+    resizeMode: "contain",
     marginVertical: 10,
   },
   date: {
@@ -89,15 +120,13 @@ const s = StyleSheet.create({
   },
   caption: {
     fontSize: 12,
-    color:"blue",
-
+    color: "blue",
   },
   source: {
     fontSize: 12,
   },
   bodyText: {
-    marginTop:10,
+    marginTop: 10,
     fontSize: 16,
-  }
+  },
 });
-

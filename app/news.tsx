@@ -23,6 +23,14 @@ type UserType = {
   friends: number[];
 };
 
+type UserType = {
+  id: number;
+  username: string;
+  locations: string[];
+  languagepreference: string;
+  friends: number[];
+};
+
 type newsItemType = {
   date: string;
   link: string;
