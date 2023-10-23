@@ -29,7 +29,12 @@
     },
     "plugins": [
       "expo-router",
-      "expo-location"
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow OurSOS to use your location."
+        }
+      ]
     ],
     "scheme": "your-app-scheme"
   }
