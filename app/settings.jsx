@@ -35,22 +35,22 @@ export default function Settings() {
             <Text style={styles.profileUsername}>My Username</Text>
           </View>
           <ScrollView style={styles.scrollView}>
-          {settingsArray.map((setting, i) => {
-  return (
-    <View style={styles.settingItem} key={i}>
-      <Link href="/settings/notifications">
-        <TouchableOpacity style={styles.button}>
-          <View style={styles.leftContent}>
-            <Text>{setting}</Text>
-          </View>
-          <View style={styles.rightContent}>
-            <Image source={require("../assets/favicon.png")} />
-          </View>
-        </TouchableOpacity>
-      </Link>
-    </View>
-  );
-})}
+            {settingsArray.map((setting, i) => {
+              return (
+                <View style={styles.settingItem} key={i}>
+                  <Link href="/settings/notifications">
+                    <TouchableOpacity style={styles.button}>
+                      <View style={styles.leftContent}>
+                        <Text>{setting}</Text>
+                      </View>
+                      <View style={styles.rightContent}>
+                        <Image source={require("../assets/favicon.png")} />
+                      </View>
+                    </TouchableOpacity>
+                  </Link>
+                </View>
+              );
+            })}
 
           </ScrollView>
         </View>

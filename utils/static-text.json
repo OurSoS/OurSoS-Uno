@@ -1,0 +1,35 @@
+{
+        "intro-friends": {
+                "details": "We recognize that your circle of loved ones extends far and wide, beyond just your immediate location. With approximate location data, we can provide you with information about the safety of your family and friends around the world.",
+                "heading": "Friends and Family"
+        },
+        "intro-map": {
+                "details": "Visualizing crisis information is crucial. OurSOS offers an interactive map view that displays crises and dangers in your area. This user-friendly interface helps you understand the proximity of threats and aids in making quick and informed decisions.",
+                "heading": "Map"
+        },
+        "intro-newsfeed": {
+                "details": "Staying informed goes beyond crisis alerts.That's why we've included a local news dashboard for your saved locales.OurSOS keeps you up-to-date with relevant news and developments, helping you navigate through any situation effectively.",
+                "heading": "NewsFeed"
+        },
+        "map": {
+                "heading": "Map",
+                "search-placeholder": "Search locations and friends"
+        },
+        "news": {
+                "heading": "My Dashboard",
+                "search-placeholder": "Search locations and friends",
+                "pins-header": "Pins",
+                "friends-header": "Friends",
+                "view-more": "View More"
+        },
+        "friends": {
+                "search-placeholder": "Search for friends"
+        },
+        "article": {
+                "details": "Read the full article here"
+        },
+        "button-text": {
+                "continue": "Continue",
+                "back-button": "Go Back"
+        }
+}

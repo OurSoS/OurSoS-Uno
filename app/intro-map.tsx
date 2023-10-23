@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import IntroLayout from "./intro/_layout";
-import { UserLanguageContext } from "./context/language-context";
-import axios from "axios";
+import { StaticTextContext } from "./context/language-context";
+
 type UserType = {
   id: number;
   username: string;
@@ -11,61 +11,24 @@ type UserType = {
   languagepreference: string;
   friends: number[];
 };
+
 export default function IntroMap() {
-  const [userLang, setUserLang] = useState("en");
-  const [newsHeading, setNewsHeading] = useState("Map");
-  const [newsText, setNewsText] = useState("");
-  useEffect(() => {
-    axios
-      .get<UserType>("https://oursos-backend-production.up.railway.app/users/1")
-      .then((user) => {
-        setUserLang(user.data.languagepreference);
-        console.log(user.data.languagepreference);
-      });
-  }, []);
-
-  useEffect(() => {
-    const data = {
-      text: "Visualizing crisis information is crucial. OurSOS offers an interactive map view that displays crises and dangers in your area. This user-friendly interface helps you understand the proximity of threats and aids in making quick and informed decisions.",
-      lang: userLang,
-    };
-    const headingData = {
-      text: "Map",
-      lang: userLang,
-    };
-
-    axios
-      .post("https://oursos-backend-production.up.railway.app/translate", data)
-      .then((res) => {
-        setNewsText(res.data);
-      });
-
-    axios
-      .post(
-        "https://oursos-backend-production.up.railway.app/translate",
-        headingData
-      )
-      .then((res) => {
-        setNewsHeading(res.data);
-      });
-  }, [userLang]);
+  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext)
 
   return (
-    <UserLanguageContext.Provider value={[userLang, setUserLang]}>
-      <View style={styles.container}>
-        <IntroLayout>
-          <Text style={styles.header}>{newsHeading}</Text>
-          <View style={styles.innercontainer}>
-            <Text style={styles.text}>{newsText}</Text>
-            <Link href="/intro-friends">
-              <View style={styles.button}>
-                <Text style={styles.text}>Continue</Text>
-              </View>
-            </Link>
-          </View>
-        </IntroLayout>
-      </View>
-    </UserLanguageContext.Provider>
+    <View style={styles.container}>
+      <IntroLayout>
+        <Text style={styles.header}>{translatedStaticContent['intro-map'].heading}</Text>
+        <View style={styles.innercontainer}>
+          <Text style={styles.text}>{translatedStaticContent['intro-map'].details}</Text>
+          <Link href="/intro-friends">
+            <View style={styles.button}>
+              <Text style={styles.text}>Continue</Text>
+            </View>
+          </Link>
+        </View>
+      </IntroLayout>
+    </View>
   );
 }
 

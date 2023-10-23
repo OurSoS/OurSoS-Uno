@@ -2,7 +2,7 @@ import { View, StyleSheet, TextInput, Button } from "react-native";
 import { useState } from "react";
 import { styles } from "../app/styles/newsStyles";
 import Friend from "../components/friend";
-import {useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function friends() {
   const router = useRouter();

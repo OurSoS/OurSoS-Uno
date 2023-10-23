@@ -93,27 +93,29 @@ export default function News() {
     return null;
   }
 
-  return (
-    <>
-      <ScrollView>
-        <View>
-          <Text style={styles.heading2}>My Dashboard</Text>
-          <Image source={{ uri: "../assets/searchIcon.png" }} />
-          <TextInput
-            placeholder="Search locations and friends"
-            style={styles.searchInput}
-          ></TextInput>
-        </View>
+  return (<>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={10}
-          pagingEnabled
-          style={{ padding: 10 }}
-        >
-          {news.map((newsItem, i) => (
-            <View key={i} style={{ flexDirection: "row" }}>
+    <ScrollView>
+      <View>
+        <Text style={styles.heading2}>My Dashboard</Text>
+        <Image source={{ uri: "../assets/searchIcon.png" }} />
+        <TextInput
+
+          placeholder="Search locations and friends"
+          style={styles.searchInput}
+        ></TextInput>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={10}
+        pagingEnabled
+        style={{ padding: 10 }}
+      >
+        {
+          news.map((newsItem, i) => {
+            return (<View key={i} style={{ flexDirection: "row" }}>
               <View
                 id="DisasterCard"
                 style={[styles.disasterOuterCard, { flex: 1, marginRight: 10 }]}
@@ -137,10 +139,12 @@ export default function News() {
                 </Link>
               </View>
             </View>
-          ))}
-        </ScrollView>
+            )
+          })
+        }
+      </ScrollView>
 
-        <View id="PinsContainer">
+      <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Pins</Text>
           <Link href={"/pins"}>
@@ -202,10 +206,7 @@ export default function News() {
       </View>
 
       <StatusBar style="auto" />
-
-      </ScrollView>
-
-      <Footer />
-    </>
-  );
+    </ScrollView>
+    <Footer />
+  </>);
 }

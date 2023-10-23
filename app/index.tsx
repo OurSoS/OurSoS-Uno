@@ -1,24 +1,82 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
 import IntroLayout from "./intro/_layout";
+import axios from "axios";
+import staticText from "../utils/static-text.json"
+import { UserLanguageContext } from "./context/language-context";
+export type staticType = {
+  "intro-friends": {
+    "details": string,
+    "heading": string,
+  },
+  "intro-map": {
+    "details": string,
+    "heading": string,
+  },
+  "intro-newsfeed": {
+    "details": string,
+    "heading": string,
+  },
+  "map": {
+    "heading": string,
+    "search-placeholder": string,
+  },
+  "news": {
+    "heading": string,
+    "search-placeholder": string,
+    "pins-header": string,
+    "friends-header": string,
+    "view-more": string,
+  },
+  "friends": {
+    "search-placeholder": string,
+  },
+  "article": {
+    "details": string,
+  },
+  "button-text": {
+    "continue": string,
+    "back-button": string,
+  }
+};
 
 export default function App() {
+  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
+  const [userLang, setUserLang] = useState("en");
 
+  useEffect(() => {
+    // Axios call returns a translated object in type staticType for reference in remaining app
+    axios.get("https://oursos-backend-production.up.railway.app/users/1").then((user) => {
+      setUserLang(user.data.languagepreference);
+    }).then(() => {
+      axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
+        .then(res => {
+          setTranslatedStaticContent(res.data.translateObject);
+        }).then(() => {
+
+          console.log(translatedStaticContent);
+        })
+    })
+
+  }, [])
   return (
-    <View style={styles.container}>
-      <IntroLayout>
-        <Text style={styles.header}>Welcome to OurSoS!</Text>
-        <Link href="/intro-select-language">
-          {/* <Pressable style={styles.button}> */}
-          <Text style={styles.text}>Select Language</Text>
-          {/* </Pressable> */}
-        </Link>
-        <Link href="/map"><Text>Go Map</Text></Link>
-        <Link href="/news"><Text>Go News</Text></Link>
-      </IntroLayout>
-    </View>
+    <UserLanguageContext.Provider value={[userLang, setUserLang]}>
+      
+      <View style={styles.container}>
+        <IntroLayout>
+          <Text style={styles.header}>Welcome to OurSoS!</Text>
+          <Link href="/intro-select-language">
+            {/* <Pressable style={styles.button}> */}
+            <Text style={styles.text}>Select Language</Text>
+            {/* </Pressable> */}
+          </Link>
+          <Link href="/map"><Text>Go Map</Text></Link>
+          <Link href="/news"><Text>Go News</Text></Link>
+        </IntroLayout>
+      </View>
+    </UserLanguageContext.Provider>
   );
 }
 

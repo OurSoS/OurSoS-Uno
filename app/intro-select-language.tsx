@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
 import IntroLayout from "./intro/_layout";
@@ -11,9 +11,15 @@ type LanguageType = {
   name: string;
   tag: string;
 };
+import { staticType } from ".";
+
+import staticText from "../utils/static-text.json"
+import { StaticTextContext, UserLanguageContext } from "./context/language-context";
 
 export default function SelectLanguage() {
 
+  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
+  const [userLang, setUserLang] = useContext(UserLanguageContext);
   const router = useRouter();
   const [languages, setLanguages] = useState<LanguageType[]>([
     {
@@ -21,8 +27,8 @@ export default function SelectLanguage() {
       tag: "en",
     },
   ]);
-  const [checkLangauge, setCheckLangauge] = useState(0);
   const [languageTag, setLanguageTag] = useState("en");
+
   useEffect(() => {
     axios
       .get("https://oursos-backend-production.up.railway.app/languagelistenglish")
@@ -39,82 +45,71 @@ export default function SelectLanguage() {
       "friends": [2, 3],
     };
     if (languageTag) {
-      console.log({ languageTag });
-      //get the real language Tag from the the backend boobs 00
-
+      setUserLang(languageTag);
       axios
         .put(
           "https://oursos-backend-production.up.railway.app/updateuser/1",
           updateUserRequest
         )
         .then((response) => {
-          console.log("User updated successfully", response.data);
+          setUserLang(languageTag);
+          axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
+            .then(res => {
+              setTranslatedStaticContent(res.data.translateObject);
+              console.log(res.data.translateObject);
+            }).then(() => {
+              console.log(translatedStaticContent);
+            })
           router.replace("/intro-newsfeed")
         })
-        .catch((error) => {
-          console.error("Error updating user:", error);
-        });
-    } else {
-      console.log("No user language tag");
     }
   };
+
+
   return (
-    <View style={styles.container}>
-      <IntroLayout>
-        <Text style={styles.header}>Select your language</Text>
-        <FlatList
-          style={styles.languageList}
-          data={languages}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: LanguageType;
-            index: number;
-          }) => (
+    <UserLanguageContext.Provider value={[userLang, setUserLang]}>
+      <StaticTextContext.Provider value={[translatedStaticContent, setTranslatedStaticContent]}>
+        <View style={styles.container}>
+          <IntroLayout>
+            <Text style={styles.header}>Select your language</Text>
+            <FlatList
+              style={styles.languageList}
+              data={languages}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: LanguageType;
+                index: number;
+              }) => (
+                <Pressable
+                  onPress={() => {
+                    // setCheckLangauge(index);
+                    setLanguageTag(languages[index]?.tag);
+                    console.log({ languageTag });
+                  }}
+                  style={styles.languageBtn}
+                >
+                  <Text style={styles.text}>{item.name}</Text>
+                </Pressable>
+              )}
+            />
+
+            {/* <Link > */}
             <Pressable
               onPress={() => {
-                setCheckLangauge(index);
-                setLanguageTag(languages[index]?.tag);
-                console.log({ languageTag });
+                setUserLanguage();
+
               }}
-              style={styles.languageBtn}
+              style={styles.button}
             >
-              <Text style={styles.text}>{item.name}</Text>
-              {/* {index == checkLangauge && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  width={30}
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 12.75l6 6 9-13.5"
-                  />
-                </svg>
-              )} */}
+              <Text style={styles.text}>Continue</Text>
             </Pressable>
-          )}
-        />
-
-        {/* <Link > */}
-        <Pressable
-          onPress={() => {
-            setUserLanguage();
-
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.text}>Continue</Text>
-        </Pressable>
-        {/* </Link> */}
-      </IntroLayout>
-    </View>
+            {/* </Link> */}
+          </IntroLayout>
+        </View>
+      </StaticTextContext.Provider>
+    </UserLanguageContext.Provider>
   );
 }
 
