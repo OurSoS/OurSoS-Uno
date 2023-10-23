@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
+import Footer from "../../components/Footer";
 
 type newsItemType = {
   date: string;
@@ -91,6 +92,7 @@ export default function Article() {
         </Link>
         <Text style={s.bodyText}>{news?.snippet}</Text>
       </ScrollView>
+      <Footer />
     </>
   );
 }
