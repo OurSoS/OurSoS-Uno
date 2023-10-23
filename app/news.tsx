@@ -56,20 +56,20 @@ export default function News() {
     <ScrollView>
       <View>
         <Text style={styles.heading2}>My Dashboard</Text>
-          <Image source={{uri: "../assets/searchIcon.png"}} />
-          <TextInput
+        <Image source={{ uri: "../assets/searchIcon.png" }} />
+        <TextInput
 
-            placeholder="Search locations and friends"
-            style={styles.searchInput}
-          ></TextInput>
-        </View>
+          placeholder="Search locations and friends"
+          style={styles.searchInput}
+        ></TextInput>
+      </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={10}
         pagingEnabled
-        style={{padding:10}}
+        style={{ padding: 10 }}
       >
         {
           news.map((newsItem, i) => {
@@ -178,7 +178,7 @@ export default function News() {
 
 
     </ScrollView>
-      
-      <Footer />
+
+    <Footer />
   </>);
 }

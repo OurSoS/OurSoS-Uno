@@ -87,14 +87,14 @@ const s = StyleSheet.create({
   },
   caption: {
     fontSize: 12,
-    color:"blue",
+    color: "blue",
 
   },
   source: {
     fontSize: 12,
   },
   bodyText: {
-    marginTop:10,
+    marginTop: 10,
     fontSize: 16,
   }
 });

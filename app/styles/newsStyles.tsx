@@ -24,11 +24,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: 62,
-    backgroundColor: "white", 
+    backgroundColor: "white",
     padding: 10,
     marginBottom: 0,
     marginHorizontal: 10,
-    elevation: 3, 
+    elevation: 3,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     // shadowRadius: 3.84,
     // elevation: 10,
     // margin: 20,
-    
+
   },
   pinImage: {
     width: "100%",
