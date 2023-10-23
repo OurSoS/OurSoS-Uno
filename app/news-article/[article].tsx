@@ -132,7 +132,6 @@ const s = StyleSheet.create({
   },
   bodyText: {
     marginTop: 10,
-    marginTop: 10,
     fontSize: 16,
   },
 });

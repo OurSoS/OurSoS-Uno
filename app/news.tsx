@@ -111,7 +111,7 @@ export default function News() {
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={10}
         pagingEnabled
-        style={{padding:10}}
+        style={{ padding: 10 }}
       >
         {
           news.map((newsItem, i) => {
@@ -139,10 +139,12 @@ export default function News() {
                 </Link>
               </View>
             </View>
-          ))}
-        </ScrollView>
+            )
+          })
+        }
+      </ScrollView>
 
-        <View id="PinsContainer">
+      <View id="PinsContainer">
         <View id="PinsHeader" style={styles.pinsHeader}>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Pins</Text>
           <Link href={"/pins"}>
@@ -204,12 +206,7 @@ export default function News() {
       </View>
 
       <StatusBar style="auto" />
-
-
-
-
     </ScrollView>
-      
-      <Footer />
+    <Footer />
   </>);
 }
