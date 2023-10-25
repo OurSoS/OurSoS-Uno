@@ -31,6 +31,8 @@
     "react-native-screens": "~3.22.0",
     "react-native-svg": "^13.9.0",
     "react-native-swiper": "^1.6.0-rc.3",
+    "react-native-toggle-element": "^2.0.1",
+    "react-native-toggle-input": "^1.0.12",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {
