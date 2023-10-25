@@ -1,11 +1,18 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, FlatList } from "react-native";
 import { Link } from "expo-router";
 import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
-import IntroLayout from "./intro/_layout";
 import axios from "axios";
 import staticText from "../utils/static-text.json"
 import { UserLanguageContext } from "./context/language-context";
+
+import IntroTextButton from "./components/intro/intro-text-button";
+import IntroLayout from "./components/intro/_layout";
+
+import tw from 'twrnc';
+import Dashboard from "./components/dashboard/dashboard";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 export type staticType = {
   "intro-friends": {
     "details": string,
@@ -42,41 +49,153 @@ export type staticType = {
   }
 };
 
-export default function App() {
-  const [translatedStaticContent, setTranslatedStaticContent] = useState(staticText);
-  const [userLang, setUserLang] = useState("en");
+type LanguageType = {
+  name: string;
+  tag: string;
+};
+
+export default function Index() {
+  const [translatedStaticContent, setTranslatedStaticContent] = useState<any>(staticText);
+  const [userLang, setUserLang] = useState("hi");
+  const [introComponent, setIntroComponent] = useState("welcome");
+  const [languages, setLanguages] = useState<LanguageType[]>([])
+  const [location, setLocation] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const setUserLanguage = async () => {
+    const updateUserRequest = {
+      "username": "sam",
+      "latitude": 49.26357,
+      "longitude": -123.13857,
+      "languagepreference": userLang, // Ensure that languageTag is defined and has a valid value
+      "friends": [2, 3],
+      "profile": "https://picsum.photos/200/300?grayscale"
+    };
+    if (userLang) {
+      setUserLang(userLang);
+      // await axios
+      //   .put(
+      //     "https://oursos-backend-production.up.railway.app/updateuser/1",
+      //     updateUserRequest
+      //   )
+      //   .then(async (response) => {
+      await axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
+        .then(res => {
+          setTranslatedStaticContent(res.data);
+          setIntroComponent("newsFeed")
+        })
+      // })
+    }
+  };
 
   useEffect(() => {
-    // Axios call returns a translated object in type staticType for reference in remaining app
-    axios.get("https://oursos-backend-production.up.railway.app/users/1").then((user) => {
-      setUserLang(user.data.languagepreference);
-    }).then(() => {
-      axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
-        .then(res => {
-          setTranslatedStaticContent(res.data.translateObject);
-        }).then(() => {
 
-          console.log(translatedStaticContent);
-        })
-    })
+    (async () => {
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/languages")
+        .then((res) => {
+          setLanguages(res.data);
+        });
 
-  }, [])
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/users/1")
+        .then((res) => {
+          setCurrentUser(res.data);
+        });
+    })();
+  }, []);
+
+  const buttonFunction = (buttonText: string) => {
+    setIntroComponent(buttonText);
+  }
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
   return (
-    <UserLanguageContext.Provider value={[userLang, setUserLang]}>
-      
-      <View style={styles.container}>
-        <IntroLayout>
-          <Text style={styles.header}>Welcome to OurSoS!</Text>
-          <Link href="/intro-select-language">
-            {/* <Pressable style={styles.button}> */}
-            <Text style={styles.text}>Select Language</Text>
-            {/* </Pressable> */}
-          </Link>
-          <Link href="/map"><Text>Go Map</Text></Link>
-          <Link href="/news"><Text>Go News</Text></Link>
-        </IntroLayout>
-      </View>
-    </UserLanguageContext.Provider>
+    // <Text>fooo</Text>
+    // <UserLanguageContext.Provider value={[userLang, setUserLang]}>
+    // <SafeAreaProvider>
+    <View style={styles.container}>
+      {
+        introComponent === "welcome" ?
+          <IntroTextButton heading="Welcome To OurSOS!"
+            details="Empowering Your Safety, Connecting Our World"
+            buttonNext="selectLocation"
+            buttonText="Select Language"
+            buttonFunction={buttonFunction}
+          >
+          </IntroTextButton>
+          : introComponent === "selectLocation" ?
+            <IntroLayout>
+              <Text style={styles.header}>Select your language</Text>
+              <FlatList
+                style={tw.style(`w-full`, `flex`, `flex-col`)}
+                data={languages}
+                renderItem={({
+                  item,
+                  index,
+                }: {
+                  item: LanguageType;
+                  index: number;
+                }) => (
+                  <Pressable
+                    onPress={() => {
+                      setUserLang(languages[index]?.tag);
+                    }}
+                    style={tw.style(`text-white`, `bg-white`, `px-7`, `py-3`, `rounded-lg`, `border`, `mb-3`)}
+                  >
+                    <Text style={styles.text}>{item.name}</Text>
+                  </Pressable>
+                )}
+              />
+              <Pressable
+                onPress={() => {
+                  setUserLanguage();
+                }}
+                style={tw.style(`text-white`, `bg-[#003566]`, `px-7`, `py-3`, `rounded-lg`)}
+              >
+                <Text style={tw.style(`text-white`)}>Continue</Text>
+              </Pressable>
+            </IntroLayout>
+            : introComponent === "newsFeed"
+              ? <IntroTextButton heading={translatedStaticContent["intro-newsfeed"].heading}
+                details={translatedStaticContent["intro-newsfeed"].details}
+                buttonNext="introMap"
+                buttonText={translatedStaticContent["button-text"].continue}
+                buttonFunction={buttonFunction}
+              ></IntroTextButton>
+              : introComponent === "introMap"
+                ? <IntroTextButton heading={translatedStaticContent["intro-map"].heading}
+                  details={translatedStaticContent["intro-map"].details}
+                  buttonNext="introFriends"
+                  buttonText={translatedStaticContent["button-text"].continue}
+                  buttonFunction={buttonFunction}
+                ></IntroTextButton>
+                : introComponent === "introFriends"
+                  ? <IntroTextButton heading={translatedStaticContent["intro-friends"].heading}
+                    details={translatedStaticContent["intro-friends"].details}
+                    buttonNext="dashboard"
+                    buttonText={translatedStaticContent["button-text"].continue}
+
+                    buttonFunction={buttonFunction}
+                  ></IntroTextButton>
+                  : <Dashboard user={currentUser} userLang={userLang}></Dashboard>
+      }
+    </View>
+    // </SafeAreaProvider>
+    // </UserLanguageContext.Provider>
   );
 }
 
@@ -86,6 +205,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 24,
+  },
+  btnContinue: {
+    backgroundColor: "#003566",
+    color: "#FFFFFF",
   },
   container: {
     flex: 1,
@@ -119,5 +242,5 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.25,
     color: "black",
-  },
+  }
 });

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, View, SafeAreaView, Image } from "react-native";
 import axios from "axios";
 import IconTextBlock from "./components/molecules/iconTextBlock";
 import { useRouter } from "expo-router";
-import Footer from "../components/Footer";
-
+import Footer from "./components/molecules/Footer";
 import * as Location from "expo-location";
+import MapComp from "./components/molecules/map-comp";
+import { Searchbar, Text } from 'react-native-paper';
+import tw from 'twrnc';
 
 type alert = {
   id: number;
@@ -30,7 +32,10 @@ export default function App() {
 
   const mapRef = React.useRef<MapView>(null);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const onChangeSearch = (query: string) => setSearchQuery(query);
   useEffect(() => {
+
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -49,7 +54,6 @@ export default function App() {
       .get("https://oursos-backend-production.up.railway.app/alerts")
       .then((response) => {
         setAlerts(response.data);
-        // console.log(response.data);
       })
       .catch((error) => console.error(error));
   }, []);
@@ -80,76 +84,26 @@ export default function App() {
   }, []);
 
   return (
-    <>
-      <View style={styles.container}>
-        <Button onPress={() => router.back()} title="Go Back" />
-        <View style={{ padding: 15 }}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              margin: 10,
-            }}
-          >
-            <Text style={{ fontSize: 22 }}>Vancouver</Text>
-            <Text
-              style={{
-                backgroundColor: "lightgrey",
-                paddingHorizontal: 40,
-                paddingVertical: 10,
-              }}
-            >
-              logo
-            </Text>
-          </View>
-          <View>
-            <TextInput
-              placeholder="Search locations and friends"
-              style={styles.searchInput}
-            ></TextInput>
-          </View>
+    <View style={tw.style(`h-full`, `relative`)}>
+      <View style={tw.style(`flex flex-row justify-between p-6`)}>
+        <View style={tw.style(`flex flex-row content-center`)}>
+          {/* <Image source={require("../assets/LocationDot.png")} style={tw.style(`h-6 w-6 m-2`)} /> */}
+          <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text>
         </View>
-
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={{
-            latitude: location?.coords.latitude || 40,
-            longitude: location?.coords.longitude || -123.11525937277163,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {alerts &&
-            alerts.map((a, i) => {
-              return (
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
-                  title={a.category + " - " + a.severity + "\n" + a.message}
-                />
-              );
-            })}
-          {/* if users location is set on, use location of user device, if not then dont show marker */}
-          {/* MY MARKER */}
-          {location && (
-            <Marker
-              coordinate={{
-                latitude: location?.coords.latitude,
-                longitude: location?.coords.longitude,
-              }}
-              title={"You are here"}
-            />
-          )}
-
-        </MapView>
+        {/* <Image
+          style={tw.style(`h-15 w-15`)}
+          source={require("../assets/favicon.png")}
+        /> */}
       </View>
+      <Searchbar
+        style={tw.style(`m-4 mt-0`)}
+        placeholder="Search"
+        onChangeText={onChangeSearch}
+        value={searchQuery}
+      />
+      <MapComp />
       <Footer />
-    </>
+    </View>
   );
 }
 
