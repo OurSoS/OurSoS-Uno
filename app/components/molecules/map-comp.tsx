@@ -108,8 +108,8 @@ export default function MapComp({ height }: MapCompProps) {
                                                         <Marker
                                                                 key={i}
                                                                 coordinate={{
-                                                                        latitude: parseFloat(a.latitude),
-                                                                        longitude: parseFloat(a.longitude),
+                                                                        latitude: a.latitude,
+                                                                        longitude: a.longitude,
                                                                 }}
                                                                 title={a.category + " - " + a.severity + "\n" + a.message}
                                                         />
