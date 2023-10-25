@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import Footer from "../components/Footer";
 
 import * as Location from "expo-location";
+
+type MapCompProps = {
+  height: number;
+};
 
 type alert = {
   id: number;
@@ -18,7 +28,7 @@ type alert = {
   severity: string;
 };
 
-export default function App() {
+export default function MapComp({ height }: MapCompProps) {
   const router = useRouter();
 
   const [pins, setPins] = useState([]);
@@ -81,7 +91,6 @@ export default function App() {
   return (
     <>
       <View style={styles.container}>
-        <Button onPress={() => router.back()} title="Go Back" />
         <View style={{ padding: 15 }}>
           <View
             style={{
@@ -92,27 +101,11 @@ export default function App() {
             }}
           >
             <Text style={{ fontSize: 22 }}>Vancouver</Text>
-            <Text
-              style={{
-                backgroundColor: "lightgrey",
-                paddingHorizontal: 40,
-                paddingVertical: 10,
-              }}
-            >
-              logo
-            </Text>
-          </View>
-          <View>
-            <TextInput
-              placeholder="Search locations and friends"
-              style={styles.searchInput}
-            ></TextInput>
           </View>
         </View>
-
         <MapView
           ref={mapRef}
-          style={styles.map}
+          style={{ ...styles.map, height: height }}
           initialRegion={{
             latitude: location?.coords.latitude || 40,
             longitude: location?.coords.longitude || -123.11525937277163,
@@ -144,10 +137,8 @@ export default function App() {
               title={"You are here"}
             />
           )}
-
         </MapView>
       </View>
-      <Footer />
     </>
   );
 }
@@ -158,7 +149,6 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "100%",
   },
   searchInput: {
     borderRadius: 62,

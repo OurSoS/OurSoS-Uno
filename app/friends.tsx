@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 export default function friends() {
   const router = useRouter();
 
-  const [friends, setFriends] = useState([
+  const [friends] = useState([
     { name: "John Doe", image: "https://i.imgur.com/0LKZQYM.png" },
     { name: "Jane Doe", image: "https://i.imgur.com/0LKZQYM.png" },
     { name: "James Doe", image: "https://i.imgur.com/0LKZQYM.png" },

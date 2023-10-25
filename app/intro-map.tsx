@@ -1,19 +1,11 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
 import React, { useContext } from "react";
 import IntroLayout from "./intro/_layout";
 import { StaticTextContext } from "./context/language-context";
 
-type UserType = {
-  id: number;
-  username: string;
-  locations: string[];
-  languagepreference: string;
-  friends: number[];
-};
-
 export default function IntroMap() {
-  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext)
+  const [translatedStaticContent] = useContext(StaticTextContext)
 
   return (
     <View style={styles.container}>

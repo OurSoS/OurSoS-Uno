@@ -1,28 +1,23 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import IntroLayout from "./intro/_layout";
-import { UserLanguageContext } from "./context/language-context";
-import axios from "axios";
 
 import { StaticTextContext } from "./context/language-context";
-type UserType = {
-  id: number;
-  username: string;
-  locations: string[];
-  languagepreference: string;
-  friends: number[];
-};
 
 export default function IntroFriends() {
-  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext)
+  const [translatedStaticContent] = useContext(StaticTextContext);
 
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Text style={styles.header}>{translatedStaticContent['intro-friends'].heading}</Text>
+        <Text style={styles.header}>
+          {translatedStaticContent["intro-friends"].heading}
+        </Text>
         <View style={styles.innercontainer}>
-          <Text style={styles.text}>{translatedStaticContent['intro-friends'].details}</Text>
+          <Text style={styles.text}>
+            {translatedStaticContent["intro-friends"].details}
+          </Text>
           <Link href="/news">
             <View style={styles.button}>
               <Text style={styles.text}>Continue</Text>

@@ -1,34 +1,27 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
 import React, { useContext } from "react";
 import IntroLayout from "./intro/_layout";
-import { UserLanguageContext } from "./context/language-context";
-import axios from "axios";
 import { StaticTextContext } from "./context/language-context";
 
-type UserType = {
-  id: number;
-  username: string;
-  locations: string[];
-  languagepreference: string;
-  friends: number[];
-}
-
 export default function IntroNewsFeed() {
-  const [translatedStaticContent, setTranslatedStaticContent] = useContext(StaticTextContext)
+  const [translatedStaticContent] =
+    useContext(StaticTextContext);
 
   return (
     <View style={styles.container}>
       <IntroLayout>
-        <Text style={styles.header}>{translatedStaticContent['intro-newsfeed'].heading}</Text>
+        <Text style={styles.header}>
+          {translatedStaticContent["intro-newsfeed"].heading}
+        </Text>
         <View style={styles.innercontainer}>
           <Text style={styles.text}>
-            {translatedStaticContent['intro-newsfeed'].details}
+            {translatedStaticContent["intro-newsfeed"].details}
           </Text>
           <Link href="/intro-map">
-            {/* <Pressable style={styles.button}> */}
-            <Text style={styles.text}>Continue</Text>
-            {/* </Pressable> */}
+            <View style={styles.button}>
+              <Text style={styles.text}>Continue</Text>
+            </View>
           </Link>
         </View>
       </IntroLayout>
