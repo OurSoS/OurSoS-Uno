@@ -151,61 +151,77 @@ export default function News() {
             <Text style={{ fontSize: 20 }}>View More</Text>
           </Link>
         </View>
-        <View id="PinsContent" style={styles.pinsContent}>
-          <View id="Pin" style={styles.pin}>
-            <Image
-              source={{ uri: "https://loremflickr.com/320/240/vancouver" }}
-              style={styles.pinImage}
-            />
-            <Text style={styles.pinName}>Vancouver</Text>
-          </View>
 
-          <View id="Pin" style={styles.pin}>
-            <Image
-              source={{ uri: "https://loremflickr.com/320/240/kelowna" }}
-              style={[{ width: 160, height: 100 }, styles.pinImage]}
-            />
-            <Text style={styles.pinName}>Kelowna</Text>
+        <View id="PinsContainer">
+          <View id="PinsContent" style={styles.pinsContent}>
+            <View id="Pin" style={styles.pin}>
+              <Image
+                source={{ uri: "https://loremflickr.com/320/240/vancouver" }}
+                style={styles.pinImage}
+              />
+              <Text style={styles.pinName}>Vancouver</Text>
+            </View>
+
+            <View id="Pin" style={styles.pin}>
+              <Image
+                source={{ uri: "https://loremflickr.com/320/240/kelowna" }}
+                style={[{ width: 160, height: 100 }, styles.pinImage]}
+              />
+              <Text style={styles.pinName}>Kelowna</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View id="FriendsContainer">
-        <View id="FriendsHeader" style={styles.FriendsHeader}>
+        {/* <View id="FriendsHeader" style={styles.FriendsHeader}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Friends</Text>
+          <Link href={"/friends"}>
+            <Text style={{ fontSize: 20 }}>View More</Text>
+          </Link>
+        </View> */}
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            padding: 10,
+          }}
+        >
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Friends</Text>
           <Link href={"/friends"}>
             <Text style={{ fontSize: 20 }}>View More</Text>
           </Link>
         </View>
-        <View id="FriendsContent" style={styles.FriendsContent}>
-          {/* {map goes here} */}
 
-          <View id="Friend" style={styles.friend}>
-            <Image
-              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
-              style={styles.FriendImage}
-            />
-            <Text style={styles.FriendName}>Sarah</Text>
-          </View>
-          <View id="Friend" style={styles.friend}>
-            <Image
-              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
-              style={styles.FriendImage}
-            />
-            <Text style={styles.FriendName}>Sarah</Text>
-          </View>
+        <View id="FriendsContainer">
+          <View id="FriendsContent" style={styles.FriendsContent}>
+            {/* {map goes here} */}
+            <View id="Friend" style={styles.friend}>
+              <Image
+                source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+                style={styles.FriendImage}
+              />
+              <Text style={styles.FriendName}>Sarah</Text>
+            </View>
+            <View id="Friend" style={styles.friend}>
+              <Image
+                source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+                style={styles.FriendImage}
+              />
+              <Text style={styles.FriendName}>Sarah</Text>
+            </View>
 
-          <View id="Friend" style={styles.friend}>
-            <Image
-              source={{ uri: "https://loremflickr.com/320/240/portrait" }}
-              style={styles.FriendImage}
-            />
-            <Text style={styles.FriendName}>Sarah</Text>
+            <View id="Friend" style={styles.friend}>
+              <Image
+                source={{ uri: "https://loremflickr.com/320/240/portrait" }}
+                style={styles.FriendImage}
+              />
+              <Text style={styles.FriendName}>Sarah</Text>
+            </View>
           </View>
         </View>
       </View>
 
-      <StatusBar style="auto" />
+      
     </ScrollView>
     <Footer />
   </>);
