@@ -61,7 +61,7 @@ export default function Dashboard({ userLang, user }: { userLang: string, user: 
         }, []);
 
         return (
-                <SafeAreaView style={tw.style(`flex`, `h-full`, `flex-col`, `justify-between`, `w-full`, `relative`)}>
+                <View style={tw.style(`flex`, `h-full`, `flex-col`, `justify-between`, `w-full`, `relative`)}>
                         <ScrollView style={tw.style(`px-4`)}>
                                 <Text style={tw.style(`text-[1.75rem]`, `mb-8`, `py-4`)} >
                                         Dashboard
@@ -150,6 +150,6 @@ export default function Dashboard({ userLang, user }: { userLang: string, user: 
                                 </Text>
 
                         </Snackbar>
-                </SafeAreaView >
+                </View >
         )
 }

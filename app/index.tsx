@@ -11,7 +11,7 @@ import IntroLayout from "./components/intro/_layout";
 
 import tw from 'twrnc';
 import Dashboard from "./components/dashboard/dashboard";
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export type staticType = {
   "intro-friends": {
@@ -54,7 +54,7 @@ type LanguageType = {
   tag: string;
 };
 
-export default function App() {
+export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] = useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
   const [introComponent, setIntroComponent] = useState("welcome");
@@ -65,34 +65,34 @@ export default function App() {
   const setUserLanguage = async () => {
     const updateUserRequest = {
       "username": "sam",
-      "locations": ["(40.7128,-74.006)"],
+      "latitude": 49.26357,
+      "longitude": -123.13857,
       "languagepreference": userLang, // Ensure that languageTag is defined and has a valid value
       "friends": [2, 3],
+      "profile": "https://picsum.photos/200/300?grayscale"
     };
     if (userLang) {
       setUserLang(userLang);
-      await axios
-        .put(
-          "https://oursos-backend-production.up.railway.app/updateuser/1",
-          updateUserRequest
-        )
-        .then(async (response) => {
-          await axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
-            .then(res => {
-              setTranslatedStaticContent(res.data);
-              setIntroComponent("newsFeed")
-            })
+      // await axios
+      //   .put(
+      //     "https://oursos-backend-production.up.railway.app/updateuser/1",
+      //     updateUserRequest
+      //   )
+      //   .then(async (response) => {
+      await axios.post<{ "translateObject": staticType, "lang": string }>("https://oursos-backend-production.up.railway.app/translateobject", { "translateObject": staticText, "lang": userLang })
+        .then(res => {
+          setTranslatedStaticContent(res.data);
+          setIntroComponent("newsFeed")
         })
+      // })
     }
   };
-
-
 
   useEffect(() => {
 
     (async () => {
       await axios
-        .get("https://oursos-backend-production.up.railway.app/languagelistenglish")
+        .get("https://oursos-backend-production.up.railway.app/languages")
         .then((res) => {
           setLanguages(res.data);
         });
@@ -117,7 +117,6 @@ export default function App() {
     setIntroComponent(buttonText);
   }
 
-
   let text = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
@@ -126,75 +125,77 @@ export default function App() {
   }
   return (
     // <Text>fooo</Text>
-    <UserLanguageContext.Provider value={[userLang, setUserLang]}>
-      <View style={styles.container}>
-        {
-          introComponent === "welcome" ?
-            <IntroTextButton heading="Welcome To OurSOS!"
-              details="Empowering Your Safety, Connecting Our World"
-              buttonNext="selectLocation"
-              buttonText="Select Language"
-              buttonFunction={buttonFunction}
-            >
-            </IntroTextButton>
-            : introComponent === "selectLocation" ?
-              <IntroLayout>
-                <Text style={styles.header}>Select your language</Text>
-                <FlatList
-                  style={tw.style(`w-full`, `flex`, `flex-col`)}
-                  data={languages}
-                  renderItem={({
-                    item,
-                    index,
-                  }: {
-                    item: LanguageType;
-                    index: number;
-                  }) => (
-                    <Pressable
-                      onPress={() => {
-                        setUserLang(languages[index]?.tag);
-                      }}
-                      style={tw.style(`text-white`, `bg-white`, `px-7`, `py-3`, `rounded-lg`, `border`, `mb-3`)}
-                    >
-                      <Text style={styles.text}>{item.name}</Text>
-                    </Pressable>
-                  )}
-                />
-                <Pressable
-                  onPress={() => {
-                    setUserLanguage();
-                  }}
-                  style={tw.style(`text-white`, `bg-[#003566]`, `px-7`, `py-3`, `rounded-lg`)}
-                >
-                  <Text style={tw.style(`text-white`)}>Continue</Text>
-                </Pressable>
-              </IntroLayout>
-              : introComponent === "newsFeed"
-                ? <IntroTextButton heading={translatedStaticContent["intro-newsfeed"].heading}
-                  details={translatedStaticContent["intro-newsfeed"].details}
-                  buttonNext="introMap"
+    // <UserLanguageContext.Provider value={[userLang, setUserLang]}>
+    // <SafeAreaProvider>
+    <View style={styles.container}>
+      {
+        introComponent === "welcome" ?
+          <IntroTextButton heading="Welcome To OurSOS!"
+            details="Empowering Your Safety, Connecting Our World"
+            buttonNext="selectLocation"
+            buttonText="Select Language"
+            buttonFunction={buttonFunction}
+          >
+          </IntroTextButton>
+          : introComponent === "selectLocation" ?
+            <IntroLayout>
+              <Text style={styles.header}>Select your language</Text>
+              <FlatList
+                style={tw.style(`w-full`, `flex`, `flex-col`)}
+                data={languages}
+                renderItem={({
+                  item,
+                  index,
+                }: {
+                  item: LanguageType;
+                  index: number;
+                }) => (
+                  <Pressable
+                    onPress={() => {
+                      setUserLang(languages[index]?.tag);
+                    }}
+                    style={tw.style(`text-white`, `bg-white`, `px-7`, `py-3`, `rounded-lg`, `border`, `mb-3`)}
+                  >
+                    <Text style={styles.text}>{item.name}</Text>
+                  </Pressable>
+                )}
+              />
+              <Pressable
+                onPress={() => {
+                  setUserLanguage();
+                }}
+                style={tw.style(`text-white`, `bg-[#003566]`, `px-7`, `py-3`, `rounded-lg`)}
+              >
+                <Text style={tw.style(`text-white`)}>Continue</Text>
+              </Pressable>
+            </IntroLayout>
+            : introComponent === "newsFeed"
+              ? <IntroTextButton heading={translatedStaticContent["intro-newsfeed"].heading}
+                details={translatedStaticContent["intro-newsfeed"].details}
+                buttonNext="introMap"
+                buttonText={translatedStaticContent["button-text"].continue}
+                buttonFunction={buttonFunction}
+              ></IntroTextButton>
+              : introComponent === "introMap"
+                ? <IntroTextButton heading={translatedStaticContent["intro-map"].heading}
+                  details={translatedStaticContent["intro-map"].details}
+                  buttonNext="introFriends"
                   buttonText={translatedStaticContent["button-text"].continue}
                   buttonFunction={buttonFunction}
                 ></IntroTextButton>
-                : introComponent === "introMap"
-                  ? <IntroTextButton heading={translatedStaticContent["intro-map"].heading}
-                    details={translatedStaticContent["intro-map"].details}
-                    buttonNext="introFriends"
+                : introComponent === "introFriends"
+                  ? <IntroTextButton heading={translatedStaticContent["intro-friends"].heading}
+                    details={translatedStaticContent["intro-friends"].details}
+                    buttonNext="dashboard"
                     buttonText={translatedStaticContent["button-text"].continue}
+
                     buttonFunction={buttonFunction}
                   ></IntroTextButton>
-                  : introComponent === "introFriends"
-                    ? <IntroTextButton heading={translatedStaticContent["intro-friends"].heading}
-                      details={translatedStaticContent["intro-friends"].details}
-                      buttonNext="dashboard"
-                      buttonText={translatedStaticContent["button-text"].continue}
-
-                      buttonFunction={buttonFunction}
-                    ></IntroTextButton>
-                    : <Dashboard user={currentUser} userLang={userLang}></Dashboard>
-        }
-      </View>
-    </UserLanguageContext.Provider>
+                  : <Dashboard user={currentUser} userLang={userLang}></Dashboard>
+      }
+    </View>
+    // </SafeAreaProvider>
+    // </UserLanguageContext.Provider>
   );
 }
 

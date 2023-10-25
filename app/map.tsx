@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, Image } from "react-native";
 import axios from "axios";
 import IconTextBlock from "./components/molecules/iconTextBlock";
 import { useRouter } from "expo-router";
@@ -85,14 +85,23 @@ export default function App() {
 
   return (
     <View style={tw.style(`h-full`, `relative`)}>
-      <Text style={tw.style(`text-[2rem]`)}>Vancouver</Text>
+      <View style={tw.style(`flex flex-row justify-between p-6`)}>
+        <View style={tw.style(`flex flex-row content-center`)}>
+          {/* <Image source={require("../assets/LocationDot.png")} style={tw.style(`h-6 w-6 m-2`)} /> */}
+          <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text>
+        </View>
+        {/* <Image
+          style={tw.style(`h-15 w-15`)}
+          source={require("../assets/favicon.png")}
+        /> */}
+      </View>
       <Searchbar
-        style={tw.style(`mb-4`)}
+        style={tw.style(`m-4 mt-0`)}
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      <MapComp height={430} />
+      <MapComp />
       <Footer />
     </View>
   );

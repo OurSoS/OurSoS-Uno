@@ -9,23 +9,24 @@ import {
         TouchableOpacity,
 } from "react-native";
 import axios from "axios";
-import tw from 'twrnc';
+import tw from "twrnc";
 
 import { useRouter } from "expo-router";
 
 import * as Location from "expo-location";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 type MapCompProps = {
-        height: number;
+        height?: number;
 };
 
 type alert = {
         id: number;
         message: string;
         category: string;
-        latitude: string;
-        longitude: string;
-        radius: string;
+        latitude: Float;
+        longitude: Float;
+        radius: Float;
         time: string;
         severity: string;
 };
@@ -93,7 +94,7 @@ export default function MapComp({ height }: MapCompProps) {
                 <View style={tw.style(`flex`)}>
                         <MapView
                                 ref={mapRef}
-                                style={{ ...styles.map, height: height, borderRadius: 10 }}
+                                style={{ ...styles.map, height: height !== undefined ? height : "100%", borderRadius: 10 }}
                                 initialRegion={{
                                         latitude: location?.coords.latitude || 40,
                                         longitude: location?.coords.longitude || -123.11525937277163,
