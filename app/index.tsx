@@ -57,7 +57,7 @@ type LanguageType = {
 export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] = useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("welcome");
+  const [introComponent, setIntroComponent] = useState("d");
   const [languages, setLanguages] = useState<LanguageType[]>([])
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
