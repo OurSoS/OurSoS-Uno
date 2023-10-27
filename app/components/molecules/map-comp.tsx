@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Overlay } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  Image
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
@@ -69,6 +70,22 @@ type earthquake = {
 };
 
 type fire = {};
+
+const handleNewPin = () => {
+  console.log("new pin");
+}
+
+const handleToggleMyLocation = () => {
+  console.log("toggle my location");
+}
+
+const handleReportAlert = () => {
+  console.log("report alert");
+};
+
+
+
+
 
 export default function MapComp({ height }: MapCompProps) {
   const router = useRouter();
@@ -229,7 +246,6 @@ export default function MapComp({ height }: MapCompProps) {
               />
             );
           })} 
-          
 
         {/* if users location is set on, use location of user device, if not then dont show marker */}
         {/* MY MARKER */}
@@ -242,10 +258,21 @@ export default function MapComp({ height }: MapCompProps) {
             title={"You are here"}
           />
         )}
-        <View>
-          <Text>TESTTESTETS</Text>
-        </View>
       </MapView>
+
+        <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+          <TouchableOpacity onPress={handleNewPin}> 
+            <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleToggleMyLocation}>
+            <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleReportAlert}>
+            <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+          
+        </View>
+      
     </View>
   );
 }
