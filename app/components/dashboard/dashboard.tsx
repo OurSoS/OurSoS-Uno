@@ -80,7 +80,7 @@ export default function Dashboard({
           throw new Error("Network response was not ok.");
         const translatedNews = await translateResponse.json();
         setTranslatedNews(translatedNews);
-        console.log("adsfsdafasdfsad", translatedNews);
+        // console.log("adsfsdafasdfsad", translatedNews);
       } catch (err) {
         console.error("Error in fetching or translating news:", err);
       }

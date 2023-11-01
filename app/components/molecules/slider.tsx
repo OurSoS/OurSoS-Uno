@@ -12,7 +12,7 @@ export default function Slider({
   onToggleSnackBar: any;
 }) {
   useEffect(() => {
-    console.log("Translated Data: ", translatedData);
+    // console.log("Translated Data: ", translatedData);
   }, [translatedData]);
   return (
     <ScrollView
@@ -27,7 +27,7 @@ export default function Slider({
         const displayData =
           translatedData && translatedData[i] ? translatedData[i] : item;
 
-        console.log(`Item at index ${i}:`, item, `; Translated:`, displayData);
+        // console.log(`Item at index ${i}:`, item, `; Translated:`, displayData);
 
         return (
           <ContentCard

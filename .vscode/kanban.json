@@ -1,1 +1,1 @@
-{"completed":[],"inprogress":[{"name":"Map - UI (Create alert, toggle all -> my alerts)"}],"testing":[],"todo":[{"name":"Map - Full Functionality"}]}
+{"completed":[],"inprogress":[],"testing":[{"name":"Map - Button UI Front End"}],"todo":[{"name":"Map - Backend Create Pin"},{"name":"Map - Functionality - Toggle Location"},{"name":"Map - Backend Refresh Map"}]}
