@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker, Overlay } from "react-native-maps";
+import MapView, { Circle, Marker, Overlay } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -92,6 +92,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
+  const [movingMarker, setMovingMarker] = useState(false);
 
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
@@ -191,6 +192,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         {alerts &&
           alerts.map((a, i) => {
             return (
+              <View key={i}>
               <Marker
                 key={i}
                 pinColor="blue"
@@ -200,12 +202,20 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 }}
                 title={a.category + " - " + a.severity + "\n" + a.message}
               />
+              <Circle
+                  center={{ latitude: a.latitude, longitude: a.longitude }}
+                  radius={a.radius * 1000} // Adjust this radius as needed
+                  fillColor="rgba(255, 0, 0, 0.5)" // Adjust the color and opacity of the circle
+                />
+
+              </View>
             );
           })}
         {/* EARTHQUAKE ALERTS */}
         {earthquakes &&
           earthquakes.map((a: any, i: number) => {
             return (
+              <View key={i}>
               <Marker
                 key={i}
                 coordinate={{
@@ -213,12 +223,20 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   longitude: a.geometry.coordinates[0],
                 }}
               />
+              <Circle
+                  center={{ latitude: a.geometry.coordinates[1], longitude:a.geometry.coordinates[0] }}
+                  radius={a.properties.rms * 1000} // Adjust this radius as needed
+                  fillColor="rgba(215, 100, 100, 0.5)" // Adjust the color and opacity of the circle
+                />
+
+              </View>
             );
           })}
         {/* FIRE ALERTS */}
         {fires &&
           fires.map((a: any, i: number) => {
             return (
+              <View key={i}>
               <Marker
                 key={i}
                 pinColor="orange"
@@ -227,6 +245,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   longitude: parseFloat(a.longitude),
                 }}
               />
+              <Circle
+                  center={{ latitude: parseFloat(a.latitude), longitude:parseFloat(a.longitude) }}
+                  radius={a.track * 1000} // Adjust this radius as needed
+                  fillColor="rgba(255, 200, 200, 0.5)" // Adjust the color and opacity of the circle
+                />
+              </View>
             );
           })}
           {/* TSUNAMI ALERTS */}
