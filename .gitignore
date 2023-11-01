@@ -32,4 +32,7 @@ yarn-error.*
 .env*.local
 
 # typescript
-*.tsbuildinfo
+*.tsbuildinfo\
+
+#kanban
+kanban.json

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker, Circle } from "react-native-maps";
+import MapView, { Marker, Overlay } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  Image
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
@@ -18,6 +19,7 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 type MapCompProps = {
   height?: number;
+  buttons?: boolean;
 };
 
 type alert = {
@@ -70,7 +72,19 @@ type earthquake = {
 
 type fire = {};
 
-export default function MapComp({ height }: MapCompProps) {
+const handleNewPin = () => {
+  console.log("new pin");
+}
+
+const handleToggleMyLocation = () => {
+  console.log("toggle my location");
+}
+
+const handleReportAlert = () => {
+  console.log("report alert");
+};
+
+export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
   const [pins, setPins] = useState([]);
@@ -109,14 +123,14 @@ export default function MapComp({ height }: MapCompProps) {
   //GET EARTHQUAKE ALERTS
   useEffect(() => {
     axios
-      .get("https://oursos-backend-production.up.railway.app/earthquakes    ")
+      .get("https://oursos-backend-production.up.railway.app/earthquakes")
       .then((response) => {
-
+        
         setEarthquakes(response.data.features);
       })
       .then(() => {
         setTsunamis(earthquakes.filter(e => {
-          return e.properties.tsunami !== 0;
+               return e.properties.tsunami !== 0;
         }));
         console.log(tsunamis)
       })
@@ -167,8 +181,8 @@ export default function MapComp({ height }: MapCompProps) {
           borderRadius: 10,
         }}
         initialRegion={{
-          latitude: 49.2827,
-          longitude: -123.1207,
+          latitude: location?.coords.latitude || 40,
+          longitude: location?.coords.longitude || -123.11525937277163,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -177,52 +191,34 @@ export default function MapComp({ height }: MapCompProps) {
         {alerts &&
           alerts.map((a, i) => {
             return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  pinColor="blue"
-                  coordinate={{
-                    latitude: a.latitude,
-                    longitude: a.longitude,
-                  }}
-                  title={a.category + " - " + a.severity + "\n" + a.message}
-                />
-
-                <Circle
-                  center={{ latitude: a.latitude, longitude: a.longitude }}
-                  radius={a.radius * 1000} // Adjust this radius as needed
-                  fillColor="rgba(255, 0, 0, 0.5)" // Adjust the color and opacity of the circle
-                />
-
-              </View>
+              <Marker
+                key={i}
+                pinColor="blue"
+                coordinate={{
+                  latitude: a.latitude,
+                  longitude: a.longitude,
+                }}
+                title={a.category + " - " + a.severity + "\n" + a.message}
+              />
             );
           })}
         {/* EARTHQUAKE ALERTS */}
         {earthquakes &&
           earthquakes.map((a: any, i: number) => {
             return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: a.geometry.coordinates[1],
-                    longitude: a.geometry.coordinates[0],
-                  }}
-                />
-                <Circle
-                  center={{ latitude: a.geometry.coordinates[1], longitude:a.geometry.coordinates[0] }}
-                  radius={a.properties.rms * 1000} // Adjust this radius as needed
-                  fillColor="rgba(215, 100, 100, 0.5)" // Adjust the color and opacity of the circle
-                />
-
-              </View>
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: a.geometry.coordinates[1],
+                  longitude: a.geometry.coordinates[0],
+                }}
+              />
             );
           })}
         {/* FIRE ALERTS */}
         {fires &&
           fires.map((a: any, i: number) => {
             return (
-              <View key={i}>
               <Marker
                 key={i}
                 pinColor="orange"
@@ -231,16 +227,10 @@ export default function MapComp({ height }: MapCompProps) {
                   longitude: parseFloat(a.longitude),
                 }}
               />
-              <Circle
-                  center={{ latitude: parseFloat(a.latitude), longitude:parseFloat(a.longitude) }}
-                  radius={a.track * 1000} // Adjust this radius as needed
-                  fillColor="rgba(255, 200, 200, 0.5)" // Adjust the color and opacity of the circle
-                />
-              </View>
             );
           })}
-        {/* TSUNAMI ALERTS */}
-        {tsunamis &&
+          {/* TSUNAMI ALERTS */}
+          {tsunamis &&
           tsunamis?.map((a: any, i: number) => {
             return (
               <Marker
@@ -252,8 +242,7 @@ export default function MapComp({ height }: MapCompProps) {
                 }}
               />
             );
-          })}
-
+          })} 
 
         {/* if users location is set on, use location of user device, if not then dont show marker */}
         {/* MY MARKER */}
@@ -266,10 +255,24 @@ export default function MapComp({ height }: MapCompProps) {
             title={"You are here"}
           />
         )}
-        <View>
-          <Text>TESTTESTETS</Text>
-        </View>
       </MapView>
+
+         {buttons === true ? (
+           <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+             <TouchableOpacity onPress={handleNewPin}> 
+               <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+             <TouchableOpacity onPress={handleToggleMyLocation}>
+               <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+             <TouchableOpacity onPress={handleReportAlert}>
+               <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+           </View>  
+         ): (
+            <View></View>
+         )}
+      
     </View>
   );
 }

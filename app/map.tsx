@@ -101,7 +101,7 @@ export default function App() {
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      <MapComp />
+      <MapComp buttons={true}/>
       <Footer />
     </View>
   );
