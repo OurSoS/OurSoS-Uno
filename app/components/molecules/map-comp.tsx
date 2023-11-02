@@ -19,6 +19,7 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 type MapCompProps = {
   height?: number;
+  buttons?: boolean;
 };
 
 type alert = {
@@ -83,11 +84,7 @@ const handleReportAlert = () => {
   console.log("report alert");
 };
 
-
-
-
-
-export default function MapComp({ height }: MapCompProps) {
+export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
   const [pins, setPins] = useState([]);
@@ -126,7 +123,7 @@ export default function MapComp({ height }: MapCompProps) {
   //GET EARTHQUAKE ALERTS
   useEffect(() => {
     axios
-      .get("https://oursos-backend-production.up.railway.app/earthquakes    ")
+      .get("https://oursos-backend-production.up.railway.app/earthquakes")
       .then((response) => {
         
         setEarthquakes(response.data.features);
@@ -260,18 +257,21 @@ export default function MapComp({ height }: MapCompProps) {
         )}
       </MapView>
 
-        <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
-          <TouchableOpacity onPress={handleNewPin}> 
-            <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleToggleMyLocation}>
-            <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleReportAlert}>
-            <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
-          </TouchableOpacity>
-          
-        </View>
+         {buttons === true ? (
+           <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+             <TouchableOpacity onPress={handleNewPin}> 
+               <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+             <TouchableOpacity onPress={handleToggleMyLocation}>
+               <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+             <TouchableOpacity onPress={handleReportAlert}>
+               <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
+             </TouchableOpacity>
+           </View>  
+         ): (
+            <View></View>
+         )}
       
     </View>
   );
