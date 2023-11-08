@@ -218,6 +218,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <View key={i}>
               <Marker
                 key={i}
+                title={a.properties.title}
+                image={require('../../../assets/mapIcons/Earthquake.png')}
                 coordinate={{
                   latitude: a.geometry.coordinates[1],
                   longitude: a.geometry.coordinates[0],
@@ -239,7 +241,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <View key={i}>
               <Marker
                 key={i}
-                pinColor="orange"
+                image={require('../../../assets/mapIcons/Fire_Icon.png')}
                 coordinate={{
                   latitude: parseFloat(a.latitude),
                   longitude: parseFloat(a.longitude),
@@ -259,7 +261,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             return (
               <Marker
                 key={i}
-                pinColor="pink"
+                image={require('../../../assets/mapIcons/Tsunami.png')}
                 coordinate={{
                   latitude: parseFloat(a.latitude),
                   longitude: parseFloat(a.longitude),
@@ -272,6 +274,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         {/* MY MARKER */}
         {location && (
           <Marker
+            image={require('../../../assets/mapIcons/Location.png')}
             coordinate={{
               latitude: location?.coords.latitude,
               longitude: location?.coords.longitude,
