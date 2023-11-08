@@ -63,23 +63,23 @@ export default function Dashboard({
           };
         });
 
-        const translateResponse = await fetch(
-          "https://oursos-backend-production.up.railway.app/translateobject",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              translateObject: translationData,
-              lang: userLang,
-            }),
-          }
-        );
-        if (!translateResponse.ok)
-          throw new Error("Network response was not ok.");
-        const translatedNews = await translateResponse.json();
-        setTranslatedNews(translatedNews);
+        // const translateResponse = await fetch(
+        //   "https://oursos-backend-production.up.railway.app/translateobject",
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({
+        //       translateObject: translationData,
+        //       lang: userLang,
+        //     }),
+        //   }
+        // );
+        // if (!translateResponse.ok)
+        //   throw new Error("Network response was not ok.");
+        // const translatedNews = await translateResponse.json();
+        // setTranslatedNews(translatedNews);
         // console.log("adsfsdafasdfsad", translatedNews);
       } catch (err) {
         console.error("Error in fetching or translating news:", err);
