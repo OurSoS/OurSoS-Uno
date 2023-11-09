@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Circle, Marker, Overlay } from "react-native-maps";
+import { Circle, Marker, Overlay } from "react-native-maps";
+import MapView from 'react-native-map-clustering';
 import {
   StyleSheet,
   View,
@@ -169,7 +170,7 @@ const handleRegionChange = debounce((region) => {
           setVisibleFires(visibleFires);
           setVisibleTsunamis(visibleTsunamis);
 
-}, 1000); // Adjust the delay (in milliseconds) as needed
+}, 400); // Adjust the delay (in milliseconds) as needed
 
 
   const retrieveAlerts = async () => {
