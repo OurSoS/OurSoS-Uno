@@ -26,8 +26,7 @@
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE"
-      ],
-      "package": "com.jekburri.oursos"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -46,9 +45,6 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "5fac9b2a-424a-4d07-867c-dc7e20f631fe"
       }
     }
   }
