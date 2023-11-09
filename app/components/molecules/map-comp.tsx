@@ -97,6 +97,13 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   const mapRef = React.useRef<MapView>(null);
 
+  const [visibleAlerts, setVisibleAlerts] = useState<alert[]>([]);
+  const [visibleEarthquakes, setVisibleEarthquakes] = useState<earthquake[]>(
+    []
+  );
+  const [visibleFires, setVisibleFires] = useState<any>([]);
+  const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+
   const retrieveAlerts = async () => {
     await axios
       .get("https://oursos-backend-production.up.railway.app/alerts")
@@ -181,104 +188,139 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           longitudeDelta: 0.0421,
         }}
         showsUserLocation={true}
+        onRegionChange={(region) => {
+          // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
+          const visibleAlerts = alerts.filter((a) => {
+            // Check if the alert's latitude and longitude are within the visible region
+            return (
+              a.latitude >= region.latitude - region.latitudeDelta / 2 &&
+              a.latitude <= region.latitude + region.latitudeDelta / 2 &&
+              a.longitude >= region.longitude - region.longitudeDelta / 2 &&
+              a.longitude <= region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleEarthquakes = earthquakes.filter((a) => {
+            // Check if the earthquake's latitude and longitude are within the visible region
+            return (
+              a.geometry.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              a.geometry.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              a.geometry.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              a.geometry.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleFires = fires.filter((a:any) => {
+            // Check if the fire's latitude and longitude are within the visible region
+            return (
+              parseFloat(a.latitude) >=
+                region.latitude - region.latitudeDelta / 2 &&
+              parseFloat(a.latitude) <=
+                region.latitude + region.latitudeDelta / 2 &&
+              parseFloat(a.longitude) >=
+                region.longitude - region.longitudeDelta / 2 &&
+              parseFloat(a.longitude) <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleTsunamis = tsunamis.filter((a:any) => {
+            // Check if the tsunami's latitude and longitude are within the visible region
+            return (
+              parseFloat(a.latitude) >=
+                region.latitude - region.latitudeDelta / 2 &&
+              parseFloat(a.latitude) <=
+                region.latitude + region.latitudeDelta / 2 &&
+              parseFloat(a.longitude) >=
+                region.longitude - region.longitudeDelta / 2 &&
+              parseFloat(a.longitude) <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          // Update the state variables with the filtered data
+          setVisibleAlerts(visibleAlerts);
+          setVisibleEarthquakes(visibleEarthquakes);
+          setVisibleFires(visibleFires);
+          setVisibleTsunamis(visibleTsunamis);
+        }}
       >
-        {/* USER GENERATED ALERTS */}
-        {alerts &&
-          alerts.map((a, i) => {
-            return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  pinColor="blue"
-                  coordinate={{
-                    latitude: a.latitude,
-                    longitude: a.longitude,
-                  }}
-                  title={a.category + " - " + a.severity + "\n" + a.message}
-                />
-                <Circle
-                  center={{ latitude: a.latitude, longitude: a.longitude }}
-                  radius={a.radius * 1000} // Adjust this radius as needed
-                  fillColor="rgba(255, 0, 0, 0.5)" // Adjust the color and opacity of the circle
-                />
-              </View>
-            );
-          })}
-        {/* EARTHQUAKE ALERTS */}
-        {earthquakes &&
-          earthquakes.map((a: any, i: number) => {
-            return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  title={a.properties.title}
-                  coordinate={{
-                    latitude: a.geometry.coordinates[1],
-                    longitude: a.geometry.coordinates[0],
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/mapIcons/Earthquake.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-                <Circle
-                  center={{
-                    latitude: a.geometry.coordinates[1],
-                    longitude: a.geometry.coordinates[0],
-                  }}
-                  radius={a.properties.rms * 1000} // Adjust this radius as needed
-                  fillColor="rgba(215, 100, 100, 0.5)" // Adjust the color and opacity of the circle
-                />
-              </View>
-            );
-          })}
-        {/* FIRE ALERTS */}
-        {fires &&
-          fires.map((a: any, i: number) => {
-            return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/mapIcons/Fire_Icon.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-                <Circle
-                  center={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
-                  radius={a.track * 1000} // Adjust this radius as needed
-                  fillColor="rgba(255, 200, 200, 0.5)" // Adjust the color and opacity of the circle
-                />
-              </View>
-            );
-          })}
-        {/* TSUNAMI ALERTS */}
-        {tsunamis &&
-          tsunamis?.map((a: any, i: number) => {
-            return (
-              <Marker
-                key={i}
-                coordinate={{
-                  latitude: parseFloat(a.latitude),
-                  longitude: parseFloat(a.longitude),
-                }}
-              >
-                <Image
-                  source={require("../../../assets/mapIcons/Tsunami.png")}
-                  style={{ width: 20, height: 20 }} // Change the width and height as needed
-                />
-              </Marker>
-            );
-          })}
+        {visibleAlerts.map((a, i) => {
+          // Render visible alerts
+          return (
+            <Marker
+              key={i}
+              coordinate={{
+                latitude: a.latitude,
+                longitude: a.longitude,
+              }}
+            >
+              <Image
+                source={require("../../../assets/LocationDot.png")}
+                style={{ width: 20, height: 20 }} // Change the width and height as needed
+              />
+            </Marker>
+          );
+        })}
+
+        {visibleEarthquakes.map((a:any, i) => {
+          // Render visible earthquakes
+          return (
+            <Marker
+              key={i}
+              coordinate={{
+                latitude: a.geometry.coordinates[1],
+                longitude: a.geometry.coordinates[0],
+              }}
+            >
+              <Image
+                source={require("../../../assets/mapIcons/Earthquake.png")}
+                style={{ width: 20, height: 20 }} // Change the width and height as needed
+              />
+            </Marker>
+          );
+        })}
+
+        {visibleFires.map((a:any, i:number) => {
+          // Render visible fires
+          return (
+            <Marker
+              key={i}
+              coordinate={{
+                latitude: parseFloat(a.latitude),
+                longitude: parseFloat(a.longitude),
+              }}
+            >
+              <Image
+                source={require("../../../assets/mapIcons/Wildfire.png")}
+                style={{ width: 20, height: 20 }} // Change the width and height as needed
+              />
+            </Marker>
+          );
+        })}
+
+        {visibleTsunamis.map((a:any, i:number) => {
+          // Render visible tsunamis
+          return (
+            <Marker
+              key={i}
+              coordinate={{
+                latitude: parseFloat(a.latitude),
+                longitude: parseFloat(a.longitude),
+              }}
+            >
+              <Image
+                source={require("../../../assets/mapIcons/Tsunami.png")}
+                style={{ width: 20, height: 20 }} // Change the width and height as needed
+              />
+            </Marker>
+          );
+        })}
+
       </MapView>
 
       {buttons === true ? (

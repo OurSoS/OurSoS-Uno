@@ -71,25 +71,25 @@ export default function Index() {
     if (userLang) {
       setUserLang(userLang);
 
-      await axios
-        .post<{ translateObject: staticType; lang: string }>(
-          "https://oursos-backend-production.up.railway.app/translateobject",
-          { translateObject: staticText, lang: userLang }
-        )
-        .then((res) => {
-          setTranslatedStaticContent(res.data);
-          setIntroComponent("newsFeed");
-        });
+      // await axios
+      //   .post<{ translateObject: staticType; lang: string }>(
+      //     "https://oursos-backend-production.up.railway.app/translateobject",
+      //     { translateObject: staticText, lang: userLang }
+      //   )
+      //   .then((res) => {
+      //     setTranslatedStaticContent(res.data);
+      //     setIntroComponent("newsFeed");
+      //   });
     }
   };
 
   useEffect(() => {
     (async () => {
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/languages")
-        .then((res) => {
-          setLanguages(res.data);
-        });
+      // await axios
+      //   .get("https://oursos-backend-production.up.railway.app/languages")
+      //   .then((res) => {
+      //     setLanguages(res.data);
+      //   });
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
