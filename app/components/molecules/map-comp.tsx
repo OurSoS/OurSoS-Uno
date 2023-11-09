@@ -15,6 +15,8 @@ import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
+import debounce from "lodash.debounce";
+
 type MapCompProps = {
   height?: number;
   buttons?: boolean;
@@ -82,6 +84,7 @@ const handleReportAlert = () => {
   console.log("report alert");
 };
 
+
 export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
@@ -104,6 +107,70 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+
+const handleRegionChange = debounce((region) => {
+  
+           // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
+           const visibleAlerts = alerts.filter((a) => {
+            // Check if the alert's latitude and longitude are within the visible region
+            return (
+              a.latitude >= region.latitude - region.latitudeDelta / 2 &&
+              a.latitude <= region.latitude + region.latitudeDelta / 2 &&
+              a.longitude >= region.longitude - region.longitudeDelta / 2 &&
+              a.longitude <= region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleEarthquakes = earthquakes.filter((a) => {
+            // Check if the earthquake's latitude and longitude are within the visible region
+            return (
+              a.geometry.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              a.geometry.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              a.geometry.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              a.geometry.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleFires = fires.filter((a:any) => {
+            // Check if the fire's latitude and longitude are within the visible region
+            return (
+              parseFloat(a.latitude) >=
+                region.latitude - region.latitudeDelta / 2 &&
+              parseFloat(a.latitude) <=
+                region.latitude + region.latitudeDelta / 2 &&
+              parseFloat(a.longitude) >=
+                region.longitude - region.longitudeDelta / 2 &&
+              parseFloat(a.longitude) <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          const visibleTsunamis = tsunamis.filter((a:any) => {
+            // Check if the tsunami's latitude and longitude are within the visible region
+            return (
+              parseFloat(a.latitude) >=
+                region.latitude - region.latitudeDelta / 2 &&
+              parseFloat(a.latitude) <=
+                region.latitude + region.latitudeDelta / 2 &&
+              parseFloat(a.longitude) >=
+                region.longitude - region.longitudeDelta / 2 &&
+              parseFloat(a.longitude) <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          });
+
+          // Update the state variables with the filtered data
+          setVisibleAlerts(visibleAlerts);
+          setVisibleEarthquakes(visibleEarthquakes);
+          setVisibleFires(visibleFires);
+          setVisibleTsunamis(visibleTsunamis);
+
+}, 1000); // Adjust the delay (in milliseconds) as needed
+
 
   const retrieveAlerts = async () => {
     await axios
@@ -237,65 +304,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         }}
         showsUserLocation={true}
         onRegionChange={(region) => {
-          // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
-          const visibleAlerts = alerts.filter((a) => {
-            // Check if the alert's latitude and longitude are within the visible region
-            return (
-              a.latitude >= region.latitude - region.latitudeDelta / 2 &&
-              a.latitude <= region.latitude + region.latitudeDelta / 2 &&
-              a.longitude >= region.longitude - region.longitudeDelta / 2 &&
-              a.longitude <= region.longitude + region.longitudeDelta / 2
-            );
-          });
-
-          const visibleEarthquakes = earthquakes.filter((a) => {
-            // Check if the earthquake's latitude and longitude are within the visible region
-            return (
-              a.geometry.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
-              a.geometry.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
-              a.geometry.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
-              a.geometry.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
-
-          const visibleFires = fires.filter((a:any) => {
-            // Check if the fire's latitude and longitude are within the visible region
-            return (
-              parseFloat(a.latitude) >=
-                region.latitude - region.latitudeDelta / 2 &&
-              parseFloat(a.latitude) <=
-                region.latitude + region.latitudeDelta / 2 &&
-              parseFloat(a.longitude) >=
-                region.longitude - region.longitudeDelta / 2 &&
-              parseFloat(a.longitude) <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
-
-          const visibleTsunamis = tsunamis.filter((a:any) => {
-            // Check if the tsunami's latitude and longitude are within the visible region
-            return (
-              parseFloat(a.latitude) >=
-                region.latitude - region.latitudeDelta / 2 &&
-              parseFloat(a.latitude) <=
-                region.latitude + region.latitudeDelta / 2 &&
-              parseFloat(a.longitude) >=
-                region.longitude - region.longitudeDelta / 2 &&
-              parseFloat(a.longitude) <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
-
-          // Update the state variables with the filtered data
-          setVisibleAlerts(visibleAlerts);
-          setVisibleEarthquakes(visibleEarthquakes);
-          setVisibleFires(visibleFires);
-          setVisibleTsunamis(visibleTsunamis);
+          handleRegionChange(region);
         }}
+          
       >
         {visibleAlerts.map((a, i) => {
           // Render visible alerts
