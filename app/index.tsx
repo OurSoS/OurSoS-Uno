@@ -68,19 +68,19 @@ export default function Index() {
       friends: [2, 3],
       profile: "https://picsum.photos/200/300?grayscale",
     };
-    if (userLang) {
-      setUserLang(userLang);
+    // if (userLang) {
+    //   setUserLang(userLang);
 
-      // await axios
-      //   .post<{ translateObject: staticType; lang: string }>(
-      //     "https://oursos-backend-production.up.railway.app/translateobject",
-      //     { translateObject: staticText, lang: userLang }
-      //   )
-      //   .then((res) => {
-      //     setTranslatedStaticContent(res.data);
-      //     setIntroComponent("newsFeed");
-      //   });
-    }
+    //   await axios
+    //     .post<{ translateObject: staticType; lang: string }>(
+    //       "https://oursos-backend-production.up.railway.app/translateobject",
+    //       { translateObject: staticText, lang: userLang }
+    //     )
+    //     .then((res) => {
+    //       setTranslatedStaticContent(res.data);
+    //       setIntroComponent("newsFeed");
+    //     });
+    // }
   };
 
   useEffect(() => {

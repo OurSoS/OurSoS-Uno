@@ -94,6 +94,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
+  const [friendsLocation, setFriendsLocation] = useState<any>([]);
 
   const mapRef = React.useRef<MapView>(null);
 
@@ -135,6 +136,33 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   useEffect(() => {
     (async () => {
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/earthquakes")
+        .then((response) => {
+
+          setEarthquakes(response.data.features);
+        })
+        .then(() => {
+          setTsunamis(earthquakes.filter(e => {
+            return e.properties.tsunami !== 0;
+          }));
+          console.log(tsunamis)
+        })
+        .catch((error) => console.error(error));
+      //GET FIRE ALERTS
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/fires")
+        .then((response) => {
+          setFires(response.data);
+        })
+        .catch((error) => console.error(error));
+
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/alerts")
+        .then((response) => {
+          setAlerts(response.data);
+        })
+        .catch((error) => console.error(error));
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -142,8 +170,28 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-    })();
+      // console.log(location);
 
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/alerts")
+        .then((response) => {
+          setAlerts(response.data);
+        })
+        .catch((error) => console.error(error));
+
+      await axios.get("https://oursos-backend-production.up.railway.app/users/1").then((response) => {
+        return response.data.friends;
+      }).then((response) => {
+        response.map((friend: any) => {
+          axios.get(`https://oursos-backend-production.up.railway.app/users/${friend}`).then((response) => {
+            let long = response.data.longitude;
+            let lat = response.data.latitude;
+            setFriendsLocation((friendsLocation: any) => [...friendsLocation, { longitude: long, latitude: lat }]);
+          })
+        })
+      }).catch((error) => console.error(error));
+    })();
+    
     retrieveAlerts();
   }, []);
 
@@ -320,6 +368,21 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             </Marker>
           );
         })}
+
+{friendsLocation &&
+          friendsLocation?.map((a: any, i: number) => {
+            return (
+              <View key={i}>
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: parseFloat(a.latitude),
+                    longitude: parseFloat(a.longitude),
+                  }}
+                />
+              </View>
+            );
+          })}
 
       </MapView>
 
