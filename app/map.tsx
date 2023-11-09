@@ -22,66 +22,59 @@ type alert = {
 };
 
 export default function App() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  const [pins, setPins] = useState([]);
-  const [alerts, setAlerts] = useState<alert[]>([]);
+  // const [pins, setPins] = useState([]);
+  // const [alerts, setAlerts] = useState<alert[]>([]);
 
-  const [location, setLocation] = useState<Location.LocationObject>();
-  const [errorMsg, setErrorMsg] = useState("");
+  // const [location, setLocation] = useState<Location.LocationObject>();
+  // const [errorMsg, setErrorMsg] = useState("");
 
   const mapRef = React.useRef<MapView>(null);
 
+
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = (query: string) => setSearchQuery(query);
-  useEffect(() => {
+  // useEffect(() => {
 
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //     console.log(location);
+  //   })();
+  // }, []);
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log(location);
-    })();
-  }, []);
 
-  useEffect(() => {
-    axios
-      .get("https://oursos-backend-production.up.railway.app/alerts")
-      .then((response) => {
-        setAlerts(response.data);
-      })
-      .catch((error) => console.error(error));
-  }, []);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+  // useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
 
-      if (mapRef.current) {
-        mapRef.current.animateToRegion(
-          {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          1000
-        );
-      }
-    })();
-  }, []);
+  //     if (mapRef.current) {
+  //       mapRef.current.animateToRegion(
+  //         {
+  //           latitude: location.coords.latitude,
+  //           longitude: location.coords.longitude,
+  //           latitudeDelta: 0.0922,
+  //           longitudeDelta: 0.0421,
+  //         },
+  //         1000
+  //       );
+  //     }
+  //   })();
+  // }, []);
 
   return (
     <View style={tw.style(`h-full`, `relative`)}>
@@ -101,7 +94,7 @@ export default function App() {
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      <MapComp buttons={true}/>
+      <MapComp buttons={true} />
       <Footer />
     </View>
   );

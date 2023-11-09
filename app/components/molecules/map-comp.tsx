@@ -96,11 +96,46 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
+  const [friendsLocation, setFriendsLocation] = useState<any>([]);
 
   const mapRef = React.useRef<MapView>(null);
 
+
+
+
+
+
+
+
   useEffect(() => {
     (async () => {
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/earthquakes")
+        .then((response) => {
+
+          setEarthquakes(response.data.features);
+        })
+        .then(() => {
+          setTsunamis(earthquakes.filter(e => {
+            return e.properties.tsunami !== 0;
+          }));
+          console.log(tsunamis)
+        })
+        .catch((error) => console.error(error));
+      //GET FIRE ALERTS
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/fires")
+        .then((response) => {
+          setFires(response.data);
+        })
+        .catch((error) => console.error(error));
+
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/alerts")
+        .then((response) => {
+          setAlerts(response.data);
+        })
+        .catch((error) => console.error(error));
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -110,41 +145,26 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       // console.log(location);
+
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/alerts")
+        .then((response) => {
+          setAlerts(response.data);
+        })
+        .catch((error) => console.error(error));
+
+      await axios.get("https://oursos-backend-production.up.railway.app/users/1").then((response) => {
+        return response.data.friends;
+      }).then((response) => {
+        response.map((friend: any) => {
+          axios.get(`https://oursos-backend-production.up.railway.app/users/${friend}`).then((response) => {
+            let long = response.data.longitude;
+            let lat = response.data.latitude;
+            setFriendsLocation((friendsLocation: any) => [...friendsLocation, { longitude: long, latitude: lat }]);
+          })
+        })
+      }).catch((error) => console.error(error));
     })();
-  }, []);
-  //GET USER GENERATED ALERTS
-  useEffect(() => {
-    axios
-      .get("https://oursos-backend-production.up.railway.app/alerts")
-      .then((response) => {
-        setAlerts(response.data);
-      })
-      .catch((error) => console.error(error));
-  }, []);
-  //GET EARTHQUAKE ALERTS
-  useEffect(() => {
-    axios
-      .get("https://oursos-backend-production.up.railway.app/earthquakes")
-      .then((response) => {
-        
-        setEarthquakes(response.data.features);
-      })
-      .then(() => {
-        setTsunamis(earthquakes.filter(e => {
-               return e.properties.tsunami !== 0;
-        }));
-        console.log(tsunamis)
-      })
-      .catch((error) => console.error(error));
-  }, []);
-  //GET FIRE ALERTS
-  useEffect(() => {
-    axios
-      .get("https://oursos-backend-production.up.railway.app/fires")
-      .then((response) => {
-        setFires(response.data);
-      })
-      .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
@@ -193,16 +213,16 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           alerts.map((a, i) => {
             return (
               <View key={i}>
-              <Marker
-                key={i}
-                pinColor="blue"
-                coordinate={{
-                  latitude: a.latitude,
-                  longitude: a.longitude,
-                }}
-                title={a.category + " - " + a.severity + "\n" + a.message}
-              />
-              <Circle
+                <Marker
+                  key={i}
+                  pinColor="blue"
+                  coordinate={{
+                    latitude: a.latitude,
+                    longitude: a.longitude,
+                  }}
+                  title={a.category + " - " + a.severity + "\n" + a.message}
+                />
+                <Circle
                   center={{ latitude: a.latitude, longitude: a.longitude }}
                   radius={a.radius * 1000} // Adjust this radius as needed
                   fillColor="rgba(255, 0, 0, 0.5)" // Adjust the color and opacity of the circle
@@ -211,22 +231,40 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               </View>
             );
           })}
+
+        {/* friends */}
+
+        {friendsLocation &&
+          friendsLocation?.map((a: any, i: number) => {
+            return (
+              <View key={i}>
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: parseFloat(a.latitude),
+                    longitude: parseFloat(a.longitude),
+                  }}
+                />
+              </View>
+            );
+          })}
+
         {/* EARTHQUAKE ALERTS */}
         {earthquakes &&
           earthquakes.map((a: any, i: number) => {
             return (
               <View key={i}>
-              <Marker
-                key={i}
-                title={a.properties.title}
-                image={require('../../../assets/mapIcons/Earthquake.png')}
-                coordinate={{
-                  latitude: a.geometry.coordinates[1],
-                  longitude: a.geometry.coordinates[0],
-                }}
-              />
-              <Circle
-                  center={{ latitude: a.geometry.coordinates[1], longitude:a.geometry.coordinates[0] }}
+                <Marker
+                  key={i}
+                  title={a.properties.title}
+                  image={require('../../../assets/mapIcons/Earthquake.png')}
+                  coordinate={{
+                    latitude: a.geometry.coordinates[1],
+                    longitude: a.geometry.coordinates[0],
+                  }}
+                />
+                <Circle
+                  center={{ latitude: a.geometry.coordinates[1], longitude: a.geometry.coordinates[0] }}
                   radius={a.properties.rms * 1000} // Adjust this radius as needed
                   fillColor="rgba(215, 100, 100, 0.5)" // Adjust the color and opacity of the circle
                 />
@@ -239,24 +277,24 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           fires.map((a: any, i: number) => {
             return (
               <View key={i}>
-              <Marker
-                key={i}
-                image={require('../../../assets/mapIcons/Fire_Icon.png')}
-                coordinate={{
-                  latitude: parseFloat(a.latitude),
-                  longitude: parseFloat(a.longitude),
-                }}
-              />
-              <Circle
-                  center={{ latitude: parseFloat(a.latitude), longitude:parseFloat(a.longitude) }}
+                <Marker
+                  key={i}
+                  image={require('../../../assets/mapIcons/Fire_Icon.png')}
+                  coordinate={{
+                    latitude: parseFloat(a.latitude),
+                    longitude: parseFloat(a.longitude),
+                  }}
+                />
+                <Circle
+                  center={{ latitude: parseFloat(a.latitude), longitude: parseFloat(a.longitude) }}
                   radius={a.track * 1000} // Adjust this radius as needed
                   fillColor="rgba(255, 200, 200, 0.5)" // Adjust the color and opacity of the circle
                 />
               </View>
             );
           })}
-          {/* TSUNAMI ALERTS */}
-          {tsunamis &&
+        {/* TSUNAMI ALERTS */}
+        {tsunamis &&
           tsunamis?.map((a: any, i: number) => {
             return (
               <Marker
@@ -268,7 +306,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 }}
               />
             );
-          })} 
+          })}
 
         {/* if users location is set on, use location of user device, if not then dont show marker */}
         {/* MY MARKER */}
@@ -284,22 +322,22 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         )}
       </MapView>
 
-         {buttons === true ? (
-           <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
-             <TouchableOpacity onPress={handleNewPin}> 
-               <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
-             </TouchableOpacity>
-             <TouchableOpacity onPress={handleToggleMyLocation}>
-               <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
-             </TouchableOpacity>
-             <TouchableOpacity onPress={handleReportAlert}>
-               <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
-             </TouchableOpacity>
-           </View>  
-         ): (
-            <View></View>
-         )}
-      
+      {buttons === true ? (
+        <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+          <TouchableOpacity onPress={handleNewPin}>
+            <Image source={require("../../../assets/mapui/MapUI-NewPin.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleToggleMyLocation}>
+            <Image source={require("../../../assets/mapui/MapUI-MyLoc.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleReportAlert}>
+            <Image source={require("../../../assets/mapui/MapUI-ReportAlert.png")} style={tw.style(`h-10 w-10 m-2`)} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View></View>
+      )}
+
     </View>
   );
 }
