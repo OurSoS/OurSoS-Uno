@@ -84,10 +84,6 @@ const handleNewPin = () => {
   console.log("new pin");
 };
 
-const handleToggleMyLocation = () => {
-  console.log("toggle my location");
-};
-
 export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
@@ -300,6 +296,21 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     console.log("report alert");
   };
 
+  const handleToggleMyLocation = () => {
+    console.log("toggle my location");
+    if (location && location.coords && mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        },
+        1000
+      ); // You can adjust the duration (1000 ms here) as needed
+    }
+  };
+
   return (
     <View style={tw.style(`flex`)}>
       <MapView
@@ -428,12 +439,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleToggleMyLocation}>
+          <Pressable onPress={handleToggleMyLocation}>
             <Image
               source={require("../../../assets/mapui/MapUI-MyLoc.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
-          </TouchableOpacity>
+          </Pressable>
           <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-ReportAlert.png")}
