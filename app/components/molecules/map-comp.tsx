@@ -409,7 +409,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         {draggableMarker && (
           <Marker
             coordinate={draggableMarker}
-            draggable
+            draggable={true}
             onDragEnd={(event) => {
               setDraggableMarker({
                 latitude: event.nativeEvent.coordinate.latitude,
