@@ -432,12 +432,24 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Alert Message</Text>
+                <Text style={styles.modalText}>Report Alert</Text>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setCustomAlertModel(!CustomAlertModel)}
+                  onPress={() => console.log("FireButton Clicked")}
                 >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
+                  <Text style={styles.textStyle}>Fire</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => console.log("EarthquakeButton Clicked")}
+                >
+                  <Text style={styles.textStyle}>Earthquake</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => console.log("TsunamiButton Clicked")}
+                >
+                  <Text style={styles.textStyle}>Tsunami</Text>
                 </Pressable>
               </View>
             </View>
@@ -498,6 +510,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    marginVertical: 5,
   },
   buttonClose: {
     backgroundColor: "#2196F3",
