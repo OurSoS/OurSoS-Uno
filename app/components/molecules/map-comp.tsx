@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Circle, Marker, Overlay } from "react-native-maps";
-import MapView from 'react-native-map-clustering';
+import MapView from "react-native-map-clustering";
 import {
   StyleSheet,
   View,
@@ -9,6 +9,8 @@ import {
   Button,
   TouchableOpacity,
   Image,
+  Modal,
+  Pressable,
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
@@ -17,6 +19,11 @@ import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 import debounce from "lodash.debounce";
+
+type LatLng = {
+  latitude: number;
+  longitude: number;
+};
 
 type MapCompProps = {
   height?: number;
@@ -81,13 +88,11 @@ const handleToggleMyLocation = () => {
   console.log("toggle my location");
 };
 
-const handleReportAlert = () => {
-  console.log("report alert");
-};
-
-
 export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
+
+  const [CustomAlertModel, setCustomAlertModel] = useState(false);
+  const [draggableMarker, setDraggableMarker] = useState<LatLng | null>(null);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -108,70 +113,60 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+  const handleRegionChange = debounce((region) => {
+    // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
+    const visibleAlerts = alerts.filter((a) => {
+      // Check if the alert's latitude and longitude are within the visible region
+      return (
+        a.latitude >= region.latitude - region.latitudeDelta / 2 &&
+        a.latitude <= region.latitude + region.latitudeDelta / 2 &&
+        a.longitude >= region.longitude - region.longitudeDelta / 2 &&
+        a.longitude <= region.longitude + region.longitudeDelta / 2
+      );
+    });
 
-const handleRegionChange = debounce((region) => {
-  
-           // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
-           const visibleAlerts = alerts.filter((a) => {
-            // Check if the alert's latitude and longitude are within the visible region
-            return (
-              a.latitude >= region.latitude - region.latitudeDelta / 2 &&
-              a.latitude <= region.latitude + region.latitudeDelta / 2 &&
-              a.longitude >= region.longitude - region.longitudeDelta / 2 &&
-              a.longitude <= region.longitude + region.longitudeDelta / 2
-            );
-          });
+    const visibleEarthquakes = earthquakes.filter((a) => {
+      // Check if the earthquake's latitude and longitude are within the visible region
+      return (
+        a.geometry.coordinates[1] >=
+          region.latitude - region.latitudeDelta / 2 &&
+        a.geometry.coordinates[1] <=
+          region.latitude + region.latitudeDelta / 2 &&
+        a.geometry.coordinates[0] >=
+          region.longitude - region.longitudeDelta / 2 &&
+        a.geometry.coordinates[0] <=
+          region.longitude + region.longitudeDelta / 2
+      );
+    });
 
-          const visibleEarthquakes = earthquakes.filter((a) => {
-            // Check if the earthquake's latitude and longitude are within the visible region
-            return (
-              a.geometry.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
-              a.geometry.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
-              a.geometry.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
-              a.geometry.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
+    const visibleFires = fires.filter((a: any) => {
+      // Check if the fire's latitude and longitude are within the visible region
+      return (
+        parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
+        parseFloat(a.latitude) <= region.latitude + region.latitudeDelta / 2 &&
+        parseFloat(a.longitude) >=
+          region.longitude - region.longitudeDelta / 2 &&
+        parseFloat(a.longitude) <= region.longitude + region.longitudeDelta / 2
+      );
+    });
 
-          const visibleFires = fires.filter((a:any) => {
-            // Check if the fire's latitude and longitude are within the visible region
-            return (
-              parseFloat(a.latitude) >=
-                region.latitude - region.latitudeDelta / 2 &&
-              parseFloat(a.latitude) <=
-                region.latitude + region.latitudeDelta / 2 &&
-              parseFloat(a.longitude) >=
-                region.longitude - region.longitudeDelta / 2 &&
-              parseFloat(a.longitude) <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
+    const visibleTsunamis = tsunamis.filter((a: any) => {
+      // Check if the tsunami's latitude and longitude are within the visible region
+      return (
+        parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
+        parseFloat(a.latitude) <= region.latitude + region.latitudeDelta / 2 &&
+        parseFloat(a.longitude) >=
+          region.longitude - region.longitudeDelta / 2 &&
+        parseFloat(a.longitude) <= region.longitude + region.longitudeDelta / 2
+      );
+    });
 
-          const visibleTsunamis = tsunamis.filter((a:any) => {
-            // Check if the tsunami's latitude and longitude are within the visible region
-            return (
-              parseFloat(a.latitude) >=
-                region.latitude - region.latitudeDelta / 2 &&
-              parseFloat(a.latitude) <=
-                region.latitude + region.latitudeDelta / 2 &&
-              parseFloat(a.longitude) >=
-                region.longitude - region.longitudeDelta / 2 &&
-              parseFloat(a.longitude) <=
-                region.longitude + region.longitudeDelta / 2
-            );
-          });
-
-          // Update the state variables with the filtered data
-          setVisibleAlerts(visibleAlerts);
-          setVisibleEarthquakes(visibleEarthquakes);
-          setVisibleFires(visibleFires);
-          setVisibleTsunamis(visibleTsunamis);
-
-}, 400); // Adjust the delay (in milliseconds) as needed
-
+    // Update the state variables with the filtered data
+    setVisibleAlerts(visibleAlerts);
+    setVisibleEarthquakes(visibleEarthquakes);
+    setVisibleFires(visibleFires);
+    setVisibleTsunamis(visibleTsunamis);
+  }, 400); // Adjust the delay (in milliseconds) as needed
 
   const retrieveAlerts = async () => {
     await axios
@@ -207,14 +202,15 @@ const handleRegionChange = debounce((region) => {
       await axios
         .get("https://oursos-backend-production.up.railway.app/earthquakes")
         .then((response) => {
-
           setEarthquakes(response.data.features);
         })
         .then(() => {
-          setTsunamis(earthquakes.filter(e => {
-            return e.properties.tsunami !== 0;
-          }));
-          console.log(tsunamis)
+          setTsunamis(
+            earthquakes.filter((e) => {
+              return e.properties.tsunami !== 0;
+            })
+          );
+          console.log(tsunamis);
         })
         .catch((error) => console.error(error));
       //GET FIRE ALERTS
@@ -247,19 +243,30 @@ const handleRegionChange = debounce((region) => {
         })
         .catch((error) => console.error(error));
 
-      await axios.get("https://oursos-backend-production.up.railway.app/users/1").then((response) => {
-        return response.data.friends;
-      }).then((response) => {
-        response.map((friend: any) => {
-          axios.get(`https://oursos-backend-production.up.railway.app/users/${friend}`).then((response) => {
-            let long = response.data.longitude;
-            let lat = response.data.latitude;
-            setFriendsLocation((friendsLocation: any) => [...friendsLocation, { longitude: long, latitude: lat }]);
-          })
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/users/1")
+        .then((response) => {
+          return response.data.friends;
         })
-      }).catch((error) => console.error(error));
+        .then((response) => {
+          response.map((friend: any) => {
+            axios
+              .get(
+                `https://oursos-backend-production.up.railway.app/users/${friend}`
+              )
+              .then((response) => {
+                let long = response.data.longitude;
+                let lat = response.data.latitude;
+                setFriendsLocation((friendsLocation: any) => [
+                  ...friendsLocation,
+                  { longitude: long, latitude: lat },
+                ]);
+              });
+          });
+        })
+        .catch((error) => console.error(error));
     })();
-    
+
     retrieveAlerts();
   }, []);
 
@@ -288,6 +295,11 @@ const handleRegionChange = debounce((region) => {
     })();
   }, []);
 
+  const handleReportAlert = () => {
+    setCustomAlertModel(true);
+    console.log("report alert");
+  };
+
   return (
     <View style={tw.style(`flex`)}>
       <MapView
@@ -307,7 +319,6 @@ const handleRegionChange = debounce((region) => {
         onRegionChange={(region) => {
           handleRegionChange(region);
         }}
-          
       >
         {visibleAlerts.map((a, i) => {
           // Render visible alerts
@@ -327,7 +338,7 @@ const handleRegionChange = debounce((region) => {
           );
         })}
 
-        {visibleEarthquakes.map((a:any, i) => {
+        {visibleEarthquakes.map((a: any, i) => {
           // Render visible earthquakes
           return (
             <Marker
@@ -345,7 +356,7 @@ const handleRegionChange = debounce((region) => {
           );
         })}
 
-        {visibleFires.map((a:any, i:number) => {
+        {visibleFires.map((a: any, i: number) => {
           // Render visible fires
           return (
             <Marker
@@ -363,7 +374,7 @@ const handleRegionChange = debounce((region) => {
           );
         })}
 
-        {visibleTsunamis.map((a:any, i:number) => {
+        {visibleTsunamis.map((a: any, i: number) => {
           // Render visible tsunamis
           return (
             <Marker
@@ -381,7 +392,7 @@ const handleRegionChange = debounce((region) => {
           );
         })}
 
-{friendsLocation &&
+        {friendsLocation &&
           friendsLocation?.map((a: any, i: number) => {
             return (
               <View key={i}>
@@ -395,7 +406,18 @@ const handleRegionChange = debounce((region) => {
               </View>
             );
           })}
-
+        {draggableMarker && (
+          <Marker
+            coordinate={draggableMarker}
+            draggable={true}
+            onDragEnd={(event) => {
+              setDraggableMarker({
+                latitude: event.nativeEvent.coordinate.latitude,
+                longitude: event.nativeEvent.coordinate.longitude,
+              });
+            }}
+          />
+        )}
       </MapView>
 
       {buttons === true ? (
@@ -412,12 +434,71 @@ const handleRegionChange = debounce((region) => {
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleReportAlert}>
+          <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-ReportAlert.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
-          </TouchableOpacity>
+          </Pressable>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={CustomAlertModel}
+            onRequestClose={() => {
+              setCustomAlertModel(!CustomAlertModel);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Report Alert</Text>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    console.log("FireButton Clicked");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
+                  }}
+                >
+                  <Text style={styles.textStyle}>Fire</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    console.log("EarthquakeButton Clicked");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
+                  }}
+                >
+                  <Text style={styles.textStyle}>Earthquake</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => {
+                    console.log("TsunamiButton Clicked");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
+                  }}
+                >
+                  <Text style={styles.textStyle}>Tsunami</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </View>
       ) : (
         <View></View>
@@ -448,5 +529,44 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     marginRight: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginVertical: 5,
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
