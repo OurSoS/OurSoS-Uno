@@ -20,6 +20,11 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 import debounce from "lodash.debounce";
 
+type LatLng = {
+  latitude: number;
+  longitude: number;
+};
+
 type MapCompProps = {
   height?: number;
   buttons?: boolean;
@@ -87,6 +92,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
+  const [draggableMarker, setDraggableMarker] = useState<LatLng | null>(null);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -400,6 +406,18 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               </View>
             );
           })}
+        {draggableMarker && (
+          <Marker
+            coordinate={draggableMarker}
+            draggable
+            onDragEnd={(event) => {
+              setDraggableMarker({
+                latitude: event.nativeEvent.coordinate.latitude,
+                longitude: event.nativeEvent.coordinate.longitude,
+              });
+            }}
+          />
+        )}
       </MapView>
 
       {buttons === true ? (
@@ -438,6 +456,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   onPress={() => {
                     console.log("FireButton Clicked");
                     setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={styles.textStyle}>Fire</Text>
@@ -447,6 +471,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   onPress={() => {
                     console.log("EarthquakeButton Clicked");
                     setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={styles.textStyle}>Earthquake</Text>
@@ -456,6 +486,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   onPress={() => {
                     console.log("TsunamiButton Clicked");
                     setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={styles.textStyle}>Tsunami</Text>
