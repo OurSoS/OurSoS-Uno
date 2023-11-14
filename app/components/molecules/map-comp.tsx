@@ -435,19 +435,28 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Text style={styles.modalText}>Report Alert</Text>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => console.log("FireButton Clicked")}
+                  onPress={() => {
+                    console.log("FireButton Clicked");
+                    setCustomAlertModel(false);
+                  }}
                 >
                   <Text style={styles.textStyle}>Fire</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => console.log("EarthquakeButton Clicked")}
+                  onPress={() => {
+                    console.log("EarthquakeButton Clicked");
+                    setCustomAlertModel(false);
+                  }}
                 >
                   <Text style={styles.textStyle}>Earthquake</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => console.log("TsunamiButton Clicked")}
+                  onPress={() => {
+                    console.log("TsunamiButton Clicked");
+                    setCustomAlertModel(false);
+                  }}
                 >
                   <Text style={styles.textStyle}>Tsunami</Text>
                 </Pressable>
