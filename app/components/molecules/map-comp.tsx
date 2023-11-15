@@ -11,6 +11,7 @@ import {
   Image,
   Modal,
   Pressable,
+  ScrollView
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
@@ -89,6 +90,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
   const [draggableMarker, setDraggableMarker] = useState<LatLng | null>(null);
+  // show map feed modal button
+  const [showMapFeedModal, setShowMapFeedModal] = useState(false);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -182,7 +185,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             return e.properties.tsunami !== 0;
           })
         );
-        console.log(tsunamis);
+        // console.log(tsunamis);
       })
       .catch((error) => console.error(error));
     await axios
@@ -206,7 +209,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               return e.properties.tsunami !== 0;
             })
           );
-          console.log(tsunamis);
+          // console.log(tsunamis);
         })
         .catch((error) => console.error(error));
       //GET FIRE ALERTS
@@ -277,17 +280,17 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
 
-      if (mapRef.current) {
-        mapRef.current.animateToRegion(
-          {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          1000
-        );
-      }
+      // if (mapRef.current) {
+      //   mapRef.current.animateToRegion(
+      //     {
+      //       latitude: location.coords.latitude,
+      //       longitude: location.coords.longitude,
+      //       latitudeDelta: 0.0922,
+      //       longitudeDelta: 0.0421,
+      //     },
+      //     1000
+      //   );
+      // }
     })();
   }, []);
 
@@ -296,8 +299,25 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     console.log("report alert");
   };
 
+  const handleGoToMap = async (lat: string, long: string) => {
+    console.log("Latitude:", lat);
+    console.log("Longitude:", long);
+    setShowMapFeedModal(false);
+    const targetRegion = {
+      latitude: parseInt(lat),
+      longitude: parseInt(long),
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    };
+    console.log(mapRef)
+    // Animate to the target region
+    if (mapRef && mapRef.current && tsunamis.length > 0 && fires.length > 0) {
+      await mapRef.current.animateToRegion(targetRegion, 1000);
+    }
+  };
+
   const handleToggleMyLocation = () => {
-    console.log("toggle my location");
+    // console.log("toggle my location");
     if (location && location.coords && mapRef.current) {
       mapRef.current.animateToRegion(
         {
@@ -313,124 +333,160 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   return (
     <View style={tw.style(`flex`)}>
-      <MapView
-        ref={mapRef}
-        style={{
-          ...styles.map,
-          height: height !== undefined ? height : "100%",
-          borderRadius: 10,
-        }}
-        initialRegion={{
-          latitude: location?.coords.latitude || 40,
-          longitude: location?.coords.longitude || -123.11525937277163,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        showsUserLocation={true}
-        onRegionChange={(region) => {
-          handleRegionChange(region);
-        }}
-      >
-        {visibleAlerts.map((a, i) => {
-          // Render visible alerts
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: a.latitude,
-                longitude: a.longitude,
-              }}
-            >
-              <Image
-                source={require("../../../assets/LocationDot.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
-              />
-            </Marker>
-          );
-        })}
 
-        {visibleEarthquakes.map((a: any, i) => {
-          // Render visible earthquakes
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: a.geometry.coordinates[1],
-                longitude: a.geometry.coordinates[0],
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Earthquake.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
-              />
-            </Marker>
-          );
-        })}
 
-        {visibleFires.map((a: any, i: number) => {
-          // Render visible fires
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: parseFloat(a.latitude),
-                longitude: parseFloat(a.longitude),
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Wildfire.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
-              />
-            </Marker>
-          );
-        })}
+      {showMapFeedModal === true ? (
+              <ScrollView style={tw.style("flex")}>
+                {fires.map((a:any, i:number) => {
+                  // Render visible alerts
+                  return (
+                    <View key={i} style={tw.style("p-2 m-2 flex flex-row")}>
+                      <View style={tw.style("flex gap-2")}>
+                        <Image
+                          source={require("../../../assets/mapIcons/Wildfire.png")}
+                          style={{ width: 20, height: 20 }} // Change the width and height as needed
+                        />
+                        <Text>Fire</Text>
+                        <Text>Location - {typeof(a?.latitude)}, {a?.longitude}</Text>
+                        <Text>Severity - Calculated on backend</Text>
+                        <Text>Description - USE GPT AI?</Text>
+                        <Text>Time - {a?.acq_time}</Text>
+                        <Text>Date - {a?.acq_date}</Text>
+                        <Text>Radius - {a?.scan}</Text>
+                        <Pressable onPress={() => handleGoToMap(a.latitude, a.longitude)}><Text>View on Map</Text></Pressable>
+                      </View>
+                    </View>
+                  );
+                })}
+                <Text>Here</Text>
+              </ScrollView>
+            ) : (
+          <MapView
+            ref={mapRef}
+            style={{
+              ...styles.map,
+              height: height !== undefined ? height : "100%",
+              borderRadius: 10,
+            }}
+            initialRegion={{
+              latitude: location?.coords.latitude || 40,
+              longitude: location?.coords.longitude || -123.11525937277163,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            showsUserLocation={true}
+            onRegionChange={(region) => {
+              handleRegionChange(region);
+            }}
+          >
+            {visibleAlerts.map((a, i) => {
+              // Render visible alerts
+              return (
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: a.latitude,
+                    longitude: a.longitude,
+                  }}
+                >
+                  <Image
+                    source={require("../../../assets/LocationDot.png")}
+                    style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  />
+                </Marker>
+              );
+            })}
 
-        {visibleTsunamis.map((a: any, i: number) => {
-          // Render visible tsunamis
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: parseFloat(a.latitude),
-                longitude: parseFloat(a.longitude),
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Tsunami.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
-              />
-            </Marker>
-          );
-        })}
+            {visibleEarthquakes.map((a: any, i) => {
+              // Render visible earthquakes
+              return (
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: a.geometry.coordinates[1],
+                    longitude: a.geometry.coordinates[0],
+                  }}
+                >
+                  <Image
+                    source={require("../../../assets/mapIcons/Earthquake.png")}
+                    style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  />
+                </Marker>
+              );
+            })}
 
-        {friendsLocation &&
-          friendsLocation?.map((a: any, i: number) => {
-            return (
-              <View key={i}>
+            {visibleFires.map((a: any, i: number) => {
+              // Render visible fires
+              return (
                 <Marker
                   key={i}
                   coordinate={{
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
-                />
-              </View>
-            );
-          })}
-        {draggableMarker && (
-          <Marker
-            coordinate={draggableMarker}
-            draggable={true}
-            onDragEnd={(event) => {
-              setDraggableMarker({
-                latitude: event.nativeEvent.coordinate.latitude,
-                longitude: event.nativeEvent.coordinate.longitude,
-              });
-            }}
-          />
-        )}
-      </MapView>
+                >
+                  <Image
+                    source={require("../../../assets/mapIcons/Wildfire.png")}
+                    style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  />
+                </Marker>
+              );
+            })}
 
+            {visibleTsunamis.map((a: any, i: number) => {
+              // Render visible tsunamis
+              return (
+                <Marker
+                  key={i}
+                  coordinate={{
+                    latitude: parseFloat(a.latitude),
+                    longitude: parseFloat(a.longitude),
+                  }}
+                >
+                  <Image
+                    source={require("../../../assets/mapIcons/Tsunami.png")}
+                    style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  />
+                </Marker>
+              );
+            })}
+
+            {friendsLocation &&
+              friendsLocation?.map((a: any, i: number) => {
+                return (
+                  <View key={i}>
+                    <Marker
+                      key={i}
+                      coordinate={{
+                        latitude: parseFloat(a.latitude),
+                        longitude: parseFloat(a.longitude),
+                      }}
+                    />
+                  </View>
+                );
+              })}
+            {draggableMarker && (
+              <Marker
+                coordinate={draggableMarker}
+                draggable={true}
+                onDragEnd={(event) => {
+                  setDraggableMarker({
+                    latitude: event.nativeEvent.coordinate.latitude,
+                    longitude: event.nativeEvent.coordinate.longitude,
+                  });
+                }}
+              />
+            )}
+          </MapView>
+              
+            )}
+      {/* {showMapFeedModal === true ? (
+        <View style={tw.style("fixed inset-0 flex items-center justify-center z-50")}>
+          <Text>Modal open</Text>
+        </View>
+      ) : (
+        <View></View>
+      )} */}
       {buttons === true ? (
         <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
           <TouchableOpacity onPress={handleNewPin}>
@@ -451,6 +507,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </Pressable>
+          <TouchableOpacity onPress={() => setShowMapFeedModal(!showMapFeedModal)}>
+            <Image
+              source={require("../../../assets/footerIcons/mapIcon.png")}
+              style={tw.style(`h-10 w-10 m-2`)}
+            />
+          </TouchableOpacity>
           <Modal
             animationType="slide"
             transparent={true}
@@ -514,6 +576,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       ) : (
         <View></View>
       )}
+      
     </View>
   );
 }
