@@ -20,25 +20,20 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 import debounce from "lodash.debounce";
 
-type LatLng = {
-  latitude: number;
-  longitude: number;
-};
-
 type MapCompProps = {
   height?: number;
   buttons?: boolean;
 };
 
 type alert = {
-  id: number;
-  message: string;
+  id?: number;
+  message?: string;
   category: string;
   latitude: Float;
   longitude: Float;
-  radius: Float;
-  time: string;
-  severity: string;
+  radius?: Float;
+  time?: string;
+  severity?: string;
 };
 
 type earthquake = {
@@ -88,7 +83,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
-  const [draggableMarker, setDraggableMarker] = useState<LatLng | null>(null);
+  const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -423,6 +418,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             draggable={true}
             onDragEnd={(event) => {
               setDraggableMarker({
+                category: "New Pin",
                 latitude: event.nativeEvent.coordinate.latitude,
                 longitude: event.nativeEvent.coordinate.longitude,
               });
@@ -465,13 +461,39 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("FireButton Clicked");
+                    console.log("Fire Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Fire",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Fire Alert",
+                            category: "Fire",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
@@ -480,10 +502,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("EarthquakeButton Clicked");
+                    console.log("Earthquake Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Earthquake",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
@@ -495,10 +518,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("TsunamiButton Clicked");
+                    console.log("Tsunami Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Tsunami",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
