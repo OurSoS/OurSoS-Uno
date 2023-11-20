@@ -9,7 +9,7 @@ import { Avatar, Button, Card, Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
 import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
-
+import FriendsList from "../molecules/friends";
 type newsItemType = {
   date: string;
   link: string;
@@ -98,6 +98,7 @@ export default function Dashboard({
         `relative`
       )}
     >
+      <FriendsList />
       <ScrollView style={tw.style(`px-4`)}>
         <Text style={tw.style(`text-[1.75rem]`, `mb-8`, `py-4`)}>
           Dashboard
