@@ -9,7 +9,7 @@ import { Avatar, Button, Card, Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
 import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
-
+import FriendsList from "../molecules/friends";
 type newsItemType = {
   date: string;
   link: string;
