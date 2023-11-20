@@ -42,14 +42,17 @@ const FriendsList = () => {
   };
 
   return (
-    <FlatList
-      ListHeaderComponent={listHeaderComponent}
-      ListHeaderComponentStyle={styles.listHeader}
-      data={friends}
-      renderItem={renderItem}
-      ItemSeparatorComponent={itemSeparatorComponent}
-      keyExtractor={(item) => item.id.toString()}
-    />
+    <View>
+      <Text style={styles.listHeadline}>Friends</Text>
+      <ScrollView>
+        {friends.map((friend, index) => (
+          <View key={friend.id.toString()}>
+            {renderFriend(friend)}
+            {index < friends.length - 1 && itemSeparatorComponent()}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
