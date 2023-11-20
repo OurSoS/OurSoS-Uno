@@ -24,7 +24,7 @@ const friends = [
 ];
 
 const FriendsList = () => {
-  const renderItem = ({ item }: { item: Friend }) => (git 
+  const renderItem = ({ item }: { item: Friend }) => (
     <View style={styles.item}>
       <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={item.image} />
