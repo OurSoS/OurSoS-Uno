@@ -19,7 +19,13 @@ const friends = [
 ];
 
 const FriendsList = () => {
-  return <View></View>;
-};
+        const renderItem = ({ item }) => (
+          <View style={styles.item}>
+            <View style={styles.avatarContainer}>
+              <Image style={styles.avatar} source={item.image} />
+            </View>
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
+        );
 
 export default FriendsList;
