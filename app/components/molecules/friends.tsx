@@ -28,4 +28,13 @@ const FriendsList = () => {
           </View>
         );
 
+
+        const listHeaderComponent = () => {
+                return <Text style={styles.listHeadline}>Friends</Text>;
+              };
+              
+              const itemSeparatorComponent = () => {
+                return <View style={styles.separator} />;
+              };
+              
 export default FriendsList;
