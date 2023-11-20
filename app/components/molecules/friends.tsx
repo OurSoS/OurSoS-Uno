@@ -1,5 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+interface Friend {
+  id: number;
+  name: string;
+  image: any;
+}
 
 const friends = [
   { id: 1, name: "Hani", image: require("../../../assets/avatars/Avatar.png") },
@@ -19,7 +24,7 @@ const friends = [
 ];
 
 const FriendsList = () => {
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: Friend }) => (git 
     <View style={styles.item}>
       <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={item.image} />
