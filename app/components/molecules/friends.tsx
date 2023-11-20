@@ -37,4 +37,15 @@ const FriendsList = () => {
                 return <View style={styles.separator} />;
               };
               
+              return (
+                <FlatList
+                  ListHeaderComponent={listHeaderComponent}
+                  ListHeaderComponentStyle={styles.listHeader}
+                  data={friends}
+                  renderItem={renderItem}
+                  ItemSeparatorComponent={itemSeparatorComponent}
+                  keyExtractor={(item) => item.id.toString()}
+                />
+              );
+              
 export default FriendsList;
