@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
 interface Friend {
   id: number;
   name: string;
@@ -24,12 +24,12 @@ const friends = [
 ];
 
 const FriendsList = () => {
-  const renderItem = ({ item }: { item: Friend }) => (
-    <View style={styles.item}>
+  const renderFriend = (friend: Friend) => (
+    <View key={friend.id.toString()} style={styles.item}>
       <View style={styles.avatarContainer}>
-        <Image style={styles.avatar} source={item.image} />
+        <Image style={styles.avatar} source={friend.image} />
       </View>
-      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.name}>{friend.name}</Text>
     </View>
   );
 
