@@ -98,7 +98,6 @@ export default function Dashboard({
         `relative`
       )}
     >
-      <FriendsList />
       <ScrollView style={tw.style(`px-4`)}>
         <Text style={tw.style(`text-[1.75rem]`, `mb-8`, `py-4`)}>
           Dashboard
@@ -188,6 +187,7 @@ export default function Dashboard({
             {/* </View> */}
           </ScrollView>
         </View>
+        <FriendsList />
       </ScrollView>
       <Footer />
       <Snackbar

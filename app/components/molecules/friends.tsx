@@ -55,6 +55,7 @@ const FriendsList = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   listHeader: {
     height: 55,
@@ -83,17 +84,18 @@ const styles = StyleSheet.create({
     marginRight: 13, // Added margin to separate the avatar from the name
   },
   avatar: {
-    height: 55,
-    width: 55,
+    height: 80,
+    width: 80,
+    borderRadius: 121,
   },
   name: {
-    fontWeight: "600",
-    fontSize: 16,
+    fontWeight: "500",
+    fontSize: 24,
   },
   separator: {
     height: 1,
     width: "100%",
-    backgroundColor: "blue",
+    backgroundColor: "#B4B4B4",
   },
 });
 
