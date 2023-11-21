@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
+
 interface Friend {
   id: number;
   name: string;
@@ -26,29 +27,19 @@ const friends = [
 const FriendsList = () => {
   const renderFriend = (friend: Friend) => (
     <View key={friend.id.toString()} style={styles.item}>
-      <View style={styles.avatarContainer}>
-        <Image style={styles.avatar} source={friend.image} />
-      </View>
+      <Image style={styles.avatar} source={friend.image} />
       <Text style={styles.name}>{friend.name}</Text>
     </View>
   );
 
-  const listHeaderComponent = () => {
-    return <Text style={styles.listHeadline}>Friends</Text>;
-  };
-
-  const itemSeparatorComponent = () => {
-    return <View style={styles.separator} />;
-  };
-
   return (
-    <View>
+    <View style={styles.cardBackground}>
       <Text style={styles.listHeadline}>Friends</Text>
       <ScrollView>
         {friends.map((friend, index) => (
           <View key={friend.id.toString()}>
             {renderFriend(friend)}
-            {index < friends.length - 1 && itemSeparatorComponent()}
+            {index < friends.length - 1 && <View style={styles.separator} />}
           </View>
         ))}
       </ScrollView>
@@ -57,45 +48,56 @@ const FriendsList = () => {
 };
 
 const styles = StyleSheet.create({
-  listHeader: {
-    height: 55,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFF", // Assuming you want a white background
+  cardBackground: {
+    width: "95%",
+    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 5,
+    paddingTop: 20,
+    paddingHorizontal: 40,
+    marginTop: -150,
+    marginBottom: 150,
+    alignSelf: "center",
   },
   listHeadline: {
     color: "#333",
     fontSize: 25,
     fontWeight: "bold",
+    alignSelf: "flex-start",
+    marginBottom: 20,
+  },
+  scrollViewStyle: {
+    width: "100%",
+  },
+  friendContainer: {
+    width: "100%",
+    alignItems: "center",
   },
   item: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 13,
-    backgroundColor: "#FFF", // Assuming you want a white background for each item
-  },
-  avatarContainer: {
-    backgroundColor: "#D9D9D9",
-    borderRadius: 50, // A radius of half of the size to make it perfectly round
-    height: 89,
-    width: 89,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 13, // Added margin to separate the avatar from the name
+    width: "100%",
   },
   avatar: {
     height: 80,
     width: 80,
-    borderRadius: 121,
+    borderRadius: 25,
+    marginRight: 20,
   },
   name: {
     fontWeight: "500",
-    fontSize: 24,
+    fontSize: 24, // Reduced font size for the name
   },
   separator: {
     height: 1,
     width: "100%",
     backgroundColor: "#B4B4B4",
+    marginTop: 13,
   },
 });
 

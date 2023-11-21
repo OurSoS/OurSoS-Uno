@@ -189,6 +189,7 @@ export default function Dashboard({
         </View>
         <FriendsList />
       </ScrollView>
+
       <Footer />
       <Snackbar
         style={tw.style(`bg-white`, `rounded-t-lg`)}
