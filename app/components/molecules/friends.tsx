@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, ScrollView, Image } from "react-native";
-
+import Icon from "react-native-vector-icons/MaterialIcons";
 interface Friend {
   id: number;
   name: string;
@@ -29,6 +29,7 @@ const FriendsList = () => {
     <View key={friend.id.toString()} style={styles.item}>
       <Image style={styles.avatar} source={friend.image} />
       <Text style={styles.name}>{friend.name}</Text>
+      <Icon name="chevron-right" size={30} style={styles.iconStyle} />
     </View>
   );
 
@@ -92,6 +93,13 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: "500",
     fontSize: 24, // Reduced font size for the name
+  },
+  iconStyle: {
+    position: "absolute",
+    right: 10,
+    top: "50%",
+    marginTop: -1,
+    color: "#003566",
   },
   separator: {
     height: 1,
