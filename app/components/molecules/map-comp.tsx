@@ -510,6 +510,31 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Earthquake Alert",
+                            category: "Earthquake",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
@@ -526,6 +551,31 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Tsunami Alert",
+                            category: "Tsunami",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
