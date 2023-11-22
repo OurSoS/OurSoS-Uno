@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Circle, Marker, Overlay } from "react-native-maps";
 import MapView from "react-native-map-clustering";
+import { ActivityIndicator } from "react-native";
 import {
   StyleSheet,
   View,
@@ -11,20 +12,15 @@ import {
   Image,
   Modal,
   Pressable,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
 import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
-
+import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
-
-type LatLng = {
-  latitude: number;
-  longitude: number;
-};
 
 type MapCompProps = {
   height?: number;
@@ -32,14 +28,14 @@ type MapCompProps = {
 };
 
 type alert = {
-  id: number;
-  message: string;
+  id?: number;
+  message?: string;
   category: string;
   latitude: Float;
   longitude: Float;
-  radius: Float;
-  time: string;
-  severity: string;
+  radius?: Float;
+  time?: string;
+  severity?: string;
 };
 
 type earthquake = {
@@ -89,9 +85,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const router = useRouter();
 
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
-  const [draggableMarker, setDraggableMarker] = useState<LatLng | null>(null);
-  // show map feed modal button
+  const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
+
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
+  const [isMapView, setIsMapView] = useState(true);
 
   const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
@@ -112,6 +109,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+  
   const handleRegionChange = debounce((region) => {
     // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
     const visibleAlerts = alerts.filter((a) => {
@@ -165,7 +163,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
     setVisibleTsunamis(visibleTsunamis);
-  }, 400); // Adjust the delay (in milliseconds) as needed
+  }, 100); // Adjust the delay (in milliseconds) as needed
 
   const retrieveAlerts = async () => {
     await axios
@@ -302,16 +300,21 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const handleGoToMap = async (lat: string, long: string) => {
     console.log("Latitude:", lat);
     console.log("Longitude:", long);
+
     setShowMapFeedModal(false);
+
     const targetRegion = {
-      latitude: parseInt(lat),
-      longitude: parseInt(long),
+      latitude: parseFloat(lat),
+      longitude: parseFloat(long),
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     };
-    console.log(mapRef)
+
+    console.log(mapRef);
+
     // Animate to the target region
     if (mapRef && mapRef.current && tsunamis.length > 0 && fires.length > 0) {
+      //@ts-ignore
       await mapRef.current.animateToRegion(targetRegion, 1000);
     }
   };
@@ -319,6 +322,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const handleToggleMyLocation = () => {
     // console.log("toggle my location");
     if (location && location.coords && mapRef.current) {
+      //@ts-ignore
       mapRef.current.animateToRegion(
         {
           latitude: location.coords.latitude,
@@ -333,153 +337,151 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
   return (
     <View style={tw.style(`flex`)}>
-
-
       {showMapFeedModal === true ? (
-              <ScrollView style={tw.style("flex")}>
-                {fires.map((a:any, i:number) => {
-                  // Render visible alerts
-                  return (
-                    <View key={i} style={tw.style("p-2 m-2 flex flex-row")}>
-                      <View style={tw.style("flex gap-2")}>
-                        <Image
-                          source={require("../../../assets/mapIcons/Wildfire.png")}
-                          style={{ width: 20, height: 20 }} // Change the width and height as needed
-                        />
-                        <Text>Fire</Text>
-                        <Text>Location - {typeof(a?.latitude)}, {a?.longitude}</Text>
-                        <Text>Severity - Calculated on backend</Text>
-                        <Text>Description - USE GPT AI?</Text>
-                        <Text>Time - {a?.acq_time}</Text>
-                        <Text>Date - {a?.acq_date}</Text>
-                        <Text>Radius - {a?.scan}</Text>
-                        <Pressable onPress={() => handleGoToMap(a.latitude, a.longitude)}><Text>View on Map</Text></Pressable>
-                      </View>
-                    </View>
-                  );
-                })}
-                <Text>Here</Text>
-              </ScrollView>
-            ) : (
-          <MapView
-            ref={mapRef}
-            style={{
-              ...styles.map,
-              height: height !== undefined ? height : "100%",
-              borderRadius: 10,
-            }}
-            initialRegion={{
-              latitude: location?.coords.latitude || 40,
-              longitude: location?.coords.longitude || -123.11525937277163,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            showsUserLocation={true}
-            onRegionChange={(region) => {
-              handleRegionChange(region);
-            }}
-          >
-            {visibleAlerts.map((a, i) => {
-              // Render visible alerts
-              return (
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: a.latitude,
-                    longitude: a.longitude,
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/LocationDot.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-              );
-            })}
-
-            {visibleEarthquakes.map((a: any, i) => {
-              // Render visible earthquakes
-              return (
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: a.geometry.coordinates[1],
-                    longitude: a.geometry.coordinates[0],
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/mapIcons/Earthquake.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-              );
-            })}
-
-            {visibleFires.map((a: any, i: number) => {
-              // Render visible fires
-              return (
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/mapIcons/Wildfire.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-              );
-            })}
-
-            {visibleTsunamis.map((a: any, i: number) => {
-              // Render visible tsunamis
-              return (
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
-                >
-                  <Image
-                    source={require("../../../assets/mapIcons/Tsunami.png")}
-                    style={{ width: 20, height: 20 }} // Change the width and height as needed
-                  />
-                </Marker>
-              );
-            })}
-
-            {friendsLocation &&
-              friendsLocation?.map((a: any, i: number) => {
-                return (
-                  <View key={i}>
-                    <Marker
-                      key={i}
-                      coordinate={{
-                        latitude: parseFloat(a.latitude),
-                        longitude: parseFloat(a.longitude),
-                      }}
-                    />
-                  </View>
-                );
-              })}
-            {draggableMarker && (
+        <ScrollView style={tw.style("flex")}>
+          {fires.length === 0 ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <ModalViewAlerts data={fires} handleGoToMap={handleGoToMap} />
+          )}
+        </ScrollView>
+      ) : (
+        <MapView
+          ref={mapRef}
+          style={{
+            ...styles.map,
+            height: height !== undefined ? height : "100%",
+            borderRadius: 10,
+          }}
+          initialRegion={{
+            latitude: location?.coords.latitude || 40,
+            longitude: location?.coords.longitude || -123.11525937277163,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          showsUserLocation={true}
+          onRegionChange={(region) => {
+            handleRegionChange(region);
+          }}
+        >
+          {visibleAlerts.map((a, i) => {
+            // Render visible alerts
+            return (
               <Marker
-                coordinate={draggableMarker}
-                draggable={true}
-                onDragEnd={(event) => {
-                  setDraggableMarker({
-                    latitude: event.nativeEvent.coordinate.latitude,
-                    longitude: event.nativeEvent.coordinate.longitude,
-                  });
+                key={i}
+                coordinate={{
+                  latitude: a.latitude,
+                  longitude: a.longitude,
                 }}
-              />
-            )}
-          </MapView>
-              
-            )}
+              >
+                <Image
+                  source={require("../../../assets/LocationDot.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+
+          {visibleEarthquakes.map((a: any, i) => {
+            // Render visible earthquakes
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: a.geometry.coordinates[1],
+                  longitude: a.geometry.coordinates[0],
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Earthquake.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+
+          {visibleFires.map((a: any, i: number) => {
+            // Render visible fires
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Wildfire.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+
+          {draggableMarker && (
+            <Marker
+              coordinate={draggableMarker}
+              draggable={true}
+              onDragEnd={(event) => {
+                setDraggableMarker({
+                  category: "New Pin",
+                  latitude: event.nativeEvent.coordinate.latitude,
+                  longitude: event.nativeEvent.coordinate.longitude,
+                });
+              }}
+            />
+          )}
+
+          {visibleTsunamis.map((a: any, i: number) => {
+            // Render visible tsunamis
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Tsunami.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+
+          {friendsLocation &&
+            friendsLocation?.map((a: any, i: number) => {
+              return (
+                <View key={i}>
+                  <Marker
+                    key={i}
+                    coordinate={{
+                      latitude: parseFloat(a.latitude),
+                      longitude: parseFloat(a.longitude),
+                    }}
+                  />
+                </View>
+              );
+            })}
+
+          {draggableMarker && (
+            <Marker
+              coordinate={draggableMarker}
+              draggable={true}
+              onDragEnd={(event) => {
+                setDraggableMarker({
+                  latitude: event.nativeEvent.coordinate.latitude,
+                  longitude: event.nativeEvent.coordinate.longitude,
+                  category: "",
+                  severity: "",
+                  message: "",
+                });
+              }}
+            />
+          )}
+        </MapView>
+      )}
       {/* {showMapFeedModal === true ? (
         <View style={tw.style("fixed inset-0 flex items-center justify-center z-50")}>
           <Text>Modal open</Text>
@@ -507,7 +509,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </Pressable>
-          <TouchableOpacity onPress={() => setShowMapFeedModal(!showMapFeedModal)}>
+          <TouchableOpacity
+            onPress={() => setShowMapFeedModal(!showMapFeedModal)}
+          >
             <Image
               source={require("../../../assets/footerIcons/mapIcon.png")}
               style={tw.style(`h-10 w-10 m-2`)}
@@ -527,13 +531,39 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("FireButton Clicked");
+                    console.log("Fire Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Fire",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Fire Alert",
+                            category: "Fire",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
@@ -542,10 +572,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("EarthquakeButton Clicked");
+                    console.log("Earthquake Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Earthquake",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
@@ -557,10 +588,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => {
-                    console.log("TsunamiButton Clicked");
+                    console.log("Tsunami Alert Pin Dropped");
                     setCustomAlertModel(false);
                     if (location) {
                       setDraggableMarker({
+                        category: "Tsunami",
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
@@ -569,6 +601,13 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 >
                   <Text style={styles.textStyle}>Tsunami</Text>
                 </Pressable>
+                {/* DELETE THIS */}
+                <Pressable
+                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
+                  onPress={() => setCustomAlertModel(false)}
+                >
+                  <Text style={tw`mb-4 text-center`}>Close</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
@@ -576,7 +615,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       ) : (
         <View></View>
       )}
-      
     </View>
   );
 }
