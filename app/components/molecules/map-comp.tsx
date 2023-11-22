@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Circle, Marker, Overlay } from "react-native-maps";
+import { Marker } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
-  Button,
   TouchableOpacity,
   Image,
   Modal,
@@ -14,7 +12,6 @@ import {
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
-import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
@@ -73,24 +70,18 @@ type earthquake = {
   type: string;
 };
 
-type fire = {};
-
 const handleNewPin = () => {
   console.log("new pin");
 };
 
 export default function MapComp({ height, buttons }: MapCompProps) {
-  const router = useRouter();
-
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
   const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
 
-  const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
-  const [movingMarker, setMovingMarker] = useState(false);
 
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
@@ -273,6 +264,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       setLocation(location);
 
       if (mapRef.current) {
+        // @ts-ignore
         mapRef.current.animateToRegion(
           {
             latitude: location.coords.latitude,
@@ -294,6 +286,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const handleToggleMyLocation = () => {
     console.log("toggle my location");
     if (location && location.coords && mapRef.current) {
+      // @ts-ignore
       mapRef.current.animateToRegion(
         {
           latitude: location.coords.latitude,
@@ -310,11 +303,14 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     <View style={tw.style(`flex`)}>
       <MapView
         ref={mapRef}
-        style={{
-          ...styles.map,
-          height: height !== undefined ? height : "100%",
-          borderRadius: 10,
-        }}
+        // style={{
+        //   ...styles.map,
+        //   height: height !== undefined ? height : "100%",
+        //   borderRadius: 10,
+        // }}
+        style={tw`w-full ${
+          height !== undefined ? `h-[${height}px]` : "h-full"
+        } rounded-lg`}
         initialRegion={{
           latitude: location?.coords.latitude || 40,
           longitude: location?.coords.longitude || -123.11525937277163,
@@ -338,7 +334,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/LocationDot.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
+                style={tw.style(`w-20, h-20`)}
+                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
@@ -356,7 +353,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/mapIcons/Earthquake.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
+                style={tw.style(`w-20, h-20`)}
+                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
@@ -374,7 +372,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/mapIcons/Wildfire.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
+                style={tw.style(`w-20, h-20`)}
+                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
@@ -392,7 +391,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/mapIcons/Tsunami.png")}
-                style={{ width: 20, height: 20 }} // Change the width and height as needed
+                style={tw.style(`w-20, h-20`)}
+                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
@@ -455,11 +455,17 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               setCustomAlertModel(!CustomAlertModel);
             }}
           >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Report Alert</Text>
+            {/* <View style={styles.centeredView}> */}
+            {/* <View style={styles.modalView}> */}
+            {/* <Text style={styles.modalText}>Report Alert</Text> */}
+            {/* style={[styles.button, styles.buttonClose]} */}
+            <View style={tw`flex-1 justify-center items-center mt-6`}>
+              <View
+                style={tw`m-5 bg-white rounded-5 p-9 items-center shadow-xl`}
+              >
+                <Text style={tw`mb-4 text-center`}>Report Alert</Text>
                 <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
                   onPress={() => {
                     console.log("Fire Alert Pin Dropped");
                     setCustomAlertModel(false);
@@ -497,10 +503,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     }
                   }}
                 >
-                  <Text style={styles.textStyle}>Fire</Text>
+                  <Text style={tw`mb-4 text-center`}>Fire</Text>
                 </Pressable>
                 <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
                   onPress={() => {
                     console.log("Earthquake Alert Pin Dropped");
                     setCustomAlertModel(false);
@@ -510,13 +516,38 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Earthquake Alert",
+                            category: "Earthquake",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
-                  <Text style={styles.textStyle}>Earthquake</Text>
+                  <Text style={tw`mb-4 text-center`}>Earthquake</Text>
                 </Pressable>
                 <Pressable
-                  style={[styles.button, styles.buttonClose]}
+                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
                   onPress={() => {
                     console.log("Tsunami Alert Pin Dropped");
                     setCustomAlertModel(false);
@@ -526,10 +557,41 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
+                      axios
+                        .post(
+                          "https://oursos-backend-production.up.railway.app/reportalert",
+                          {
+                            message: "Tsunami Alert",
+                            category: "Tsunami",
+                            severity: "High",
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude,
+                            radius: 100.0,
+                          }
+                        )
+                        .then(async (response) => {
+                          await axios
+                            .get(
+                              "https://oursos-backend-production.up.railway.app/alerts"
+                            )
+                            .then((response) => {
+                              setAlerts(response.data);
+                            });
+                          console.log(response);
+                        })
+                        .catch((error) => {
+                          console.error(error);
+                        });
                     }
                   }}
                 >
-                  <Text style={styles.textStyle}>Tsunami</Text>
+                  <Text style={tw`mb-4 text-center`}>Tsunami</Text>
+                </Pressable>
+                <Pressable
+                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
+                  onPress={() => setCustomAlertModel(false)}
+                >
+                  <Text style={tw`mb-4 text-center`}>Close</Text>
                 </Pressable>
               </View>
             </View>
@@ -542,66 +604,66 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-  },
-  searchInput: {
-    borderRadius: 62,
-    backgroundColor: "white",
-    padding: 10,
-    marginBottom: 0,
-    marginHorizontal: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginRight: 10,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    marginVertical: 5,
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   map: {
+//     width: "100%",
+//   },
+//   searchInput: {
+//     borderRadius: 62,
+//     backgroundColor: "white",
+//     padding: 10,
+//     marginBottom: 0,
+//     marginHorizontal: 10,
+//     elevation: 3,
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     marginRight: 10,
+//   },
+//   centeredView: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginTop: 22,
+//   },
+//   modalView: {
+//     margin: 20,
+//     backgroundColor: "white",
+//     borderRadius: 20,
+//     padding: 35,
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 4,
+//     elevation: 5,
+//   },
+//   button: {
+//     borderRadius: 20,
+//     padding: 10,
+//     elevation: 2,
+//     marginVertical: 5,
+//   },
+//   buttonClose: {
+//     backgroundColor: "#2196F3",
+//   },
+//   textStyle: {
+//     color: "white",
+//     fontWeight: "bold",
+//     textAlign: "center",
+//   },
+//   modalText: {
+//     marginBottom: 15,
+//     textAlign: "center",
+//   },
+// });
