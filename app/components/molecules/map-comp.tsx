@@ -581,6 +581,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 >
                   <Text style={styles.textStyle}>Tsunami</Text>
                 </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setCustomAlertModel(false)}
+                >
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
               </View>
             </View>
           </Modal>
