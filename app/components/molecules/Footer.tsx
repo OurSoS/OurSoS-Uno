@@ -13,6 +13,7 @@ import { Link } from "expo-router";
 import axios from "axios";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 import tw from 'twrnc';
+import React from "react";
 
 export default function Footer() {
         return (

@@ -1,6 +1,7 @@
 import { View, Image, Modal, TouchableOpacity, StyleSheet, TextInput, ScrollView, SafeAreaView } from "react-native";
 import { useState } from "react";
 import tw from 'twrnc';
+import React from 'react';
 
 import { Avatar, Button, Card, Text, Snackbar } from 'react-native-paper';
 import { router } from "expo-router";
