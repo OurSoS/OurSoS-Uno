@@ -22,6 +22,11 @@ type MapCompProps = {
   buttons?: boolean;
 };
 
+type LocationData = {
+  latitude: number;
+  longitude: number;
+};
+
 type alert = {
   id?: number;
   message?: string;
@@ -95,6 +100,26 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+
+  const reportFireAlert = (locationData: LocationData) => {
+    axios
+      .post("https://oursos-backend-production.up.railway.app/reportalert", {
+        message: "Fire Alert",
+        category: "Fire",
+        severity: "High",
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        radius: 100.0,
+      })
+      .then(async (response) => {
+        // Handle response or update state as needed
+      })
+      .catch((error) => {
+        console.error(error);
+        // Handle error appropriately
+      });
+  };
+
   const handleRegionChange = debounce((region) => {
     // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
     const visibleAlerts = alerts.filter((a) => {
@@ -300,14 +325,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   return (
-    <View style={tw.style(`flex`)}>
+    <View style={tw.style(`flex-1`)}>
       <MapView
         ref={mapRef}
-        // style={{
-        //   ...styles.map,
-        //   height: height !== undefined ? height : "100%",
-        //   borderRadius: 10,
-        // }}
         style={tw`w-full ${
           height !== undefined ? `h-[${height}px]` : "h-full"
         } rounded-lg`}
@@ -335,12 +355,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <Image
                 source={require("../../../assets/LocationDot.png")}
                 style={tw.style(`w-20, h-20`)}
-                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
         })}
-
         {visibleEarthquakes.map((a: any, i) => {
           // Render visible earthquakes
           return (
@@ -354,12 +372,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <Image
                 source={require("../../../assets/mapIcons/Earthquake.png")}
                 style={tw.style(`w-20, h-20`)}
-                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
         })}
-
         {visibleFires.map((a: any, i: number) => {
           // Render visible fires
           return (
@@ -373,12 +389,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <Image
                 source={require("../../../assets/mapIcons/Wildfire.png")}
                 style={tw.style(`w-20, h-20`)}
-                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
         })}
-
         {visibleTsunamis.map((a: any, i: number) => {
           // Render visible tsunamis
           return (
@@ -392,12 +406,10 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               <Image
                 source={require("../../../assets/mapIcons/Tsunami.png")}
                 style={tw.style(`w-20, h-20`)}
-                // style={{ width: 20, height: 20 }} // Change the width and height as needed
               />
             </Marker>
           );
         })}
-
         {friendsLocation &&
           friendsLocation?.map((a: any, i: number) => {
             return (
@@ -412,16 +424,49 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               </View>
             );
           })}
+
         {draggableMarker && (
           <Marker
             coordinate={draggableMarker}
-            draggable={true}
+            draggable
             onDragEnd={(event) => {
+              const newLatitude = event.nativeEvent.coordinate.latitude;
+              const newLongitude = event.nativeEvent.coordinate.longitude;
+
+              console.log(
+                `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
+              );
+
               setDraggableMarker({
-                category: "New Pin",
-                latitude: event.nativeEvent.coordinate.latitude,
-                longitude: event.nativeEvent.coordinate.longitude,
+                ...draggableMarker,
+                latitude: newLatitude,
+                longitude: newLongitude,
               });
+              axios
+                .post(
+                  "https://oursos-backend-production.up.railway.app/reportalert",
+                  {
+                    message: "Fire Alert",
+                    category: "Fire",
+                    severity: "High",
+                    latitude: newLatitude,
+                    longitude: newLongitude,
+                    radius: 1000.0,
+                  }
+                )
+                .then(async (response) => {
+                  await axios
+                    .get(
+                      "https://oursos-backend-production.up.railway.app/alerts"
+                    )
+                    .then((response) => {
+                      setAlerts(response.data);
+                    });
+                  console.log(response);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             }}
           />
         )}
@@ -455,10 +500,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               setCustomAlertModel(!CustomAlertModel);
             }}
           >
-            {/* <View style={styles.centeredView}> */}
-            {/* <View style={styles.modalView}> */}
-            {/* <Text style={styles.modalText}>Report Alert</Text> */}
-            {/* style={[styles.button, styles.buttonClose]} */}
             <View style={tw`flex-1 justify-center items-center mt-6`}>
               <View
                 style={tw`m-5 bg-white rounded-5 p-9 items-center shadow-xl`}
@@ -475,117 +516,35 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
-                      axios
-                        .post(
-                          "https://oursos-backend-production.up.railway.app/reportalert",
-                          {
-                            message: "Fire Alert",
-                            category: "Fire",
-                            severity: "High",
-                            latitude: location.coords.latitude,
-                            longitude: location.coords.longitude,
-                            radius: 100.0,
-                          }
-                        )
-                        .then(async (response) => {
-                          await axios
-                            .get(
-                              "https://oursos-backend-production.up.railway.app/alerts"
-                            )
-                            .then((response) => {
-                              setAlerts(response.data);
-                            });
-                          console.log(response);
-                        })
-                        .catch((error) => {
-                          console.error(error);
-                        });
+                      // axios
+                      //   .post(
+                      //     "https://oursos-backend-production.up.railway.app/reportalert",
+                      //     {
+                      //       message: "Fire Alert",
+                      //       category: "Fire",
+                      //       severity: "High",
+                      //       latitude: location.coords.latitude,
+                      //       longitude: location.coords.longitude,
+                      //       radius: 100.0,
+                      //     }
+                      //   )
+                      //   .then(async (response) => {
+                      //     await axios
+                      //       .get(
+                      //         "https://oursos-backend-production.up.railway.app/alerts"
+                      //       )
+                      //       .then((response) => {
+                      //         setAlerts(response.data);
+                      //       });
+                      //     console.log(response);
+                      //   })
+                      //   .catch((error) => {
+                      //     console.error(error);
+                      //   });
                     }
                   }}
                 >
                   <Text style={tw`mb-4 text-center`}>Fire</Text>
-                </Pressable>
-                <Pressable
-                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
-                  onPress={() => {
-                    console.log("Earthquake Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Earthquake",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                      axios
-                        .post(
-                          "https://oursos-backend-production.up.railway.app/reportalert",
-                          {
-                            message: "Earthquake Alert",
-                            category: "Earthquake",
-                            severity: "High",
-                            latitude: location.coords.latitude,
-                            longitude: location.coords.longitude,
-                            radius: 100.0,
-                          }
-                        )
-                        .then(async (response) => {
-                          await axios
-                            .get(
-                              "https://oursos-backend-production.up.railway.app/alerts"
-                            )
-                            .then((response) => {
-                              setAlerts(response.data);
-                            });
-                          console.log(response);
-                        })
-                        .catch((error) => {
-                          console.error(error);
-                        });
-                    }
-                  }}
-                >
-                  <Text style={tw`mb-4 text-center`}>Earthquake</Text>
-                </Pressable>
-                <Pressable
-                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
-                  onPress={() => {
-                    console.log("Tsunami Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Tsunami",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                      axios
-                        .post(
-                          "https://oursos-backend-production.up.railway.app/reportalert",
-                          {
-                            message: "Tsunami Alert",
-                            category: "Tsunami",
-                            severity: "High",
-                            latitude: location.coords.latitude,
-                            longitude: location.coords.longitude,
-                            radius: 100.0,
-                          }
-                        )
-                        .then(async (response) => {
-                          await axios
-                            .get(
-                              "https://oursos-backend-production.up.railway.app/alerts"
-                            )
-                            .then((response) => {
-                              setAlerts(response.data);
-                            });
-                          console.log(response);
-                        })
-                        .catch((error) => {
-                          console.error(error);
-                        });
-                    }
-                  }}
-                >
-                  <Text style={tw`mb-4 text-center`}>Tsunami</Text>
                 </Pressable>
                 <Pressable
                   style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
@@ -603,67 +562,3 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   map: {
-//     width: "100%",
-//   },
-//   searchInput: {
-//     borderRadius: 62,
-//     backgroundColor: "white",
-//     padding: 10,
-//     marginBottom: 0,
-//     marginHorizontal: 10,
-//     elevation: 3,
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.84,
-//     marginRight: 10,
-//   },
-//   centeredView: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     marginTop: 22,
-//   },
-//   modalView: {
-//     margin: 20,
-//     backgroundColor: "white",
-//     borderRadius: 20,
-//     padding: 35,
-//     alignItems: "center",
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 4,
-//     elevation: 5,
-//   },
-//   button: {
-//     borderRadius: 20,
-//     padding: 10,
-//     elevation: 2,
-//     marginVertical: 5,
-//   },
-//   buttonClose: {
-//     backgroundColor: "#2196F3",
-//   },
-//   textStyle: {
-//     color: "white",
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   modalText: {
-//     marginBottom: 15,
-//     textAlign: "center",
-//   },
-// });
