@@ -1,3 +1,4 @@
+import React from "react";
 import { View, TextInput, ScrollView, SafeAreaView } from "react-native";
 import { useEffect, useState } from "react";
 import tw from "twrnc";
@@ -10,7 +11,6 @@ import { router } from "expo-router";
 import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
-import React from "react";
 type newsItemType = {
   date: string;
   link: string;

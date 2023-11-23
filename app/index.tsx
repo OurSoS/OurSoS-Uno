@@ -8,6 +8,58 @@ import IntroTextButton from "./components/intro/intro-text-button";
 import IntroLayout from "./components/intro/_layout";
 import tw from "twrnc";
 import Dashboard from "./components/dashboard/dashboard";
+import { Suspense } from "react";
+import Loading from "./components/loading";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
+import * as Notification from "expo-notifications";
+
+type alert = {
+  id?: number;
+  message?: string;
+  category: string;
+  latitude: Float;
+  longitude: Float;
+  radius?: Float;
+  time?: string;
+  severity?: string;
+};
+
+type earthquake = {
+  geometry: {
+    coordinates: [number, number, number];
+    type: string;
+  };
+  id: string;
+  properties: {
+    alert: null | string;
+    cdi: null | number;
+    code: string;
+    detail: string;
+    dmin: null | number;
+    felt: null | number;
+    gap: null | number;
+    ids: string;
+    mag: number;
+    magType: string;
+    mmi: null | number;
+    net: string;
+    nst: null | number;
+    place: string;
+    rms: number;
+    sig: number;
+    sources: string;
+    status: string;
+    time: number;
+    title: string;
+    tsunami: number;
+    type: string;
+    types: string;
+    tz: null | number;
+    updated: number;
+    url: string;
+  };
+  type: string;
+};
 
 export type staticType = {
   "intro-friends": {
@@ -51,6 +103,11 @@ type LanguageType = {
 };
 
 export default function Index() {
+  const [alerts, setAlerts] = useState<alert[]>([]);
+  const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
+  const [fires, setFires] = useState<any>([]);
+  const [tsunamis, setTsunamis] = useState<any>([]);
+
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
@@ -59,6 +116,7 @@ export default function Index() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
+
   const setUserLanguage = async () => {
     const updateUserRequest = {
       username: "sam",
@@ -83,6 +141,55 @@ export default function Index() {
     // }
   };
 
+  async function registerForPushNotificationsAsync() {
+    let { status } = await Notification.requestPermissionsAsync();
+    if (status !== "granted") {
+      alert(
+        "Hey! You might want to enable notifications for my app, they are good."
+      );
+      return;
+    }
+    // Here you might want to save the token if you plan to use remote notifications
+  }
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+    // ... other initialization code
+  }, []);
+
+  Notification.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
+  // calculate distance between two points
+  const degreesToRadians = (degrees: number) => {
+    return (degrees * Math.PI) / 180;
+  };
+
+  const distanceBetweenPoints = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
+    const earthRadiusKm = 6371;
+
+    const dLat = degreesToRadians(lat2 - lat1);
+    const dLon = degreesToRadians(lon2 - lon1);
+
+    lat1 = degreesToRadians(lat1);
+    lat2 = degreesToRadians(lat2);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return earthRadiusKm * c;
+  };
+
   useEffect(() => {
     (async () => {
       // await axios
@@ -96,16 +203,107 @@ export default function Index() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
+    })();
+  }, []);
 
+  useEffect(() => {
+    (async () => {
+      const retrieveAlerts = async () => {
+        await axios
+          .get("https://oursos-backend-production.up.railway.app/alerts")
+          .then((response) => {
+            setAlerts(response.data);
+          })
+          .catch((error) => console.error(error));
+        await axios
+          .get("https://oursos-backend-production.up.railway.app/earthquakes")
+          .then((response) => {
+            setEarthquakes(response.data.features);
+          })
+          .then(() => {
+            setTsunamis(
+              earthquakes.filter((e) => {
+                return e.properties.tsunami !== 0;
+              })
+            );
+            console.log(tsunamis);
+          })
+          .catch((error) => console.error(error));
+
+        await axios
+          .get("https://oursos-backend-production.up.railway.app/fires")
+          .then((response) => {
+            setFires(response.data);
+          })
+          .catch((error) => console.error(error));
+      };
+
+      retrieveAlerts();
+      // console.log("alerts");
+      // alerts ["latitude": 49.2827, "longitude": -123.1207,"radius": 5]
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+
+      if (location && location.coords) {
+        checkAndNotifyForAlerts(
+          location.coords.latitude,
+          location.coords.longitude,
+          alerts
+        );
+      }
+    })();
+  }, [alerts]);
+
+  const checkAndNotifyForAlerts = async (
+    myLatitude: number,
+    myLongitude: number,
+    alerts: alert[]
+  ) => {
+    for (let alert of alerts) {
+      if (alert.radius !== undefined) {
+        const distance = distanceBetweenPoints(
+          myLatitude,
+          myLongitude,
+          alert.latitude,
+          alert.longitude
+        );
+        if (distance <= alert.radius) {
+          await sendLocalNotification(
+            `You are within the radius of alert id: ${alert.id}`
+          );
+        }
+      }
+    }
+  };
+
+  const sendLocalNotification = async (message: string) => {
+    try {
+      await Notification.scheduleNotificationAsync({
+        content: {
+          title: "Alert Notification",
+          body: message,
+        },
+        trigger: null, // Immediate trigger
+      });
+    } catch (error) {
+      console.error("Error in sending notification", error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
       await axios
         .get("https://oursos-backend-production.up.railway.app/users/1")
         .then((res) => {
           setCurrentUser(res.data);
         });
     })();
-  }, []);
+  }, [alerts]);
 
   const buttonFunction = (buttonText: string) => {
     setIntroComponent(buttonText);
@@ -118,89 +316,92 @@ export default function Index() {
     text = JSON.stringify(location);
   }
   return (
-    <View style={styles.container}>
-      {introComponent === "welcome" ? (
-        <IntroTextButton
-          heading="Welcome To OurSOS!"
-          details="Empowering Your Safety, Connecting Our World"
-          buttonNext="selectLocation"
-          buttonText="Select Language"
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "selectLocation" ? (
-        <IntroLayout>
-          <Text style={styles.header}>Select your language</Text>
-          <FlatList
-            style={tw.style(`w-full`, `flex`, `flex-col`)}
-            data={languages}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: LanguageType;
-              index: number;
-            }) => (
-              <Pressable
-                onPress={() => {
-                  setUserLang(languages[index]?.tag);
-                }}
-                style={tw.style(
-                  `text-white`,
-                  `bg-white`,
-                  `px-7`,
-                  `py-3`,
-                  `rounded-lg`,
-                  `border`,
-                  `mb-3`
-                )}
-              >
-                <Text style={styles.text}>{item.name}</Text>
-              </Pressable>
-            )}
-          />
-          <Pressable
-            onPress={() => {
-              setUserLanguage();
-            }}
-            style={tw.style(
-              `text-white`,
-              `bg-[#003566]`,
-              `px-7`,
-              `py-3`,
-              `rounded-lg`
-            )}
-          >
-            <Text style={tw.style(`text-white`)}>Continue</Text>
-          </Pressable>
-        </IntroLayout>
-      ) : introComponent === "newsFeed" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-newsfeed"].heading}
-          details={translatedStaticContent["intro-newsfeed"].details}
-          buttonNext="introMap"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "introMap" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-map"].heading}
-          details={translatedStaticContent["intro-map"].details}
-          buttonNext="introFriends"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "introFriends" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-friends"].heading}
-          details={translatedStaticContent["intro-friends"].details}
-          buttonNext="dashboard"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : (
-        <Dashboard user={currentUser} userLang={userLang}></Dashboard>
-      )}
-    </View>
+    <>
+      <Suspense fallback={<Loading />}></Suspense>
+      <View style={styles.container}>
+        {introComponent === "welcome" ? (
+          <IntroTextButton
+            heading="Welcome To OurSOS!"
+            details="Empowering Your Safety, Connecting Our World"
+            buttonNext="selectLocation"
+            buttonText="Select Language"
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "selectLocation" ? (
+          <IntroLayout>
+            <Text style={styles.header}>Select your language</Text>
+            <FlatList
+              style={tw.style(`w-full`, `flex`, `flex-col`)}
+              data={languages}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: LanguageType;
+                index: number;
+              }) => (
+                <Pressable
+                  onPress={() => {
+                    setUserLang(languages[index]?.tag);
+                  }}
+                  style={tw.style(
+                    `text-white`,
+                    `bg-white`,
+                    `px-7`,
+                    `py-3`,
+                    `rounded-lg`,
+                    `border`,
+                    `mb-3`
+                  )}
+                >
+                  <Text style={styles.text}>{item.name}</Text>
+                </Pressable>
+              )}
+            />
+            <Pressable
+              onPress={() => {
+                setUserLanguage();
+              }}
+              style={tw.style(
+                `text-white`,
+                `bg-[#003566]`,
+                `px-7`,
+                `py-3`,
+                `rounded-lg`
+              )}
+            >
+              <Text style={tw.style(`text-white`)}>Continue</Text>
+            </Pressable>
+          </IntroLayout>
+        ) : introComponent === "newsFeed" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-newsfeed"].heading}
+            details={translatedStaticContent["intro-newsfeed"].details}
+            buttonNext="introMap"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "introMap" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-map"].heading}
+            details={translatedStaticContent["intro-map"].details}
+            buttonNext="introFriends"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "introFriends" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-friends"].heading}
+            details={translatedStaticContent["intro-friends"].details}
+            buttonNext="dashboard"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : (
+          <Dashboard user={currentUser} userLang={userLang}></Dashboard>
+        )}
+      </View>
+    </>
   );
 }
 
