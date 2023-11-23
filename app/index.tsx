@@ -274,7 +274,7 @@ export default function Index() {
         );
         if (distance <= alert.radius) {
           await sendLocalNotification(
-            `You are within the radius of alert id: ${alert.id}`
+            `You are within the radius of alert id: ${alert.category}`
           );
         }
       }
