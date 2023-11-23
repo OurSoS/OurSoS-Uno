@@ -274,7 +274,7 @@ export default function Index() {
         );
         if (distance <= alert.radius) {
           await sendLocalNotification(
-            `You are within the radius of alert id: ${alert.category}`
+            `Emergency Alert: Immediate danger in your area due to a ${alert.category}. Seek safety immediately as per local guidelines and stay informed.`
           );
         }
       }
