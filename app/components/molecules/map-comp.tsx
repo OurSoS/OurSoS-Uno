@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Marker } from "react-native-maps";
 import MapView from "react-native-map-clustering";
+import { ActivityIndicator } from "react-native";
 import {
   StyleSheet,
   View,
@@ -9,12 +10,13 @@ import {
   Image,
   Modal,
   Pressable,
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import tw from "twrnc";
 import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
-
+import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
 
 type MapCompProps = {
@@ -82,13 +84,11 @@ const handleNewPin = () => {
 export default function MapComp({ height, buttons }: MapCompProps) {
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
   const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
-
+  const [showMapFeedModal, setShowMapFeedModal] = useState(false);
   const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
-  const [ShowConfirmModal, setShowConfirmModal] = useState(false);
-
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
@@ -101,6 +101,16 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
+  const [jumpToLocation, setJumpToLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  const [currentRegion, setCurrentRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   const reportFireAlert = (locationData: LocationData) => {
     axios
@@ -176,7 +186,34 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     setVisibleTsunamis(visibleTsunamis);
   }, 400); // Adjust the delay (in milliseconds) as needed
 
-  const retrieveAlerts = async () => {};
+  const retrieveAlerts = async () => {
+    await axios
+      .get("https://oursos-backend-production.up.railway.app/alerts")
+      .then((response) => {
+        setAlerts(response.data);
+      })
+      .catch((error) => console.error(error));
+    await axios
+      .get("https://oursos-backend-production.up.railway.app/earthquakes")
+      .then((response) => {
+        setEarthquakes(response.data.features);
+      })
+      .then(() => {
+        setTsunamis(
+          earthquakes.filter((e) => {
+            return e.properties.tsunami !== 0;
+          })
+        );
+        // console.log(tsunamis);
+      })
+      .catch((error) => console.error(error));
+    await axios
+      .get("https://oursos-backend-production.up.railway.app/fires")
+      .then((response) => {
+        setFires(response.data);
+      })
+      .catch((error) => console.error(error));
+  };
 
   useEffect(() => {
     (async () => {
@@ -299,182 +336,179 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   return (
-    <View style={tw.style(`flex-1`)}>
-      <MapView
-        ref={mapRef}
-        style={tw`w-full ${
-          height !== undefined ? `h-[${height}px]` : "h-full"
-        } rounded-lg`}
-        initialRegion={{
-          latitude: location?.coords.latitude || 40,
-          longitude: location?.coords.longitude || -123.11525937277163,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        showsUserLocation={true}
-        onRegionChange={(region) => {
-          handleRegionChange(region);
-        }}
-      >
-        {visibleAlerts.map((a, i) => {
-          // Render visible alerts
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: a.latitude,
-                longitude: a.longitude,
-              }}
-            >
-              <Image
-                source={require("../../../assets/LocationDot.png")}
-                style={tw.style(`w-20, h-20`)}
+    <View style={tw.style(`flex`)}>
+      {showMapFeedModal === true ? (
+        <ScrollView style={tw.style("flex")}>
+          {fires.length === 0 ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <>
+              <ModalViewAlerts
+                data={visibleFires}
+                type={"Fire"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
               />
-            </Marker>
-          );
-        })}
-        {visibleEarthquakes.map((a: any, i) => {
-          // Render visible earthquakes
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: a.geometry.coordinates[1],
-                longitude: a.geometry.coordinates[0],
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Earthquake.png")}
-                style={tw.style(`w-20, h-20`)}
+              <ModalViewAlerts
+                data={visibleEarthquakes}
+                type={"Earthquake"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
               />
-            </Marker>
-          );
-        })}
-        {visibleFires.map((a: any, i: number) => {
-          // Render visible fires
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: parseFloat(a.latitude),
-                longitude: parseFloat(a.longitude),
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Wildfire.png")}
-                style={tw.style(`w-20, h-20`)}
+              <ModalViewAlerts
+                data={visibleTsunamis}
+                type={"Earthquake"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
               />
-            </Marker>
-          );
-        })}
-        {visibleTsunamis.map((a: any, i: number) => {
-          // Render visible tsunamis
-          return (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: parseFloat(a.latitude),
-                longitude: parseFloat(a.longitude),
-              }}
-            >
-              <Image
-                source={require("../../../assets/mapIcons/Tsunami.png")}
-                style={tw.style(`w-20, h-20`)}
-              />
-            </Marker>
-          );
-        })}
-        {friendsLocation &&
-          friendsLocation?.map((a: any, i: number) => {
+            </>
+          )}
+        </ScrollView>
+      ) : (
+        <MapView
+          ref={mapRef}
+          style={{
+            height: height !== undefined ? height : "100%",
+            borderRadius: 10,
+          }}
+          initialRegion={currentRegion}
+          showsUserLocation={true}
+          onRegionChangeComplete={(region) => {
+            console.log(region);
+            handleRegionChange(region);
+            setCurrentRegion(region);
+          }}
+        >
+          {visibleAlerts.map((a, i) => {
+            // Render visible alerts
             return (
-              <View key={i}>
-                <Marker
-                  key={i}
-                  coordinate={{
-                    latitude: parseFloat(a.latitude),
-                    longitude: parseFloat(a.longitude),
-                  }}
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: a.latitude,
+                  longitude: a.longitude,
+                }}
+              >
+                <Image
+                  source={require("../../../assets/LocationDot.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
                 />
-              </View>
+              </Marker>
             );
           })}
-
-        {/* "
-
-
-
-
-
-
-
-
-
-
-
-
-" */}
-
-        {draggableMarker && (
-          <Marker
-            coordinate={draggableMarker}
-            draggable
-            onDragEnd={(event) => {
-              const newLatitude = event.nativeEvent.coordinate.latitude;
-              const newLongitude = event.nativeEvent.coordinate.longitude;
-
-              console.log(
-                `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
+          {visibleEarthquakes.map((a: any, i) => {
+            // Render visible earthquakes
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: a.geometry.coordinates[1],
+                  longitude: a.geometry.coordinates[0],
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Earthquake.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+          {visibleFires.map((a: any, i: number) => {
+            // Render visible fires
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Wildfire.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+          {visibleTsunamis.map((a: any, i: number) => {
+            // Render visible tsunamis
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: parseFloat(a.latitude),
+                  longitude: parseFloat(a.longitude),
+                }}
+              >
+                <Image
+                  source={require("../../../assets/mapIcons/Tsunami.png")}
+                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                />
+              </Marker>
+            );
+          })}
+          {friendsLocation &&
+            friendsLocation?.map((a: any, i: number) => {
+              return (
+                <View key={i}>
+                  <Marker
+                    key={i}
+                    coordinate={{
+                      latitude: parseFloat(a.latitude),
+                      longitude: parseFloat(a.longitude),
+                    }}
+                  />
+                </View>
               );
+            })}
 
-              setDraggableMarker({
-                ...draggableMarker,
-                latitude: newLatitude,
-                longitude: newLongitude,
-              });
-              axios
-                .post(
-                  "https://oursos-backend-production.up.railway.app/reportalert",
-                  {
-                    message: "Fire Alert",
-                    category: "Fire",
-                    severity: "High",
-                    latitude: newLatitude,
-                    longitude: newLongitude,
-                    radius: 100.0,
-                  }
-                )
-                .then(async (response) => {
-                  await axios
-                    .get(
-                      "https://oursos-backend-production.up.railway.app/alerts"
-                    )
-                    .then((response) => {
-                      setAlerts(response.data);
-                    });
-                  console.log(response);
-                })
-                .catch((error) => {
-                  console.error(error);
+          {draggableMarker && (
+            <Marker
+              coordinate={draggableMarker}
+              draggable
+              onDragEnd={(event) => {
+                const newLatitude = event.nativeEvent.coordinate.latitude;
+                const newLongitude = event.nativeEvent.coordinate.longitude;
+
+                console.log(
+                  `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
+                );
+
+                setDraggableMarker({
+                  ...draggableMarker,
+                  latitude: newLatitude,
+                  longitude: newLongitude,
                 });
-            }}
-          />
-        )}
-      </MapView>
-
-      {/* "
-
-
-
-
-
-
-
-
-
-
-
-
-" */}
+                axios
+                  .post(
+                    "https://oursos-backend-production.up.railway.app/reportalert",
+                    {
+                      message: "Fire Alert",
+                      category: "Fire",
+                      severity: "High",
+                      latitude: newLatitude,
+                      longitude: newLongitude,
+                      radius: 100.0,
+                    }
+                  )
+                  .then(async (response) => {
+                    await axios
+                      .get(
+                        "https://oursos-backend-production.up.railway.app/alerts"
+                      )
+                      .then((response) => {
+                        setAlerts(response.data);
+                      });
+                    console.log(response);
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+            />
+          )}
+        </MapView>
+      )}
 
       {buttons === true ? (
         <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
@@ -496,6 +530,14 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </Pressable>
+          <TouchableOpacity
+            onPress={() => setShowMapFeedModal(!showMapFeedModal)}
+          >
+            <Image
+              source={require("../../../assets/footerIcons/mapIcon.png")}
+              style={tw.style(`h-10 w-10 m-2`)}
+            />
+          </TouchableOpacity>
           <Modal
             animationType="slide"
             transparent={true}
@@ -520,31 +562,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                       });
-                      // axios
-                      //   .post(
-                      //     "https://oursos-backend-production.up.railway.app/reportalert",
-                      //     {
-                      //       message: "Fire Alert",
-                      //       category: "Fire",
-                      //       severity: "High",
-                      //       latitude: location.coords.latitude,
-                      //       longitude: location.coords.longitude,
-                      //       radius: 100.0,
-                      //     }
-                      //   )
-                      //   .then(async (response) => {
-                      //     await axios
-                      //       .get(
-                      //         "https://oursos-backend-production.up.railway.app/alerts"
-                      //       )
-                      //       .then((response) => {
-                      //         setAlerts(response.data);
-                      //       });
-                      //     console.log(response);
-                      //   })
-                      //   .catch((error) => {
-                      //     console.error(error);
-                      //   });
                     }
                   }}
                 >
