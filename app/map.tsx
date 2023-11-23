@@ -88,12 +88,12 @@ export default function App() {
           source={require("../assets/favicon.png")}
         />
       </View>
-      <Searchbar
+      {/* <Searchbar
         style={tw.style(`m-4 mt-0`)}
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
-      />
+      /> */}
       <MapComp buttons={true} />
       <Footer />
     </View>
