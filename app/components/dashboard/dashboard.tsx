@@ -1,3 +1,4 @@
+import React from "react";
 import { View, TextInput, ScrollView, SafeAreaView } from "react-native";
 import { useEffect, useState } from "react";
 import tw from "twrnc";

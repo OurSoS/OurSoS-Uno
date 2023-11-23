@@ -87,7 +87,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
-  const [ShowConfirmModal, setShowConfirmModal] = useState(false);
 
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
@@ -426,21 +425,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             );
           })}
 
-        {/* "
-
-
-
-
-
-
-
-
-
-
-
-
-" */}
-
         {draggableMarker && (
           <Marker
             coordinate={draggableMarker}
@@ -467,7 +451,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     severity: "High",
                     latitude: newLatitude,
                     longitude: newLongitude,
-                    radius: 100.0,
+                    radius: 1000.0,
                   }
                 )
                 .then(async (response) => {
@@ -487,21 +471,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           />
         )}
       </MapView>
-
-      {/* "
-
-
-
-
-
-
-
-
-
-
-
-
-" */}
 
       {buttons === true ? (
         <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
