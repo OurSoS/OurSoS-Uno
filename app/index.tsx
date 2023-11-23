@@ -8,6 +8,8 @@ import IntroTextButton from "./components/intro/intro-text-button";
 import IntroLayout from "./components/intro/_layout";
 import tw from "twrnc";
 import Dashboard from "./components/dashboard/dashboard";
+import { Suspense } from "react";
+import Loading from "./components/loading";
 
 export type staticType = {
   "intro-friends": {
@@ -118,89 +120,92 @@ export default function Index() {
     text = JSON.stringify(location);
   }
   return (
-    <View style={styles.container}>
-      {introComponent === "welcome" ? (
-        <IntroTextButton
-          heading="Welcome To OurSOS!"
-          details="Empowering Your Safety, Connecting Our World"
-          buttonNext="selectLocation"
-          buttonText="Select Language"
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "selectLocation" ? (
-        <IntroLayout>
-          <Text style={styles.header}>Select your language</Text>
-          <FlatList
-            style={tw.style(`w-full`, `flex`, `flex-col`)}
-            data={languages}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: LanguageType;
-              index: number;
-            }) => (
-              <Pressable
-                onPress={() => {
-                  setUserLang(languages[index]?.tag);
-                }}
-                style={tw.style(
-                  `text-white`,
-                  `bg-white`,
-                  `px-7`,
-                  `py-3`,
-                  `rounded-lg`,
-                  `border`,
-                  `mb-3`
-                )}
-              >
-                <Text style={styles.text}>{item.name}</Text>
-              </Pressable>
-            )}
-          />
-          <Pressable
-            onPress={() => {
-              setUserLanguage();
-            }}
-            style={tw.style(
-              `text-white`,
-              `bg-[#003566]`,
-              `px-7`,
-              `py-3`,
-              `rounded-lg`
-            )}
-          >
-            <Text style={tw.style(`text-white`)}>Continue</Text>
-          </Pressable>
-        </IntroLayout>
-      ) : introComponent === "newsFeed" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-newsfeed"].heading}
-          details={translatedStaticContent["intro-newsfeed"].details}
-          buttonNext="introMap"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "introMap" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-map"].heading}
-          details={translatedStaticContent["intro-map"].details}
-          buttonNext="introFriends"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : introComponent === "introFriends" ? (
-        <IntroTextButton
-          heading={translatedStaticContent["intro-friends"].heading}
-          details={translatedStaticContent["intro-friends"].details}
-          buttonNext="dashboard"
-          buttonText={translatedStaticContent["button-text"].continue}
-          buttonFunction={buttonFunction}
-        ></IntroTextButton>
-      ) : (
-        <Dashboard user={currentUser} userLang={userLang}></Dashboard>
-      )}
-    </View>
+    <>
+      <Suspense fallback={<Loading />}></Suspense>
+      <View style={styles.container}>
+        {introComponent === "welcome" ? (
+          <IntroTextButton
+            heading="Welcome To OurSOS!"
+            details="Empowering Your Safety, Connecting Our World"
+            buttonNext="selectLocation"
+            buttonText="Select Language"
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "selectLocation" ? (
+          <IntroLayout>
+            <Text style={styles.header}>Select your language</Text>
+            <FlatList
+              style={tw.style(`w-full`, `flex`, `flex-col`)}
+              data={languages}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: LanguageType;
+                index: number;
+              }) => (
+                <Pressable
+                  onPress={() => {
+                    setUserLang(languages[index]?.tag);
+                  }}
+                  style={tw.style(
+                    `text-white`,
+                    `bg-white`,
+                    `px-7`,
+                    `py-3`,
+                    `rounded-lg`,
+                    `border`,
+                    `mb-3`
+                  )}
+                >
+                  <Text style={styles.text}>{item.name}</Text>
+                </Pressable>
+              )}
+            />
+            <Pressable
+              onPress={() => {
+                setUserLanguage();
+              }}
+              style={tw.style(
+                `text-white`,
+                `bg-[#003566]`,
+                `px-7`,
+                `py-3`,
+                `rounded-lg`
+              )}
+            >
+              <Text style={tw.style(`text-white`)}>Continue</Text>
+            </Pressable>
+          </IntroLayout>
+        ) : introComponent === "newsFeed" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-newsfeed"].heading}
+            details={translatedStaticContent["intro-newsfeed"].details}
+            buttonNext="introMap"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "introMap" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-map"].heading}
+            details={translatedStaticContent["intro-map"].details}
+            buttonNext="introFriends"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : introComponent === "introFriends" ? (
+          <IntroTextButton
+            heading={translatedStaticContent["intro-friends"].heading}
+            details={translatedStaticContent["intro-friends"].details}
+            buttonNext="dashboard"
+            buttonText={translatedStaticContent["button-text"].continue}
+            buttonFunction={buttonFunction}
+          ></IntroTextButton>
+        ) : (
+          <Dashboard user={currentUser} userLang={userLang}></Dashboard>
+        )}
+      </View>
+    </>
   );
 }
 
