@@ -1,6 +1,8 @@
 import AtomIcon from "../atoms/icon";
 import { StyleSheet, Text, View } from "react-native";
 import TextStyles from "../atoms/text";
+import React from 'react';
+
 
 type IconTextProps = {
     icon: string,

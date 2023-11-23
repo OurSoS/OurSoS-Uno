@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Image, Modal, View, Button, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 export default function CustomModal({ heading, link, subtext, open }: { heading: string, link: string, subtext: string, open: boolean }) {
         const windowHeight = Dimensions.get('window').height;

@@ -3,7 +3,6 @@ import { Marker } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator } from "react-native";
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -79,33 +78,34 @@ const handleNewPin = () => {
 export default function MapComp({ height, buttons }: MapCompProps) {
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
   const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
-
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
-  const [isMapView, setIsMapView] = useState(true);
-
-  const [pins, setPins] = useState([]);
   const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
-
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
-
   const mapRef = React.useRef<MapView>(null);
-
   const [visibleAlerts, setVisibleAlerts] = useState<alert[]>([]);
   const [visibleEarthquakes, setVisibleEarthquakes] = useState<earthquake[]>(
     []
   );
   const [visibleFires, setVisibleFires] = useState<any>([]);
   const [visibleTsunamis, setVisibleTsunamis] = useState<any>([]);
-  
+  const [jumpToLocation, setJumpToLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  const [currentRegion, setCurrentRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
   const handleRegionChange = debounce((region) => {
-    // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
     const visibleAlerts = alerts.filter((a) => {
-      // Check if the alert's latitude and longitude are within the visible region
       return (
         a.latitude >= region.latitude - region.latitudeDelta / 2 &&
         a.latitude <= region.latitude + region.latitudeDelta / 2 &&
@@ -115,7 +115,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     });
 
     const visibleEarthquakes = earthquakes.filter((a) => {
-      // Check if the earthquake's latitude and longitude are within the visible region
       return (
         a.geometry.coordinates[1] >=
           region.latitude - region.latitudeDelta / 2 &&
@@ -129,7 +128,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     });
 
     const visibleFires = fires.filter((a: any) => {
-      // Check if the fire's latitude and longitude are within the visible region
       return (
         parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
         parseFloat(a.latitude) <= region.latitude + region.latitudeDelta / 2 &&
@@ -140,7 +138,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     });
 
     const visibleTsunamis = tsunamis.filter((a: any) => {
-      // Check if the tsunami's latitude and longitude are within the visible region
       return (
         parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
         parseFloat(a.latitude) <= region.latitude + region.latitudeDelta / 2 &&
@@ -150,12 +147,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    // Update the state variables with the filtered data
     setVisibleAlerts(visibleAlerts);
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
     setVisibleTsunamis(visibleTsunamis);
-  }, 100); // Adjust the delay (in milliseconds) as needed
+  }, 100);
 
   const retrieveAlerts = async () => {
     await axios
@@ -189,50 +185,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   useEffect(() => {
     (async () => {
       await axios
-        .get("https://oursos-backend-production.up.railway.app/earthquakes")
-        .then((response) => {
-          setEarthquakes(response.data.features);
-        })
-        .then(() => {
-          setTsunamis(
-            earthquakes.filter((e) => {
-              return e.properties.tsunami !== 0;
-            })
-          );
-          // console.log(tsunamis);
-        })
-        .catch((error) => console.error(error));
-      //GET FIRE ALERTS
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/fires")
-        .then((response) => {
-          setFires(response.data);
-        })
-        .catch((error) => console.error(error));
-
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/alerts")
-        .then((response) => {
-          setAlerts(response.data);
-        })
-        .catch((error) => console.error(error));
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      // console.log(location);
-
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/alerts")
-        .then((response) => {
-          setAlerts(response.data);
-        })
-        .catch((error) => console.error(error));
-
-      await axios
         .get("https://oursos-backend-production.up.railway.app/users/1")
         .then((response) => {
           return response.data.friends;
@@ -254,12 +206,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           });
         })
         .catch((error) => console.error(error));
+      retrieveAlerts();
     })();
 
-    retrieveAlerts();
-  }, []);
-
-  useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -269,46 +218,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-
-      // if (mapRef.current) {
-      //   mapRef.current.animateToRegion(
-      //     {
-      //       latitude: location.coords.latitude,
-      //       longitude: location.coords.longitude,
-      //       latitudeDelta: 0.0922,
-      //       longitudeDelta: 0.0421,
-      //     },
-      //     1000
-      //   );
-      // }
     })();
-  }, []);
+  }, [currentRegion]);
 
   const handleReportAlert = () => {
     setCustomAlertModel(true);
     console.log("report alert");
-  };
-
-  const handleGoToMap = async (lat: string, long: string) => {
-    console.log("Latitude:", lat);
-    console.log("Longitude:", long);
-
-    setShowMapFeedModal(false);
-
-    const targetRegion = {
-      latitude: parseFloat(lat),
-      longitude: parseFloat(long),
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    };
-
-    console.log(mapRef);
-
-    // Animate to the target region
-    if (mapRef && mapRef.current && tsunamis.length > 0 && fires.length > 0) {
-      //@ts-ignore
-      await mapRef.current.animateToRegion(targetRegion, 1000);
-    }
   };
 
   const handleToggleMyLocation = () => {
@@ -334,26 +249,26 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           {fires.length === 0 ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : (
-            <ModalViewAlerts data={fires} handleGoToMap={handleGoToMap} />
+            <>
+              <ModalViewAlerts data={visibleFires} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+              <ModalViewAlerts data={visibleEarthquakes} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+              <ModalViewAlerts data={visibleTsunamis} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+            </>
           )}
         </ScrollView>
       ) : (
         <MapView
           ref={mapRef}
           style={{
-            
             height: height !== undefined ? height : "100%",
             borderRadius: 10,
           }}
-          initialRegion={{
-            latitude: location?.coords.latitude || 40,
-            longitude: location?.coords.longitude || -123.11525937277163,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+          initialRegion={currentRegion}
           showsUserLocation={true}
-          onRegionChange={(region) => {
+          onRegionChangeComplete={(region) => {
+            console.log(region);
             handleRegionChange(region);
+            setCurrentRegion(region);
           }}
         >
           {visibleAlerts.map((a, i) => {
@@ -655,7 +570,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 >
                   <Text style={tw`mb-4 text-center`}>Close</Text>
                 </Pressable>
-                {/* DELETE THIS */}
                 <Pressable
                   style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
                   onPress={() => setCustomAlertModel(false)}
@@ -672,67 +586,3 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   map: {
-//     width: "100%",
-//   },
-//   searchInput: {
-//     borderRadius: 62,
-//     backgroundColor: "white",
-//     padding: 10,
-//     marginBottom: 0,
-//     marginHorizontal: 10,
-//     elevation: 3,
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.84,
-//     marginRight: 10,
-//   },
-//   centeredView: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     marginTop: 22,
-//   },
-//   modalView: {
-//     margin: 20,
-//     backgroundColor: "white",
-//     borderRadius: 20,
-//     padding: 35,
-//     alignItems: "center",
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 4,
-//     elevation: 5,
-//   },
-//   button: {
-//     borderRadius: 20,
-//     padding: 10,
-//     elevation: 2,
-//     marginVertical: 5,
-//   },
-//   buttonClose: {
-//     backgroundColor: "#2196F3",
-//   },
-//   textStyle: {
-//     color: "white",
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   modalText: {
-//     marginBottom: 15,
-//     textAlign: "center",
-//   },
-// });

@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
+import React from "react";
 type newsItemType = {
   date: string;
   link: string;

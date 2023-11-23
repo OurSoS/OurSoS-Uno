@@ -1,6 +1,8 @@
 import { View, Image, StyleSheet } from "react-native"
 import { Text } from "react-native-paper"
 import tw from 'twrnc';
+import React from 'react';
+
 
 export default function ImageText({ style, imageUrl, text }: { style: string, imageUrl: string, text: string }) {
         return (
