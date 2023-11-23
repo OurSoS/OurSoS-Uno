@@ -116,6 +116,7 @@ export default function Index() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
+
   const setUserLanguage = async () => {
     const updateUserRequest = {
       username: "sam",
@@ -139,6 +140,7 @@ export default function Index() {
     //     });
     // }
   };
+
   async function registerForPushNotificationsAsync() {
     let { status } = await Notification.requestPermissionsAsync();
     if (status !== "granted") {
@@ -153,19 +155,15 @@ export default function Index() {
     registerForPushNotificationsAsync();
     // ... other initialization code
   }, []);
-  /* 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  */
+
+  Notification.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
   // calculate distance between two points
   const degreesToRadians = (degrees: number) => {
     return (degrees * Math.PI) / 180;
@@ -205,21 +203,11 @@ export default function Index() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-      /*
+    })();
+  }, []);
 
-
-
-
-
-
-
-
-
-
-
-
-      */
-
+  useEffect(() => {
+    (async () => {
       const retrieveAlerts = async () => {
         await axios
           .get("https://oursos-backend-production.up.railway.app/alerts")
@@ -251,87 +239,69 @@ export default function Index() {
       };
 
       retrieveAlerts();
-
-      console.log("alerts");
+      // console.log("alerts");
       // alerts ["latitude": 49.2827, "longitude": -123.1207,"radius": 5]
+    })();
+  }, []);
 
+  useEffect(() => {
+    (async () => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      console.log("my location", location);
-      //{"coords": {"accuracy": 5, "altitude": 5, "altitudeAccuracy": 0.49166667461395264, "heading": 0, "latitude": 37.4219983, "longitude": -122.084, "speed": 0}, "mocked": false, "timestamp": 1700702980213}
-
-      // check if user is within alert radius
-      const isWithinAlertRadius = (
-        myLatitude: Float,
-        myLongitude: Float,
-        alerts: alert[]
-      ) => {
-        for (let alert of alerts) {
-          if (alert.radius !== undefined) {
-            const distance = distanceBetweenPoints(
-              myLatitude,
-              myLongitude,
-              alert.latitude,
-              alert.longitude
-            );
-            if (distance <= alert.radius) {
-              console.log(`You are within the radius of alert id: ${alert.id}`);
-              const isWithinAlertRadius = (
-                myLatitude: Float,
-                myLongitude: Float,
-                alerts: alert[]
-              ) => {
-                for (let alert of alerts) {
-                  if (alert.radius !== undefined && distance <= alert.radius) {
-                    console.log(
-                      `You are within the radius of alert id: ${alert.id}`
-                    );
-                    sendLocalNotification(
-                      `You are within the radius of alert id: ${alert.id}`
-                    );
-                  }
-                }
-              };
-
-              const sendLocalNotification = async (message: string) => {
-                await Notification.scheduleNotificationAsync({
-                  content: {
-                    title: "Alert Notification",
-                    body: message,
-                    data: {},
-                  },
-                  trigger: { seconds: 1 },
-                });
-              };
-            }
-          }
-        }
-      };
-
-      /*
-
-
-
-
-
-
-
-
-      
-      */
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/users/1")
-        .then((res) => {
-          setCurrentUser(res.data);
-        });
 
       if (location && location.coords) {
-        isWithinAlertRadius(
+        checkAndNotifyForAlerts(
           location.coords.latitude,
           location.coords.longitude,
           alerts
         );
       }
+    })();
+  }, [alerts]);
+
+  const checkAndNotifyForAlerts = async (
+    myLatitude: number,
+    myLongitude: number,
+    alerts: alert[]
+  ) => {
+    for (let alert of alerts) {
+      if (alert.radius !== undefined) {
+        const distance = distanceBetweenPoints(
+          myLatitude,
+          myLongitude,
+          alert.latitude,
+          alert.longitude
+        );
+        if (distance <= alert.radius) {
+          await sendLocalNotification(
+            `You are within the radius of alert id: ${alert.id}`
+          );
+        }
+      }
+    }
+  };
+
+  const sendLocalNotification = async (message: string) => {
+    try {
+      await Notification.scheduleNotificationAsync({
+        content: {
+          title: "Alert Notification",
+          body: message,
+        },
+        trigger: null, // Immediate trigger
+      });
+    } catch (error) {
+      console.error("Error in sending notification", error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/users/1")
+        .then((res) => {
+          setCurrentUser(res.data);
+        });
     })();
   }, [alerts]);
 
