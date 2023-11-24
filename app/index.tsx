@@ -159,8 +159,8 @@ export default function Index() {
   Notification.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
     }),
   });
 
@@ -264,6 +264,8 @@ export default function Index() {
     myLongitude: number,
     alerts: alert[]
   ) => {
+    console.log(alerts.length);
+    let i =0;
     for (let alert of alerts) {
       if (alert.radius !== undefined) {
         const distance = distanceBetweenPoints(
@@ -273,8 +275,10 @@ export default function Index() {
           alert.longitude
         );
         if (distance <= alert.radius) {
+          ++i;
+          console.log("alert", i);
           await sendLocalNotification(
-            `You are within the radius of alert id: ${alert.id}`
+            `Emergency Alert: Immediate danger in your area due to a ${alert.category}. Seek safety immediately as per local guidelines and stay informed.`
           );
         }
       }
