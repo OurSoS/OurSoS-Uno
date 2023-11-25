@@ -75,9 +75,9 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                 </Text>
               ) : null}
 
-              <Text style={tw.style("text-sm text-white")}>
+              {/* <Text style={tw.style("text-sm text-white")}>
                 Severity - Calculated on backend
-              </Text>
+              </Text> */}
               {props.type === "Fire" ? (
                 <>
                   <Text style={tw.style("text-sm text-white")}>Time - {a?.acq_time}</Text>
@@ -108,12 +108,12 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                   <Text style={tw.style("text-sm text-white")}>
                     Message - {a?.message}
                   </Text>
-                  <Text style={tw.style("text-sm text-white")}>Time - {a?.time}</Text>
+                  {/* <Text style={tw.style("text-sm text-white")}>Time - {a?.time}</Text> */}
                   <Text style={tw.style("text-sm text-white")}>
-                    Radius - {a?.radius + typeof a?.radius}{" "}
+                    Radius - {a?.radius}{" "}
                   </Text>
                   {/* Add a View to represent the circle */}
-                  <View
+                  {/* <View
                     style={{
                       width: a?.radius * 2, // Diameter of the circle
                       height: a?.radius * 2,
@@ -124,7 +124,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                       marginTop: 10, // Adjust the margin as needed
                       alignSelf: "center", // Center horizontally
                     }}
-                  />
+                  /> */}
                 </>
               ) : null}
             </View>
