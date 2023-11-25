@@ -159,7 +159,7 @@ function SettingsBody({ setPage }: SettingsBodyProps) {
                   style={styles.button}
                 >
                   <View style={styles.leftContent}>
-                    <Text>{setting}</Text>
+                    <Text style={{color:"white",textAlign:"center"}}>{setting}</Text>
                   </View>
                 </TouchableOpacity>
               </Pressable>
