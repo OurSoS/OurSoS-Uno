@@ -278,7 +278,7 @@ export default function Index() {
           alert.latitude,
           alert.longitude
         );
-        if (distance <= 0.1) {
+        if (distance <= 0.01) {
           // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
           ++i;
           console.log("alert", alert.category, alert.id);
