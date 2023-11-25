@@ -483,8 +483,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
                     {
-                      message: "Fire Alert",
-                      category: "Fire",
+                      message: draggableMarker.category + "Alert",
+                      category: draggableMarker.category,
                       severity: "High",
                       latitude: newLatitude,
                       longitude: newLongitude,
@@ -546,32 +546,58 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               setCustomAlertModel(!CustomAlertModel);
             }}
           >
-            <View style={tw`flex-1 justify-center items-center mt-6`}>
-              <View
-                style={tw`m-5 bg-white rounded-5 p-9 items-center shadow-xl`}
-              >
-                <Text style={tw`mb-4 text-center`}>Report Alert</Text>
+            <View
+              style={tw`flex-1 justify-center items-center mt-6 bg-black bg-opacity-50`}
+            >
+              <View style={tw`m-5 bg-white rounded-lg p-6 shadow-2xl`}>
+                <Text style={tw`text-xl font-semibold mb-6 text-center`}>
+                  Report Alert
+                </Text>
+
+                {/* Fire Button */}
                 <Pressable
-                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
                   onPress={() => {
-                    console.log("Fire Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Fire",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                    }
+                    // Fire Alert Pin Dropped logic
                   }}
                 >
-                  <Text style={tw`mb-4 text-center`}>Fire</Text>
+                  <Text style={tw`text-white text-center font-medium`}>
+                    Fire
+                  </Text>
                 </Pressable>
+
+                {/* Earthquake Button */}
                 <Pressable
-                  style={tw`rounded-5 p-2.5 my-1.5 elevation-2 bg-blue-500`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  onPress={() => {
+                    // Earthquake Alert Pin Dropped logic
+                  }}
+                >
+                  <Text style={tw`text-white text-center font-medium`}>
+                    Earthquake
+                  </Text>
+                </Pressable>
+
+                {/* Tsunami Button */}
+                <Pressable
+                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  onPress={() => {
+                    // Tsunami Alert Pin Dropped logic
+                  }}
+                >
+                  <Text style={tw`text-white text-center font-medium`}>
+                    Tsunami
+                  </Text>
+                </Pressable>
+
+                {/* Close Button */}
+                <Pressable
+                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
                   onPress={() => setCustomAlertModel(false)}
                 >
-                  <Text style={tw`mb-4 text-center`}>Close</Text>
+                  <Text style={tw`text-white text-center font-medium`}>
+                    Close
+                  </Text>
                 </Pressable>
               </View>
             </View>
