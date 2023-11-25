@@ -556,43 +556,63 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 
                 {/* Fire Button */}
                 <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
-                    // Fire Alert Pin Dropped logic
+                    console.log("Fire Alert Pin Dropped");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        category: "Fire",
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={tw`text-white text-center font-medium`}>
                     Fire
                   </Text>
                 </Pressable>
-
                 {/* Earthquake Button */}
                 <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
-                    // Earthquake Alert Pin Dropped logic
+                    console.log("Earthquake Alert Pin Dropped");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        category: "Earthquake",
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={tw`text-white text-center font-medium`}>
                     Earthquake
                   </Text>
                 </Pressable>
-
                 {/* Tsunami Button */}
                 <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
-                    // Tsunami Alert Pin Dropped logic
+                    console.log("Tsunami Alert Pin Dropped");
+                    setCustomAlertModel(false);
+                    if (location) {
+                      setDraggableMarker({
+                        category: "Tsunami",
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                      });
+                    }
                   }}
                 >
                   <Text style={tw`text-white text-center font-medium`}>
                     Tsunami
                   </Text>
                 </Pressable>
-
-                {/* Close Button */}
                 <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001D3D] shadow-md`}
+                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => setCustomAlertModel(false)}
                 >
                   <Text style={tw`text-white text-center font-medium`}>
