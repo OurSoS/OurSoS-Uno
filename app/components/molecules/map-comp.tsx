@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Marker } from "react-native-maps";
+import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator } from "react-native";
 import {
@@ -18,6 +18,7 @@ import * as Location from "expo-location";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
+import { router } from "expo-router";
 
 const mapStyle = [
   {
@@ -160,7 +161,7 @@ type earthquake = {
 };
 
 const handleNewPin = () => {
-  console.log("new pin");
+  router.push("/")
 };
 
 export default function MapComp({ height, buttons }: MapCompProps) {
@@ -174,6 +175,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
+  const [calculatedHeight, setCalculatedHeight] = useState(0);
 
   const mapRef = React.useRef<MapView>(null);
 
@@ -452,10 +454,14 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       ) : (
         <MapView
           ref={mapRef}
+          mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
+          rotateEnabled={false}
+          provider={PROVIDER_GOOGLE}
           loadingBackgroundColor={"#000000"}
           style={{height: height !== undefined ? height : "100%", borderRadius: 10}}
           customMapStyle={mapStyle}
           initialRegion={currentRegion}
+          showsMyLocationButton={true}
           showsUserLocation={true}
           onRegionChangeComplete={(region) => {
             console.log(region);
@@ -598,19 +604,14 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         <View style={tw`top-20 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}>
           <TouchableOpacity onPress={handleNewPin}>
             <Image
-              source={require("../../../assets/mapui/MapUI-NewPin.png")}
+              source={require("../../../assets/footerIcons/homeIcon.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
-          </TouchableOpacity>
-          {/* <Pressable onPress={handleToggleMyLocation}>
-            <Image
-              source={require("../../../assets/mapui/MapUI-MyLoc.png")}
-              style={tw.style(`h-10 w-10 m-2`)}
-            />
-          </Pressable> */}
+          </TouchableOpacity>          
+          
           <Pressable onPress={handleReportAlert}>
             <Image
-              source={require("../../../assets/mapui/MapUI-ReportAlert.png")}
+              source={require("../../../assets/mapui/MapUI-NewPin.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </Pressable>
@@ -618,7 +619,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             onPress={() => setShowMapFeedModal(!showMapFeedModal)}
           >
             <Image
-              source={require("../../../assets/footerIcons/mapIcon.png")}
+              source={require("../../../assets/mapui/apps-sort.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </TouchableOpacity>
