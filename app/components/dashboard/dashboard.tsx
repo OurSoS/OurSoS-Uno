@@ -1,7 +1,7 @@
 import React from "react";
 import { View, TextInput, ScrollView, SafeAreaView } from "react-native";
 import { useEffect, useState } from "react";
-import tw from "twrnc";
+// import tw from "twrnc";
 import axios from "axios";
 import Slider from "../molecules/slider";
 import { Searchbar } from "react-native-paper";
@@ -11,6 +11,8 @@ import { router } from "expo-router";
 import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
+import tw from "../../../lib/tailwind";
+
 type newsItemType = {
   date: string;
   link: string;
@@ -165,6 +167,7 @@ export default function Dashboard({
             <Text style={tw.style(`text-[1.5rem]`)}>Friends</Text>
             <Button>View More</Button>
           </View>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -193,7 +196,7 @@ export default function Dashboard({
 
       <Footer />
       <Snackbar
-        style={tw.style(`bg-white`, `rounded-t-lg`)}
+        style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
         visible={visible}
         onDismiss={onDismissSnackBar}
         action={{
