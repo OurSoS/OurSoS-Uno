@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import tw from "../lib/tailwind";
+import { useDeviceContext } from "twrnc";
+
 import {
   Text,
   View,

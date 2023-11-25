@@ -6,7 +6,7 @@ import axios from "axios";
 import staticText from "../utils/static-text.json";
 import IntroTextButton from "./components/intro/intro-text-button";
 import IntroLayout from "./components/intro/_layout";
-import tw from "twrnc";
+import tw, { create } from "twrnc";
 import Dashboard from "./components/dashboard/dashboard";
 import { Suspense } from "react";
 import Loading from "./components/loading";
@@ -117,6 +117,7 @@ export default function Index() {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  const tw = create(require("../tailwind.config.ts"));
   const setUserLanguage = async () => {
     const updateUserRequest = {
       username: "sam",
@@ -264,6 +265,8 @@ export default function Index() {
     myLongitude: number,
     alerts: alert[]
   ) => {
+    console.log(alerts.length);
+    let i = 0;
     for (let alert of alerts) {
       if (alert.radius !== undefined) {
         const distance = distanceBetweenPoints(
@@ -273,6 +276,8 @@ export default function Index() {
           alert.longitude
         );
         if (distance <= alert.radius) {
+          ++i;
+          console.log("alert", i);
           await sendLocalNotification(
             `Emergency Alert: Immediate danger in your area due to a ${alert.category}. Seek safety immediately as per local guidelines and stay informed.`
           );
