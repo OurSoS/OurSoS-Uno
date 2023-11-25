@@ -595,19 +595,19 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       )}
 
       {buttons === true ? (
-        <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+        <View style={tw`top-20 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}>
           <TouchableOpacity onPress={handleNewPin}>
             <Image
               source={require("../../../assets/mapui/MapUI-NewPin.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </TouchableOpacity>
-          <Pressable onPress={handleToggleMyLocation}>
+          {/* <Pressable onPress={handleToggleMyLocation}>
             <Image
               source={require("../../../assets/mapui/MapUI-MyLoc.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
-          </Pressable>
+          </Pressable> */}
           <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-ReportAlert.png")}
