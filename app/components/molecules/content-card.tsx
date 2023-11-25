@@ -12,22 +12,24 @@ export default function ContentCard({ imgSrc, data, heading, snippet, onToggleSn
 
         // const onToggleSnackBar = () => setVisible(!visible);
 
-        // const onDismissSnackBar = () => setVisible(false);
-        // // onPress = { onToggleSnackBar } > { visible? 'Hide': 'Show' }
-        return (
-                <View>
-                        <TouchableOpacity
-                                onPress={() => onToggleSnackBar(data)}
-                        >
-                                <Card style={tw.style(`w-[14rem]`, `m-2`, `bg-white`)}>
-                                        <Card.Cover style={tw.style(`p-2`, `bg-white`)} source={{ uri: imgSrc }} />
-                                        <Card.Title title={heading} />
-                                        <Card.Content>
-                                                <Text>{snippet}</Text>
-                                        </Card.Content>
-                                </Card>
-                        </TouchableOpacity>
-
-                </View>
-        )
-}
+  // const onDismissSnackBar = () => setVisible(false);
+  // // onPress = { onToggleSnackBar } > { visible? 'Hide': 'Show' }
+  return (
+    <View style={tw.style("text-white w-50 p-2")}>
+      <TouchableOpacity
+        style={tw.style("text-white")}
+        onPress={() => onToggleSnackBar(data)}
+      >
+        <Card style={tw.style(`mt-2 bg-[#001D3D] p-2`)}>
+          <Card.Cover
+            style={tw.style(`p-2 h-35 bg-[#001D3D]`)}
+            source={{ uri: imgSrc }}
+          />
+          <Text style={tw.style("text-white p-4")}>{heading}</Text>
+          {/* <Card.Content style={tw.style("text-white")}>
+            <Text style={tw.style("text-white")}>{snippet}</Text>
+          </Card.Content> */}
+        </Card>
+      </TouchableOpacity>
+    </View>
+  );

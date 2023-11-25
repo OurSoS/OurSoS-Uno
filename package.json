@@ -22,12 +22,15 @@
     "expo-font": "~11.4.0",
     "expo-linking": "~5.0.2",
     "expo-location": "~16.1.0",
-    "expo-router": "^2.0.0",
+    "expo-notifications": "~0.20.1",
+    "expo-router": "^2.0.4",
     "expo-status-bar": "~1.6.0",
     "lodash.debounce": "^4.0.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.72.6",
+    "react-native": "0.72.5",
+    "react-native-awesome-slider": "^2.4.5",
+    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-map-clustering": "^3.4.2",
     "react-native-maps": "1.7.1",
@@ -39,8 +42,7 @@
     "react-native-svg": "13.9.0",
     "react-native-vector-icons": "^10.0.2",
     "react-native-web": "~0.19.6",
-    "twrnc": "^3.6.4",
-    "expo-notifications": "~0.20.1"
+    "twrnc": "^3.6.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

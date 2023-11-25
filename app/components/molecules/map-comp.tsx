@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import React, { useState, useEffect, useCallback } from "react";
+import { Marker, PROVIDER_GOOGLE, MapType } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator } from "react-native";
 import {
@@ -19,88 +19,88 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
 import { router } from "expo-router";
+import ModalCreateAlerts from "../modalCreateAlerts";
 
 const mapStyle = [
   {
-    "elementType": "geometry.fill",
-    "stylers": [
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#f6d165"
-      }
-    ]
+        color: "#f6d165",
+      },
+    ],
   },
   {
-    "featureType": "administrative.land_parcel",
-    "stylers": [
+    featureType: "administrative.land_parcel",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "administrative.neighborhood",
-    "stylers": [
+    featureType: "administrative.neighborhood",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "landscape",
-    "elementType": "geometry.fill",
-    "stylers": [
+    featureType: "landscape",
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#ffc736"
-      }
-    ]
+        color: "#ffc736",
+      },
+    ],
   },
   {
-    "featureType": "poi",
-    "elementType": "labels.text",
-    "stylers": [
+    featureType: "poi",
+    elementType: "labels.text",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "geometry.fill",
-    "stylers": [
+    featureType: "road",
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#303030"
-      }
-    ]
+        color: "#303030",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "labels",
-    "stylers": [
+    featureType: "road",
+    elementType: "labels",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [
+    featureType: "water",
+    elementType: "geometry.fill",
+    stylers: [
       {
-        "color": "#0090f9"
-      }
-    ]
+        color: "#0090f9",
+      },
+    ],
   },
   {
-    "featureType": "water",
-    "elementType": "labels.text",
-    "stylers": [
+    featureType: "water",
+    elementType: "labels.text",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
-  }
-]
-
+        visibility: "off",
+      },
+    ],
+  },
+];
 
 type MapCompProps = {
   height?: number;
@@ -161,7 +161,7 @@ type earthquake = {
 };
 
 const handleNewPin = () => {
-  router.push("/")
+  router.push("/");
 };
 
 export default function MapComp({ height, buttons }: MapCompProps) {
@@ -176,6 +176,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [errorMsg, setErrorMsg] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
   const [calculatedHeight, setCalculatedHeight] = useState(0);
+  
 
   const mapRef = React.useRef<MapView>(null);
 
@@ -196,6 +197,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  //Recently added jacks stuff
+  const [generatedMarkers, setGeneratedMarkers] = useState<any>([]);
+  const [visibleGeneratedMarkers, setVisibleGeneratedMarkers] = useState<any>([]);
+  const [myAccurateLocation, setMyAccurateLocation] = useState<any>({});
+  const [showAlertReportModal, setShowAlertReportModal] = useState(false);
+  const [myMapType, setMyMapType] = useState<MapType>("standard");
 
   const reportFireAlert = (locationData: LocationData) => {
     axios
@@ -215,6 +222,20 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         // Handle error appropriately
       });
   };
+
+  const newMarker = useCallback((desc:string, severity:number, type:string) => {
+    setGeneratedMarkers((prevMarkers:any) => [
+      ...prevMarkers,
+      {
+        lat: myAccurateLocation.latitude,
+        long: myAccurateLocation.longitude,
+        desc: desc,
+        type: type,
+        severity: severity,
+      },
+    ]);
+  }, [myAccurateLocation.latitude, myAccurateLocation.longitude]);
+  
 
   const handleRegionChange = debounce((region) => {
     const visibleAlerts = alerts.filter((a) => {
@@ -263,9 +284,21 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
+    const visibleGeneratedMarkers = generatedMarkers.filter((a: any) => {
+      // Check if the tsunami's latitude and longitude are within the visible region
+      return (
+        parseFloat(a.lat) >= region.latitude - region.latitudeDelta / 2 &&
+        parseFloat(a.lat) <= region.latitude + region.latitudeDelta / 2 &&
+        parseFloat(a.long) >=
+          region.longitude - region.longitudeDelta / 2 &&
+        parseFloat(a.long) <= region.longitude + region.longitudeDelta / 2
+      );
+    });
+
     // setAllVisibleAlerts(allVisibleAlerts.push(...visibleAlerts, ...visibleEarthquakes, ...visibleFires, ...visibleTsunamis));
     // console.log("ALL ALERTS: " + JSON.stringify(allVisibleAlerts));
 
+    setVisibleGeneratedMarkers(visibleGeneratedMarkers);
     setVisibleAlerts(visibleAlerts);
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
@@ -314,7 +347,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               return e.properties.tsunami !== 0;
             })
           );
-          console.log(tsunamis);
+          // console.log(tsunamis);
         })
         .catch((error) => console.error(error));
       //GET FIRE ALERTS
@@ -406,7 +439,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   const handleToggleMyLocation = () => {
-    console.log("toggle my location");
+    // console.log("toggle my location");
     if (location && location.coords && mapRef.current) {
       // @ts-ignore
       mapRef.current.animateToRegion(
@@ -421,50 +454,116 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     }
   };
 
+  const getCircleColor = (severity:number) => {
+    switch (severity) {
+      case 1:
+        return 'gray'; // Adjust this color based on your design
+      case 2:
+        return 'lightblue'; // Adjust this color based on your design
+      case 3:
+        return 'yellow'; // Adjust this color based on your design
+      case 4:
+        return 'orange'; // Adjust this color based on your design
+      case 5:
+        return 'red'; // Adjust this color based on your design
+      default:
+        return 'gray';
+    }
+  };
+  
+
   return (
-    <View style={tw.style(`flex`)}>
+    <View style={tw.style("border-solid border-4 rounded-md border-[#001D3D]")}>
       {showMapFeedModal === true ? (
         <ScrollView style={tw.style("flex")}>
-          {visibleAlerts.length === 0 && visibleEarthquakes.length === 0 && visibleTsunamis.length === 0 && visibleFires.length === 0 ? (
-          <View style={tw.style("flex-1 justify-center items-center p-4 flex-col")}>
-           <Text style={tw.style("text-center text-lg font-bold mb-4")}>
-             There are no visible alerts in your area... 😔
-           </Text>
-           <Text style={tw.style("text-center text-sm")}>
-             Try moving the map to a new area!
-           </Text>
-         </View>
+          {visibleAlerts.length === 0 &&
+          visibleEarthquakes.length === 0 &&
+          visibleTsunamis.length === 0 &&
+          visibleFires.length === 0 ? (
+            <View
+              style={tw.style(
+                "flex-1 justify-center items-center p-4 flex-col"
+              )}
+            >
+              <Text style={tw.style("text-center text-lg font-bold mb-4")}>
+                There are no visible alerts in your area... 😔
+              </Text>
+              <Text style={tw.style("text-center text-sm")}>
+                Try moving the map to a new area!
+              </Text>
+            </View>
           ) : (
-              <View style={tw.style("flex pb-100")}>
+            <View style={tw.style("flex pb-100")}>
               {/* <ActivityIndicator size="large" color="#0000ff" /> */}
               {/* - TODO TASKS - */}
               {/* 1. Merge all the visible alerts  */}
               {/* 2. Sort the visible alerts by time */}
               {/* 3. Render the visible alerts */}
-              
-              <ModalViewAlerts data={visibleFires} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
-              <ModalViewAlerts data={visibleEarthquakes} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
-              <ModalViewAlerts data={visibleTsunamis} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
-              <ModalViewAlerts data={visibleAlerts} type={"User Alert"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+
+              <ModalViewAlerts
+                data={visibleFires}
+                type={"Fire"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
+              />
+              <ModalViewAlerts
+                data={visibleEarthquakes}
+                type={"Earthquake"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
+              />
+              <ModalViewAlerts
+                data={visibleTsunamis}
+                type={"Earthquake"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
+              />
+              <ModalViewAlerts
+                data={visibleAlerts}
+                type={"User Alert"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
+              />
+              <ModalViewAlerts
+                data={visibleGeneratedMarkers}
+                type={"User Alert"}
+                setJumpToLocation={setJumpToLocation}
+                jumpToLocation={jumpToLocation}
+              />
 
               {/* <ModalViewAlerts data={allVisibleAlerts} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation} /> */}
             </View>
           )}
         </ScrollView>
+      ) : showAlertReportModal === true ? (
+        <ModalCreateAlerts
+          setter={setShowAlertReportModal}
+          setGenMarkers={newMarker}
+          setMapType={setMyMapType}
+        />
       ) : (
         <MapView
           ref={mapRef}
+          mapType={myMapType}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
           loadingBackgroundColor={"#000000"}
-          style={{height: height !== undefined ? height : "100%", borderRadius: 10}}
+          style={{
+            height: height !== undefined ? height : "100%",
+            borderRadius: 10,
+          }}
           customMapStyle={mapStyle}
           initialRegion={currentRegion}
           showsMyLocationButton={true}
           showsUserLocation={true}
+          onUserLocationChange={(event) => {
+            //This is our devices accurate location***
+            // console.log(event.nativeEvent.coordinate);
+            setMyAccurateLocation(event.nativeEvent.coordinate);
+          }}
           onRegionChangeComplete={(region) => {
-            console.log(region);
+            // console.log(region);
             handleRegionChange(region);
             setCurrentRegion(region);
           }}
@@ -543,6 +642,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 <View key={i}>
                   <Marker
                     key={i}
+                    title={a.desc}
                     coordinate={{
                       latitude: parseFloat(a.latitude),
                       longitude: parseFloat(a.longitude),
@@ -589,7 +689,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                       .then((response) => {
                         setAlerts(response.data);
                       });
-                    console.log(response);
+                    // console.log(response);
                   })
                   .catch((error) => {
                     console.error(error);
@@ -597,22 +697,117 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               }}
             />
           )}
+
+          {visibleGeneratedMarkers &&
+            visibleGeneratedMarkers.length > 0 &&
+            visibleGeneratedMarkers.map((mark: any, i: number) => {
+              // console.log(generatedMarkers[0])
+              let imageSource;
+              switch (mark.type) {
+                case "Police":
+                  imageSource = require("../../../assets/alert-categorys/Police.png");
+                  break;
+                case "Ambulance":
+                  imageSource = require("../../../assets/alert-categorys/Ambulance.png");
+                  break;
+                case "Fire":
+                  imageSource = require("../../../assets/alert-categorys/Fire.png");
+                  break;
+                case "Suspicious":
+                  imageSource = require("../../../assets/alert-categorys/Suspicious.png");
+                  break;
+                case "Traffic":
+                  imageSource = require("../../../assets/alert-categorys/Traffic.png");
+                  break;
+              }
+              return (
+                <Marker
+                  coordinate={{
+                    latitude: mark.lat,
+                    longitude: mark.long,
+                  }}
+                  key={i}
+                  draggable={true}
+                  onDragEnd={(event) => {
+                    const newLatitude = event.nativeEvent.coordinate.latitude;
+                    const newLongitude = event.nativeEvent.coordinate.longitude;
+
+                    console.log(
+                      `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
+                    );
+
+                    mark.lat = newLatitude;
+                    mark.long = newLongitude;
+                  }}
+                  title={mark.desc}
+                >
+                  {mark.severity && mark.severity >= 1 && mark.severity <= 5 && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        width: 20, // Diameter of the circle
+                        height: 20, // Diameter of the circle
+                        borderRadius: 20,
+                        // borderTopRightRadius: 20, // Half of the width and height to make it a circle
+                        backgroundColor: getCircleColor(mark.severity),
+                        borderBlockColor: "black",
+                        borderWidth: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* You can also add additional styling or text inside the circle if needed */}
+                    </View>
+                  )}
+                  <Image
+                    source={imageSource}
+                    style={{ width: 20, height: 20 }}
+                  />
+                </Marker>
+              );
+            })}
         </MapView>
       )}
 
       {buttons === true ? (
-        <View style={tw`top-20 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}>
+        <View
+          style={tw`top-20 right-0 absolute bg-white p-1 rounded-bl-xl rounded-tl-xl`}
+        >
+          <Pressable
+            onPress={() => {
+              if(myMapType === "standard")
+                setMyMapType("satellite")
+              else if(myMapType === "satellite")
+                setMyMapType("standard")
+            }}
+          >
+            <Image
+              source={require("../../../assets/footerIcons/mapIcon.png")}
+              style={tw.style(`h-8 w-8 m-2`)}
+            />
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              //TODO: First we need to open a modal to enter info detail about the alert
+              setShowAlertReportModal(!showAlertReportModal);
+            }}
+          >
+            <Image
+              source={require("../../../assets/mapIcons/Location.png")}
+              style={tw.style(`h-8 w-8 m-2`)}
+            />
+          </Pressable>
           <TouchableOpacity onPress={handleNewPin}>
             <Image
               source={require("../../../assets/footerIcons/homeIcon.png")}
-              style={tw.style(`h-10 w-10 m-2`)}
+              style={tw.style(`h-8 w-8 m-2`)}
             />
-          </TouchableOpacity>          
-          
+          </TouchableOpacity>
+
           <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-NewPin.png")}
-              style={tw.style(`h-10 w-10 m-2`)}
+              style={tw.style(`h-8 w-8 m-2`)}
             />
           </Pressable>
           <TouchableOpacity
@@ -620,7 +815,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           >
             <Image
               source={require("../../../assets/mapui/apps-sort.png")}
-              style={tw.style(`h-10 w-10 m-2`)}
+              style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
           <Modal
