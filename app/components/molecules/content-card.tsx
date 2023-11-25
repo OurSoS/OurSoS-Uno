@@ -33,3 +33,4 @@ export default function ContentCard({ imgSrc, data, heading, snippet, onToggleSn
       </TouchableOpacity>
     </View>
   );
+}
