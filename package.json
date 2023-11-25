@@ -30,6 +30,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.72.5",
     "react-native-awesome-slider": "^2.4.5",
+    "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-map-clustering": "^3.4.2",
     "react-native-maps": "1.7.1",
