@@ -22,18 +22,18 @@ import { styles } from "./styles/settingsStyles";
 // import Toggle from "react-native-toggle-input";
 
 const settingsArray = [
-  "Notifications",
-  "Manage Friends",
+//   "Notifications",
+//   "Manage Friends",
   "Languages",
-  "Locations",
-  "Accessibility",
+//   "Locations",
+  "Light/Dark Mode",
 ];
 
 export default function Settings() {
-  useDeviceContext(tw);
   const [page, setPage] = React.useState("SettingsHome");
   const [showFriendOnMap, setShowFriendOnMap] = useState(false);
   const [notification, setNotification] = useState(false);
+
   return (
     <>
       <ImageBackground
@@ -63,7 +63,7 @@ export default function Settings() {
           {/* TODO: this toggle button has some ts error, will fix later on  */}
           {/* <Toggle toggle={notification} setToggle={setNotification} /> */}
 
-          {page === "Manage Friends" && (
+          {/* {page === "Manage Friends" && (
             <View style={{ padding: 10, display: "flex" }}>
               <Text style={{ fontSize: 26, borderBottomWidth: 3 }}>
                 Friends
@@ -88,9 +88,9 @@ export default function Settings() {
                 </TouchableOpacity>
               </ScrollView>
             </View>
-          )}
+          )} */}
 
-          {page === "Locations" && (
+          {/* {page === "Locations" && (
             <View style={{ padding: 10, display: "flex" }}>
               <Text style={{ fontSize: 26, borderBottomWidth: 3 }}>
                 Manage Pins
@@ -115,12 +115,12 @@ export default function Settings() {
                 </TouchableOpacity>
               </ScrollView>
             </View>
-          )}
-          {page === "Accessibility" && (
+          )} */}
+          {/* {page === "Accessibility" && (
             <ButtonMapping
               settings={["Enable Dark Mode", "Text to Speech", "Font Size"]}
             />
-          )}
+          )} */}
         </View>
       </ImageBackground>
       <Footer />
@@ -159,7 +159,7 @@ function SettingsBody({ setPage }: SettingsBodyProps) {
                   style={styles.button}
                 >
                   <View style={styles.leftContent}>
-                    <Text>{setting}</Text>
+                    <Text style={{color:"white",textAlign:"center"}}>{setting}</Text>
                   </View>
                 </TouchableOpacity>
               </Pressable>

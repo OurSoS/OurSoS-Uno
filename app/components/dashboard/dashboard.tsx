@@ -1,5 +1,12 @@
 import React from "react";
-import { View, TextInput, ScrollView, SafeAreaView } from "react-native";
+import {
+  View,
+  Image,
+  TextInput,
+  ScrollView,
+  SafeAreaView,
+  Pressable,
+} from "react-native";
 import { useEffect, useState } from "react";
 // import tw from "twrnc";
 import axios from "axios";
@@ -101,61 +108,43 @@ export default function Dashboard({
         `relative`
       )}
     >
-      <ScrollView style={tw.style(`px-4`)}>
-        <Text style={tw.style(`text-[1.75rem]`, `mb-8`, `py-4`)}>
-          Dashboard
-        </Text>
-        <Searchbar
+      <ScrollView style={tw.style(`p-4`)}>
+        {/* <Searchbar
           placeholder="Search"
           onChangeText={onChangeSearch}
           value={searchQuery}
-        />
+        /> */}
+
+        <View style={tw.style(`flex`)}>
+          {/* <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text> */}
+          <Image
+            source={require("../../../assets/header_logo.png")}
+            style={tw.style(`w-full h-20`)}
+            resizeMode="contain"
+          />
+        </View>
+
+        <MapComp height={300} />
+        <Pressable
+          onPress={() => {
+            router.push("/map");
+          }}
+          style={tw.style(
+            "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg text-white"
+          )}
+        >
+          <Text style={tw.style("text-xl text-white text-center")}>
+            Expand Map
+          </Text>
+        </Pressable>
+
         <Slider
           onToggleSnackBar={onToggleSnackBar}
           data={news}
           translatedData={translatedNews}
         />
-        <MapComp height={300} />
-        <View style={tw.style(`h-[300px]`, `w-full`, `py-4`)}>
-          <View
-            style={tw.style(
-              `flex`,
-              `flex-row`,
-              `justify-between`,
-              `w-full`,
-              `items-center`
-            )}
-          >
-            <Text style={tw.style(`text-[1.5rem]`)}>Pins</Text>
-            <Button>View More</Button>
-          </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={10}
-            pagingEnabled
-            style={{ padding: 10 }}
-            contentContainerStyle={{ justifyContent: "center" }}
-          >
-            <View style={tw.style(`mb-[60px]`)}>
-              {pins?.map((pin: any, i: number) => {
-                let text = "Vancouver";
-                let imgUrl =
-                  "https://www.planetware.com/wpimages/2020/03/canada-best-cities-vancouver-british-columbia.jpg";
-                return (
-                  <ImageText
-                    key={i}
-                    text={text}
-                    style="rounded"
-                    imageUrl={imgUrl}
-                  />
-                );
-              })}
-            </View>
-          </ScrollView>
-        </View>
-        <View style={tw.style(`h-[300px]`, `w-full`, `pt-0`, `pb-15`)}>
-          <View
+        <View style={tw.style( `w-full`, `pt-0`, `pb-15`)}>
+          {/* <View
             style={tw.style(
               `flex`,
               `flex-row`,
@@ -166,9 +155,8 @@ export default function Dashboard({
           >
             <Text style={tw.style(`text-[1.5rem]`)}>Friends</Text>
             <Button>View More</Button>
-          </View>
-
-          <ScrollView
+          </View> */}
+          {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             scrollEventThrottle={10}
@@ -188,10 +176,10 @@ export default function Dashboard({
                 />
               );
             })}
-            {/* </View> */}
-          </ScrollView>
+           
+          </ScrollView> */}
         </View>
-        <FriendsList />
+        {/* <FriendsList /> */}
       </ScrollView>
 
       <Footer />

@@ -78,7 +78,7 @@ export default function App() {
 
   return (
     <View style={tw.style(`h-full`, `relative`)}>
-      <View style={tw.style(`flex flex-row justify-between p-6`)}>
+      {/* <View style={tw.style(`flex flex-row justify-between p-6`)}>
         <View style={tw.style(`flex flex-row content-center`)}>
           <Image source={require("../assets/LocationDot.png")} style={tw.style(`h-6 w-6 m-2`)} />
           <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text>
@@ -87,7 +87,7 @@ export default function App() {
           style={tw.style(`h-15 w-15`)}
           source={require("../assets/favicon.png")}
         />
-      </View>
+      </View> */}
       {/* <Searchbar
         style={tw.style(`m-4 mt-0`)}
         placeholder="Search"

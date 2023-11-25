@@ -19,6 +19,88 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
 
+const mapStyle = [
+  {
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#f6d165"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#ffc736"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#303030"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#0090f9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]
+
+
 type MapCompProps = {
   height?: number;
   buttons?: boolean;
@@ -96,6 +178,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const mapRef = React.useRef<MapView>(null);
 
   const [visibleAlerts, setVisibleAlerts] = useState<alert[]>([]);
+  const [allVisibleAlerts, setAllVisibleAlerts] = useState<any>([]);
   const [visibleEarthquakes, setVisibleEarthquakes] = useState<earthquake[]>(
     []
   );
@@ -132,7 +215,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   const handleRegionChange = debounce((region) => {
-    // Filter alerts, earthquakes, fires, and tsunamis based on the visible region
     const visibleAlerts = alerts.filter((a) => {
       // Check if the alert's latitude and longitude are within the visible region
       return (
@@ -179,12 +261,14 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    // Update the state variables with the filtered data
+    // setAllVisibleAlerts(allVisibleAlerts.push(...visibleAlerts, ...visibleEarthquakes, ...visibleFires, ...visibleTsunamis));
+    // console.log("ALL ALERTS: " + JSON.stringify(allVisibleAlerts));
+
     setVisibleAlerts(visibleAlerts);
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
     setVisibleTsunamis(visibleTsunamis);
-  }, 400); // Adjust the delay (in milliseconds) as needed
+  }, 0);
 
   const retrieveAlerts = async () => {
     await axios
@@ -339,38 +423,38 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     <View style={tw.style(`flex`)}>
       {showMapFeedModal === true ? (
         <ScrollView style={tw.style("flex")}>
-          {fires.length === 0 ? (
-            <ActivityIndicator size="large" color="#0000ff" />
+          {visibleAlerts.length === 0 && visibleEarthquakes.length === 0 && visibleTsunamis.length === 0 && visibleFires.length === 0 ? (
+          <View style={tw.style("flex-1 justify-center items-center p-4 flex-col")}>
+           <Text style={tw.style("text-center text-lg font-bold mb-4")}>
+             There are no visible alerts in your area... 😔
+           </Text>
+           <Text style={tw.style("text-center text-sm")}>
+             Try moving the map to a new area!
+           </Text>
+         </View>
           ) : (
-            <>
-              <ModalViewAlerts
-                data={visibleFires}
-                type={"Fire"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleEarthquakes}
-                type={"Earthquake"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleTsunamis}
-                type={"Earthquake"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-            </>
+              <View style={tw.style("flex pb-100")}>
+              {/* <ActivityIndicator size="large" color="#0000ff" /> */}
+              {/* - TODO TASKS - */}
+              {/* 1. Merge all the visible alerts  */}
+              {/* 2. Sort the visible alerts by time */}
+              {/* 3. Render the visible alerts */}
+              
+              <ModalViewAlerts data={visibleFires} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+              <ModalViewAlerts data={visibleEarthquakes} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+              <ModalViewAlerts data={visibleTsunamis} type={"Earthquake"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+              <ModalViewAlerts data={visibleAlerts} type={"User Alert"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation}/>
+
+              {/* <ModalViewAlerts data={allVisibleAlerts} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation} /> */}
+            </View>
           )}
         </ScrollView>
       ) : (
         <MapView
           ref={mapRef}
-          style={{
-            height: height !== undefined ? height : "100%",
-            borderRadius: 10,
-          }}
+          loadingBackgroundColor={"#000000"}
+          style={{height: height !== undefined ? height : "100%", borderRadius: 10}}
+          customMapStyle={mapStyle}
           initialRegion={currentRegion}
           showsUserLocation={true}
           onRegionChangeComplete={(region) => {
@@ -511,19 +595,19 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       )}
 
       {buttons === true ? (
-        <View style={tw`top-0 right-0 absolute bg-white p-2 rounded-bl-xl`}>
+        <View style={tw`top-20 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}>
           <TouchableOpacity onPress={handleNewPin}>
             <Image
               source={require("../../../assets/mapui/MapUI-NewPin.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
           </TouchableOpacity>
-          <Pressable onPress={handleToggleMyLocation}>
+          {/* <Pressable onPress={handleToggleMyLocation}>
             <Image
               source={require("../../../assets/mapui/MapUI-MyLoc.png")}
               style={tw.style(`h-10 w-10 m-2`)}
             />
-          </Pressable>
+          </Pressable> */}
           <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-ReportAlert.png")}

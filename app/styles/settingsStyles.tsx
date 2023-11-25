@@ -27,13 +27,15 @@ export const styles = StyleSheet.create({
         settingItem: {
                 padding: 10,
                 borderWidth: 1,
+                backgroundColor: "#001D3D",
+                textColor: "white",
                 borderColor: "black",
                 borderRadius: 10,
                 margin: 10,
                 minWidth: 300,
                 shadowColor: "#000",
+                textAlign: "center",
                 shadowOffset: { width: 0, height: 2 },
-                backgroundColor: "white",
         },
         button: {
                 flexDirection: "row",
