@@ -41,7 +41,7 @@ export default function ContentCard({
         style={tw.style("text-white")}
         onPress={() => onToggleSnackBar(data)}
       >
-        <Card style={tw.style(`mt-4 bg-[#001D3D] p-2`)}>
+        <Card style={tw.style(`mt-2 bg-[#001D3D] p-2`)}>
           <Card.Cover
             style={tw.style(`p-2 h-35 bg-[#001D3D]`)}
             source={{ uri: imgSrc }}
