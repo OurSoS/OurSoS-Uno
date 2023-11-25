@@ -95,7 +95,7 @@ export default function App() {
         value={searchQuery}
       /> */}
       <MapComp buttons={true} />
-      <Footer />
+      {/* <Footer /> */}
     </View>
   );
 }
