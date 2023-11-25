@@ -153,8 +153,11 @@ export default function Index() {
     // Here you might want to save the token if you plan to use remote notifications
   }
   useEffect(() => {
-    registerForPushNotificationsAsync();
-    // ... other initialization code
+    const init = async () => {
+      await registerForPushNotificationsAsync();
+    };
+
+    init();
   }, []);
 
   Notification.setNotificationHandler({
@@ -265,7 +268,7 @@ export default function Index() {
     myLongitude: number,
     alerts: alert[]
   ) => {
-    console.log(alerts.length);
+    // console.log(alerts.length);
     let i = 0;
     for (let alert of alerts) {
       if (alert.radius !== undefined) {
@@ -275,9 +278,10 @@ export default function Index() {
           alert.latitude,
           alert.longitude
         );
-        if (distance <= alert.radius) {
+        if (distance <= 0.1) {
+          // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
           ++i;
-          console.log("alert", i);
+          console.log("alert", alert.category, alert.id);
           await sendLocalNotification(
             `Emergency Alert: Immediate danger in your area due to a ${alert.category}. Seek safety immediately as per local guidelines and stay informed.`
           );
