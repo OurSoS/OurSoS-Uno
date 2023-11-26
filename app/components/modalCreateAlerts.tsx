@@ -14,7 +14,7 @@ import tw from "twrnc";
 
 type modalCreateAlertsProps = {
   setter: React.Dispatch<React.SetStateAction<boolean>>;
-  setGenMarkers: (desc: string, severity: number, type: string) => void;
+  setGenMarkers: (desc: string, severity: number, type: string, date:string) => void;
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
 };
 
@@ -63,7 +63,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
     alert("Report Submitted!");
     props.setter(false);
     console.log(description, severity, selectedCategory);
-    props.setGenMarkers(description, severity, selectedCategory);
+    props.setGenMarkers(description, severity, selectedCategory, new Date().toISOString());
     props.setMapType("satellite");
   };
 

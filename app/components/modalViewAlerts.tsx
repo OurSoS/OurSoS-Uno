@@ -44,9 +44,10 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                 style={tw.style("w-10 h-10 mr-2 mt-1 self-center")}
               />
             ) : props.type === "User Alert" ? (
-              // TODO: make a if for each a.category type and update the image source
               <Image
-                source={require("../../assets/mapIcons/MeIcon.png")}
+                source={a.type === "Hazard" ? require("../../assets/alert-categorys/Hazard.png") :
+                        a.type === "Fire" ? require("../../assets/alert-categorys/Fire.png") :
+                        a.type === "Police" ? require("../../assets/alert-categorys/Police.png") : null}
                 style={tw.style("w-10 h-10 mr-2 mt-1 self-center")}
               />
             ) : null}
