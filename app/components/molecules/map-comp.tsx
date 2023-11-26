@@ -3,7 +3,6 @@ import { Marker, PROVIDER_GOOGLE, MapType } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator } from "react-native";
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -15,154 +14,13 @@ import {
 import axios from "axios";
 import tw from "twrnc";
 import * as Location from "expo-location";
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
 import { router } from "expo-router";
 import ModalCreateAlerts from "../modalCreateAlerts";
+import {mapStyle, MapCompProps, LocationData, alert, earthquake } from "../../../utils/static-types"
 
-const mapStyle = [
-  {
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#f6d165",
-      },
-    ],
-  },
-  {
-    featureType: "administrative.land_parcel",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "administrative.neighborhood",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "landscape",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#ffc736",
-      },
-    ],
-  },
-  {
-    featureType: "poi",
-    elementType: "labels.text",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#303030",
-      },
-    ],
-  },
-  {
-    featureType: "road",
-    elementType: "labels",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#0090f9",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "labels.text",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-];
 
-type MapCompProps = {
-  height?: number;
-  buttons?: boolean;
-};
-
-type LocationData = {
-  latitude: number;
-  longitude: number;
-};
-
-type alert = {
-  id?: number;
-  message?: string;
-  category: string;
-  latitude: Float;
-  longitude: Float;
-  radius?: Float;
-  time?: string;
-  severity?: string;
-};
-
-type earthquake = {
-  geometry: {
-    coordinates: [number, number, number];
-    type: string;
-  };
-  id: string;
-  properties: {
-    alert: null | string;
-    cdi: null | number;
-    code: string;
-    detail: string;
-    dmin: null | number;
-    felt: null | number;
-    gap: null | number;
-    ids: string;
-    mag: number;
-    magType: string;
-    mmi: null | number;
-    net: string;
-    nst: null | number;
-    place: string;
-    rms: number;
-    sig: number;
-    sources: string;
-    status: string;
-    time: number;
-    title: string;
-    tsunami: number;
-    type: string;
-    types: string;
-    tz: null | number;
-    updated: number;
-    url: string;
-  };
-  type: string;
-};
-
-const handleNewPin = () => {
-  router.push("/");
-};
 
 export default function MapComp({ height, buttons }: MapCompProps) {
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
@@ -797,7 +655,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </Pressable>
-          <TouchableOpacity onPress={handleNewPin}>
+          <TouchableOpacity onPress={()=>router.push("/")}>
             <Image
               source={require("../../../assets/footerIcons/homeIcon.png")}
               style={tw.style(`h-8 w-8 m-2`)}
