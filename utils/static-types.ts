@@ -138,3 +138,12 @@ export type earthquake = {
   };
   type: string;
 };
+
+export const getSeverityString = (severity: number) => {
+  switch (severity) {
+    case 1:
+      return "Caution";
+    case 2:
+      return "Danger";
+  }
+};
