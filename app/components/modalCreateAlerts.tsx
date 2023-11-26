@@ -26,21 +26,15 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   const progress = useSharedValue(1);
   const min = useSharedValue(1);
-  const max = useSharedValue(5);
+  const max = useSharedValue(2);
 
-  const categories = ["Police", "Ambulance", "Traffic", "Fire", "Suspicious"];
+  const categories = ["Hazard", "Fire", "Police"];
 
   const getCircleColor = (severity: number) => {
     switch (severity) {
       case 1:
-        return "gray"; // Adjust this color based on your design
-      case 2:
-        return "lightblue"; // Adjust this color based on your design
-      case 3:
         return "yellow"; // Adjust this color based on your design
-      case 4:
-        return "orange"; // Adjust this color based on your design
-      case 5:
+      case 2:
         return "red"; // Adjust this color based on your design
       default:
         return "gray";
@@ -89,35 +83,14 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 key={category}
                 onPress={() => handleSelectCategory(category)}
               >
-                {category === "Police" && (
+                {category === "Hazard" && (
                   <>
                     <Text style={tw.style("text-center text-xl")}>
                       {category}
                     </Text>
+
                     <Image
-                      source={require("../../assets/alert-categorys/Police.png")}
-                      style={tw.style("h-20 w-20")}
-                    />
-                  </>
-                )}
-                {category === "Ambulance" && (
-                  <>
-                    <Text style={tw.style("text-center text-xl")}>
-                      {category}
-                    </Text>
-                    <Image
-                      source={require("../../assets/alert-categorys/Ambulance.png")}
-                      style={tw.style("h-20 w-20")}
-                    />
-                  </>
-                )}
-                {category === "Traffic" && (
-                  <>
-                    <Text style={tw.style("text-center text-xl")}>
-                      {category}
-                    </Text>
-                    <Image
-                      source={require("../../assets/alert-categorys/Traffic.png")}
+                      source={require("../../assets/alert-categorys/Hazard.png")}
                       style={tw.style("h-20 w-20")}
                     />
                   </>
@@ -133,14 +106,13 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                     />
                   </>
                 )}
-                {category === "Suspicious" && (
+                {category === "Police" && (
                   <>
                     <Text style={tw.style("text-center text-xl")}>
                       {category}
                     </Text>
-
                     <Image
-                      source={require("../../assets/alert-categorys/Suspicious.png")}
+                      source={require("../../assets/alert-categorys/Police.png")}
                       style={tw.style("h-20 w-20")}
                     />
                   </>
@@ -158,14 +130,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             <Text
               style={
                 severity === 1
-                  ? tw.style("text-2xl text-center text-gray-500")
-                  : severity === 2
-                  ? tw.style("text-2xl text-center text-blue-500")
-                  : severity === 3
                   ? tw.style("text-2xl text-center text-yellow-500")
-                  : severity === 4
-                  ? tw.style("text-2xl text-center text-orange-500")
-                  : severity === 5
+                  : severity === 2
                   ? tw.style("text-2xl text-center text-red-500")
                   : null
               }
@@ -177,7 +143,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
               progress={progress}
               minimumValue={min}
               maximumValue={max}
-              step={4}
+              step={1}
               onValueChange={handleSeverityChange}
             />
           </View>
