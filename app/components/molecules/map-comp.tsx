@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Marker, PROVIDER_GOOGLE, MapType } from "react-native-maps";
+import { Marker, PROVIDER_GOOGLE, MapType, Callout } from "react-native-maps";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator } from "react-native";
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -15,154 +14,18 @@ import {
 import axios from "axios";
 import tw from "twrnc";
 import * as Location from "expo-location";
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ModalViewAlerts from "../modalViewAlerts";
 import debounce from "lodash.debounce";
 import { router } from "expo-router";
 import ModalCreateAlerts from "../modalCreateAlerts";
-
-const mapStyle = [
-  {
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#f6d165",
-      },
-    ],
-  },
-  {
-    featureType: "administrative.land_parcel",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "administrative.neighborhood",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "landscape",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#ffc736",
-      },
-    ],
-  },
-  {
-    featureType: "poi",
-    elementType: "labels.text",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "road",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#303030",
-      },
-    ],
-  },
-  {
-    featureType: "road",
-    elementType: "labels",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry.fill",
-    stylers: [
-      {
-        color: "#0090f9",
-      },
-    ],
-  },
-  {
-    featureType: "water",
-    elementType: "labels.text",
-    stylers: [
-      {
-        visibility: "off",
-      },
-    ],
-  },
-];
-
-type MapCompProps = {
-  height?: number;
-  buttons?: boolean;
-};
-
-type LocationData = {
-  latitude: number;
-  longitude: number;
-};
-
-type alert = {
-  id?: number;
-  message?: string;
-  category: string;
-  latitude: Float;
-  longitude: Float;
-  radius?: Float;
-  time?: string;
-  severity?: string;
-};
-
-type earthquake = {
-  geometry: {
-    coordinates: [number, number, number];
-    type: string;
-  };
-  id: string;
-  properties: {
-    alert: null | string;
-    cdi: null | number;
-    code: string;
-    detail: string;
-    dmin: null | number;
-    felt: null | number;
-    gap: null | number;
-    ids: string;
-    mag: number;
-    magType: string;
-    mmi: null | number;
-    net: string;
-    nst: null | number;
-    place: string;
-    rms: number;
-    sig: number;
-    sources: string;
-    status: string;
-    time: number;
-    title: string;
-    tsunami: number;
-    type: string;
-    types: string;
-    tz: null | number;
-    updated: number;
-    url: string;
-  };
-  type: string;
-};
-
-const handleNewPin = () => {
-  router.push("/");
-};
+import {
+  mapStyle,
+  MapCompProps,
+  LocationData,
+  alert,
+  earthquake,
+  getSeverityString,
+} from "../../../utils/static-types";
 
 export default function MapComp({ height, buttons }: MapCompProps) {
   const [CustomAlertModel, setCustomAlertModel] = useState(false);
@@ -176,12 +39,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [errorMsg, setErrorMsg] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
   const [calculatedHeight, setCalculatedHeight] = useState(0);
-  
 
   const mapRef = React.useRef<MapView>(null);
 
   const [visibleAlerts, setVisibleAlerts] = useState<alert[]>([]);
-  const [allVisibleAlerts, setAllVisibleAlerts] = useState<any>([]);
+  // const [allVisibleAlerts, setAllVisibleAlerts] = useState<any>([]);
   const [visibleEarthquakes, setVisibleEarthquakes] = useState<earthquake[]>(
     []
   );
@@ -199,43 +61,46 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   });
   //Recently added jacks stuff
   const [generatedMarkers, setGeneratedMarkers] = useState<any>([]);
-  const [visibleGeneratedMarkers, setVisibleGeneratedMarkers] = useState<any>([]);
+  const [visibleGeneratedMarkers, setVisibleGeneratedMarkers] = useState<any>(
+    []
+  );
   const [myAccurateLocation, setMyAccurateLocation] = useState<any>({});
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
 
-  const reportFireAlert = (locationData: LocationData) => {
+  const reportAlert = async(long:number, lat:number, message:string, category:string, severity:number, radius?: number) => {
     axios
       .post("https://oursos-backend-production.up.railway.app/reportalert", {
-        message: "Fire Alert",
-        category: "Fire",
-        severity: "High",
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        radius: 100.0,
+        message: message,
+        category: category,
+        severity: severity,
+        latitude: lat,
+        longitude: long,
+        radius: radius,
       })
       .then(async (response) => {
-        // Handle response or update state as needed
       })
       .catch((error) => {
         console.error(error);
-        // Handle error appropriately
       });
   };
 
-  const newMarker = useCallback((desc:string, severity:number, type:string) => {
-    setGeneratedMarkers((prevMarkers:any) => [
-      ...prevMarkers,
-      {
-        lat: myAccurateLocation.latitude,
-        long: myAccurateLocation.longitude,
-        desc: desc,
-        type: type,
-        severity: severity,
-      },
-    ]);
-  }, [myAccurateLocation.latitude, myAccurateLocation.longitude]);
-  
+  const newMarker = useCallback(
+    (desc: string, severity: number, type: string, date: string) => {
+      setGeneratedMarkers((prevMarkers: any) => [
+        ...prevMarkers,
+        {
+          lat: myAccurateLocation.latitude,
+          long: myAccurateLocation.longitude,
+          desc: desc,
+          type: type,
+          severity: severity,
+          date: date,
+        },
+      ]);
+    },
+    [myAccurateLocation.latitude, myAccurateLocation.longitude]
+  );
 
   const handleRegionChange = debounce((region) => {
     const visibleAlerts = alerts.filter((a) => {
@@ -289,8 +154,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       return (
         parseFloat(a.lat) >= region.latitude - region.latitudeDelta / 2 &&
         parseFloat(a.lat) <= region.latitude + region.latitudeDelta / 2 &&
-        parseFloat(a.long) >=
-          region.longitude - region.longitudeDelta / 2 &&
+        parseFloat(a.long) >= region.longitude - region.longitudeDelta / 2 &&
         parseFloat(a.long) <= region.longitude + region.longitudeDelta / 2
       );
     });
@@ -303,6 +167,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
     setVisibleTsunamis(visibleTsunamis);
+
+    //add on the types for the view feed
+    setVisibleFires(visibleFires.map((fire: any) => ({ ...fire, type: 'Wildfire' })))
+    setVisibleEarthquakes(visibleEarthquakes.map((earthquake: any) => ({ ...earthquake, type: 'Earthquake' })))
+    setVisibleTsunamis(visibleTsunamis.map((tsunami: any) => ({ ...tsunami, type: 'Tsunami' })))
   }, 0);
 
   const retrieveAlerts = async () => {
@@ -433,53 +302,26 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     })();
   }, []);
 
-  const handleReportAlert = () => {
-    setCustomAlertModel(true);
-    console.log("report alert");
-  };
-
-  const handleToggleMyLocation = () => {
-    // console.log("toggle my location");
-    if (location && location.coords && mapRef.current) {
-      // @ts-ignore
-      mapRef.current.animateToRegion(
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        },
-        1000
-      ); // You can adjust the duration (1000 ms here) as needed
-    }
-  };
-
-  const getCircleColor = (severity:number) => {
+  const getCircleColor = (severity: number) => {
     switch (severity) {
       case 1:
-        return 'gray'; // Adjust this color based on your design
+        return "yellow"; // Adjust this color based on your design
       case 2:
-        return 'lightblue'; // Adjust this color based on your design
-      case 3:
-        return 'yellow'; // Adjust this color based on your design
-      case 4:
-        return 'orange'; // Adjust this color based on your design
-      case 5:
-        return 'red'; // Adjust this color based on your design
+        return "red"; // Adjust this color based on your design
       default:
-        return 'gray';
+        return "gray";
     }
   };
-  
 
   return (
-    <View style={tw.style("border-solid border-4 rounded-md border-[#001D3D]")}>
+    <View style={showMapFeedModal ? {} : tw.style("border-solid border-4 border-[#001D3D]")}>
       {showMapFeedModal === true ? (
         <ScrollView style={tw.style("flex")}>
           {visibleAlerts.length === 0 &&
           visibleEarthquakes.length === 0 &&
           visibleTsunamis.length === 0 &&
-          visibleFires.length === 0 ? (
+          visibleFires.length === 0 &&
+          visibleGeneratedMarkers.length === 0 ? (
             <View
               style={tw.style(
                 "flex-1 justify-center items-center p-4 flex-col"
@@ -499,34 +341,15 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               {/* 1. Merge all the visible alerts  */}
               {/* 2. Sort the visible alerts by time */}
               {/* 3. Render the visible alerts */}
-
+            
               <ModalViewAlerts
-                data={visibleFires}
-                type={"Fire"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleEarthquakes}
-                type={"Earthquake"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleTsunamis}
-                type={"Earthquake"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleAlerts}
-                type={"User Alert"}
-                setJumpToLocation={setJumpToLocation}
-                jumpToLocation={jumpToLocation}
-              />
-              <ModalViewAlerts
-                data={visibleGeneratedMarkers}
-                type={"User Alert"}
+                data={[
+                  ...visibleFires,
+                  ...visibleEarthquakes,
+                  ...visibleTsunamis,
+                  ...visibleGeneratedMarkers,
+                ]}
+                type={"Combined"} // You can choose a type that represents the combined data
                 setJumpToLocation={setJumpToLocation}
                 jumpToLocation={jumpToLocation}
               />
@@ -558,18 +381,16 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           showsMyLocationButton={true}
           showsUserLocation={true}
           onUserLocationChange={(event) => {
-            //This is our devices accurate location***
-            // console.log(event.nativeEvent.coordinate);
+       
             setMyAccurateLocation(event.nativeEvent.coordinate);
           }}
           onRegionChangeComplete={(region) => {
-            // console.log(region);
             handleRegionChange(region);
             setCurrentRegion(region);
           }}
+          clusterColor={"#001D3D"}
         >
           {visibleAlerts.map((a, i) => {
-            // Render visible alerts
             return (
               <Marker
                 key={i}
@@ -580,7 +401,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               >
                 <Image
                   source={require("../../../assets/LocationDot.png")}
-                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  style={{ width: 20, height: 20 }} 
                 />
               </Marker>
             );
@@ -597,7 +418,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               >
                 <Image
                   source={require("../../../assets/mapIcons/Earthquake.png")}
-                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  style={{ width: 20, height: 20 }} 
                 />
               </Marker>
             );
@@ -614,7 +435,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               >
                 <Image
                   source={require("../../../assets/mapIcons/Wildfire.png")}
-                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  style={{ width: 20, height: 20 }}
                 />
               </Marker>
             );
@@ -631,7 +452,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               >
                 <Image
                   source={require("../../../assets/mapIcons/Tsunami.png")}
-                  style={{ width: 20, height: 20 }} // Change the width and height as needed
+                  style={{ width: 20, height: 20 }} 
                 />
               </Marker>
             );
@@ -652,7 +473,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               );
             })}
 
-          {draggableMarker && (
+          {/* {draggableMarker && (
             <Marker
               coordinate={draggableMarker}
               draggable
@@ -696,7 +517,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   });
               }}
             />
-          )}
+          )} */}
 
           {visibleGeneratedMarkers &&
             visibleGeneratedMarkers.length > 0 &&
@@ -707,17 +528,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 case "Police":
                   imageSource = require("../../../assets/alert-categorys/Police.png");
                   break;
-                case "Ambulance":
-                  imageSource = require("../../../assets/alert-categorys/Ambulance.png");
-                  break;
+
                 case "Fire":
                   imageSource = require("../../../assets/alert-categorys/Fire.png");
                   break;
-                case "Suspicious":
-                  imageSource = require("../../../assets/alert-categorys/Suspicious.png");
-                  break;
-                case "Traffic":
-                  imageSource = require("../../../assets/alert-categorys/Traffic.png");
+                case "Hazard":
+                  imageSource = require("../../../assets/alert-categorys/Hazard.png");
                   break;
               }
               return (
@@ -733,22 +549,20 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     const newLongitude = event.nativeEvent.coordinate.longitude;
 
                     console.log(
-                      `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
+                      `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}, Description: ${mark.desc}, Severity: ${mark.severity}, Type: ${mark.type}`
                     );
 
                     mark.lat = newLatitude;
                     mark.long = newLongitude;
                   }}
-                  title={mark.desc}
                 >
-                  {mark.severity && mark.severity >= 1 && mark.severity <= 5 && (
+                  {mark.severity && (
                     <View
                       style={{
                         position: "absolute",
-                        width: 20, // Diameter of the circle
-                        height: 20, // Diameter of the circle
+                        width: 40,
+                        height: 40,
                         borderRadius: 20,
-                        // borderTopRightRadius: 20, // Half of the width and height to make it a circle
                         backgroundColor: getCircleColor(mark.severity),
                         borderBlockColor: "black",
                         borderWidth: 1,
@@ -756,13 +570,33 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         alignItems: "center",
                       }}
                     >
-                      {/* You can also add additional styling or text inside the circle if needed */}
                     </View>
                   )}
                   <Image
                     source={imageSource}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: 40, height: 40 }}
                   />
+                  <Callout
+                    style={tw.style(
+                      "flex justify-center items-center h-20 w-50 rounded-lg"
+                    )}
+                  >
+                    <View
+                      style={tw.style("flex justify-left m-2 rounded-lg")}
+                    ></View>
+                    <View>
+                      <Text style={tw.style("text-xl font-bold")}>
+                        {mark.type + " - " + getSeverityString(mark.severity)}
+                      </Text>
+                      <Text>
+                        {mark.date}
+                      </Text>
+                      <Text style={tw.style("")}>
+                        {mark.desc}
+                      </Text>
+                      
+                    </View>
+                  </Callout>
                 </Marker>
               );
             })}
@@ -775,10 +609,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         >
           <Pressable
             onPress={() => {
-              if(myMapType === "standard")
-                setMyMapType("satellite")
-              else if(myMapType === "satellite")
-                setMyMapType("standard")
+              if (myMapType === "standard") setMyMapType("satellite");
+              else if (myMapType === "satellite") setMyMapType("standard");
             }}
           >
             <Image
@@ -788,28 +620,27 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           </Pressable>
           <Pressable
             onPress={() => {
-              //TODO: First we need to open a modal to enter info detail about the alert
               setShowAlertReportModal(!showAlertReportModal);
             }}
           >
             <Image
-              source={require("../../../assets/mapIcons/Location.png")}
+              source={require("../../../assets/mapui/MapUI-NewPin.png")}
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </Pressable>
-          <TouchableOpacity onPress={handleNewPin}>
+          <TouchableOpacity onPress={() => router.push("/")}>
             <Image
               source={require("../../../assets/footerIcons/homeIcon.png")}
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
 
-          <Pressable onPress={handleReportAlert}>
+          {/* <Pressable onPress={handleReportAlert}>
             <Image
               source={require("../../../assets/mapui/MapUI-NewPin.png")}
               style={tw.style(`h-8 w-8 m-2`)}
             />
-          </Pressable>
+          </Pressable> */}
           <TouchableOpacity
             onPress={() => setShowMapFeedModal(!showMapFeedModal)}
           >
@@ -818,7 +649,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
-          <Modal
+          {/* <Modal
             animationType="slide"
             transparent={true}
             visible={CustomAlertModel}
@@ -834,7 +665,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   Report Alert
                 </Text>
 
-                {/* Fire Button */}
+              
                 <Pressable
                   style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
@@ -853,7 +684,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     Fire
                   </Text>
                 </Pressable>
-                {/* Earthquake Button */}
                 <Pressable
                   style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
@@ -872,7 +702,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     Earthquake
                   </Text>
                 </Pressable>
-                {/* Tsunami Button */}
                 <Pressable
                   style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
                   onPress={() => {
@@ -901,7 +730,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                 </Pressable>
               </View>
             </View>
-          </Modal>
+          </Modal> */}
         </View>
       ) : (
         <View></View>
