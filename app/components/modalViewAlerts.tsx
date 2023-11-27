@@ -15,6 +15,8 @@ type Alert = {
   scan?: string;
   message?: string;
   radius?: string;
+  lat?: string,
+  long?: string
 };
 
 type ModalViewAlertsProps = {
