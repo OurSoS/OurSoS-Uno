@@ -591,7 +591,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                       <Text>
                         {mark.date}
                       </Text>
-                      <Text style={tw.style("text-italic ")}>
+                      <Text style={tw.style("")}>
                         {mark.desc}
                       </Text>
                       
