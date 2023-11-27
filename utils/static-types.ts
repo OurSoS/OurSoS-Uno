@@ -147,3 +147,5 @@ export const getSeverityString = (severity: number) => {
       return "Danger";
   }
 };
+
+export type alertFilter = "All" | "Hazard" | "Fire" | "Police" |  "Earthquake" | "Tsunami" | "Earthquake" | "Wildfire";

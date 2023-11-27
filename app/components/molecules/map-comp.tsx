@@ -167,6 +167,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     setVisibleEarthquakes(visibleEarthquakes);
     setVisibleFires(visibleFires);
     setVisibleTsunamis(visibleTsunamis);
+
+    //add on the types for the view feed
+    setVisibleFires(visibleFires.map((fire: any) => ({ ...fire, type: 'Wildfire' })))
+    setVisibleEarthquakes(visibleEarthquakes.map((earthquake: any) => ({ ...earthquake, type: 'Earthquake' })))
+    setVisibleTsunamis(visibleTsunamis.map((tsunami: any) => ({ ...tsunami, type: 'Tsunami' })))
   }, 0);
 
   const retrieveAlerts = async () => {
@@ -336,7 +341,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               {/* 1. Merge all the visible alerts  */}
               {/* 2. Sort the visible alerts by time */}
               {/* 3. Render the visible alerts */}
-
+            
               <ModalViewAlerts
                 data={[
                   ...visibleFires,
