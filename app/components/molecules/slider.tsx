@@ -19,7 +19,6 @@ export default function Slider({
       horizontal
       showsHorizontalScrollIndicator={false}
       scrollEventThrottle={10}
-      pagingEnabled
       style={{ padding: 10 }}
       contentContainerStyle={{ justifyContent: "center" }}
     >
