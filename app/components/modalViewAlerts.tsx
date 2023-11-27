@@ -65,10 +65,14 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
           onPress={() => {
             const nextFilter = getNextAlertType(filter);
             setFilter(nextFilter);
-            const sortedMarkers = [...props.data].sort((a, b) =>
-              a.type === nextFilter ? -1 : b.type === nextFilter ? 1 : 0
+
+            // Filter markers based on the selected type
+            const filteredMarkers = props.data.filter(
+              (marker) => marker.type === nextFilter
             );
-            setMarkers(sortedMarkers);
+
+            // Update the markers state with the filtered array
+            setMarkers(filteredMarkers);
           }}
           style={tw.style("h-10 bg-black justify-center items-center")}
         >
