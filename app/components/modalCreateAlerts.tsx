@@ -60,10 +60,13 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   const handleSubmit = () => {
     // Implement submission logic here (front-end logic for now)
+    
     alert("Report Submitted!");
     props.setter(false);
     console.log(description, severity, selectedCategory);
     props.setGenMarkers(description, severity, selectedCategory, new Date().toISOString());
+    
+    //POST HERE
     props.setMapType("satellite");
   };
 
