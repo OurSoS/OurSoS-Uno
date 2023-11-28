@@ -22,7 +22,7 @@ export default function Footer() {
                         <Link href="/">
                               <View style={tw.style(`flex`, `flex-col`, `items-center`, `justify-center`)}>
                                     <Image
-                                          source={require("../../../assets/footerIcons/homeIcon.png")}
+                                          source={require("../../../assets/footerIcons/dark/homeIcon-darkBlue.png")}
                                           style={styles.footerImage}
                                     />
                                     <Text style={tw.style(`text-[1rem]`)}>Home</Text>
@@ -44,7 +44,7 @@ export default function Footer() {
                         <Link href="/settings">
                               <View style={tw.style(`flex`, `flex-col`, `items-center`, `justify-center`)}>
                                     <Image
-                                          source={require("../../../assets/footerIcons/settingIcon.png")}
+                                          source={require("../../../assets/footerIcons/dark/settingIcon-darkBlue.png")}
                                           style={styles.footerImage}
                                     />
                                     <Text style={tw.style(`text-[1rem]`)}>Settings</Text>
@@ -54,10 +54,10 @@ export default function Footer() {
                   <View>
                         <Link href="/chat">
                               <View style={tw.style(`flex`, `flex-col`, `items-center`, `justify-center`)}>
-                                    {/* <Image
-                                          source={require("../../../assets/footerIcons/settingIcon.png")}
+                                    <Image
+                                          source={require("../../../assets/footerIcons/dark/robotIcon-darkBlue.png")}
                                           style={styles.footerImage}
-                                    /> */}
+                                    />
                                     <Text style={tw.style(`text-[1rem]`)}>Chat</Text>
                               </View>
                         </Link>
