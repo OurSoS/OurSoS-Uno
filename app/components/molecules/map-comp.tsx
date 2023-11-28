@@ -61,7 +61,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false)
-  const mapRef = React.useRef<MapView>(null);
+    const mapRef = React.useRef<MapView>(null);
 
   const reportAlert = async (
     long: number,
@@ -87,7 +87,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   const updateVisibleMarkers = (type: alertFilter) => {
-    console.log("Current filter is : ", type);
+    // console.log("Current filter is : ", type);
     switch (type) {
       case "All":
         setVisibleGeneratedMarkers(generatedMarkers);
@@ -152,7 +152,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   function getNextAlertType(currentType: alertFilter): alertFilter {
     const currentIndex = alertTypes.indexOf(currentType);
     const nextIndex = (currentIndex + 1) % alertTypes.length;
-    console.log(alertTypes[nextIndex]);
+    // console.log(alertTypes[nextIndex]);
     return alertTypes[nextIndex];
   }
 
@@ -436,7 +436,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
 //update region when alert created
 useEffect(() => {
   handleRegionChange(currentRegion);
-  console.log("new alert created")
+  // console.log("new alert created")
 }, [updateTick])
 
   const getCircleColor = (severity: number) => {
@@ -504,14 +504,14 @@ useEffect(() => {
           setGenMarkers={newMarker}
           setMapType={setMyMapType}
           updateMap={setUpdateTick}
-          tick={updateTick}
+          
         />
       ) : (
         <MapView
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
-          minPoints={3}
+          // minPoints={5}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
@@ -523,7 +523,7 @@ useEffect(() => {
           customMapStyle={mapStyle}
           initialRegion={currentRegion}
           showsMyLocationButton={true}
-          minZoomLevel={7}
+          minZoomLevel={4}
           showsUserLocation={true}
           onUserLocationChange={(event) => {
             setMyAccurateLocation(event.nativeEvent.coordinate);
@@ -531,7 +531,7 @@ useEffect(() => {
           onRegionChangeComplete={(region) => {
             handleRegionChange(region);
             setCurrentRegion(region);
-            console.log("line 453 visibleEarthquakes: ", visibleEarthquakes);
+            // console.log("line 453 visibleEarthquakes: ", visibleEarthquakes);
           }}
           clusterColor={"#001D3D"}
         >
