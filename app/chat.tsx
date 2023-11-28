@@ -5,8 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import tw from 'twrnc';
 import React from 'react';
 const pubnub = new Pubnub({
-      publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
-      subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
+      publishKey: "",
+      subscribeKey: "",
       userId: "myUniqueUserId"
 });
 import axios from "axios"

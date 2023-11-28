@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Marker, PROVIDER_GOOGLE, MapType, Callout } from "react-native-maps";
 import MapView from "react-native-map-clustering";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, AlertType } from "react-native";
+import { alertFilter, alert } from "../../../utils/static-types";
 import {
       View,
       Text,
@@ -22,14 +23,11 @@ import {
       mapStyle,
       MapCompProps,
       LocationData,
-      alert,
       earthquake,
       getSeverityString,
 } from "../../../utils/static-types";
 
 export default function MapComp({ height, buttons }: MapCompProps) {
-      const [CustomAlertModel, setCustomAlertModel] = useState(false);
-      const [draggableMarker, setDraggableMarker] = useState<alert | null>(null);
       const [showMapFeedModal, setShowMapFeedModal] = useState(false);
       const [alerts, setAlerts] = useState<alert[]>([]);
       const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
@@ -38,11 +36,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       const [location, setLocation] = useState<Location.LocationObject>();
       const [errorMsg, setErrorMsg] = useState("");
       const [friendsLocation, setFriendsLocation] = useState<any>([]);
-      const [calculatedHeight, setCalculatedHeight] = useState(0);
-
-      const mapRef = React.useRef<MapView>(null);
+      const [filter, setFilter] = useState<alertFilter>("All");
       const [visibleAlerts, setVisibleAlerts] = useState<alert[]>([]);
-      // const [allVisibleAlerts, setAllVisibleAlerts] = useState<any>([]);
       const [visibleEarthquakes, setVisibleEarthquakes] = useState<earthquake[]>(
             []
       );
@@ -58,7 +53,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
       });
-      //Recently added jacks stuff
       const [generatedMarkers, setGeneratedMarkers] = useState<any>([]);
       const [visibleGeneratedMarkers, setVisibleGeneratedMarkers] = useState<any>(
             []
@@ -67,7 +61,16 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       const [showAlertReportModal, setShowAlertReportModal] = useState(false);
       const [myMapType, setMyMapType] = useState<MapType>("standard");
 
-      const reportAlert = async (long: number, lat: number, message: string, category: string, severity: number, radius?: number) => {
+      const mapRef = React.useRef<MapView>(null);
+
+      const reportAlert = async (
+            long: number,
+            lat: number,
+            message: string,
+            category: string,
+            severity: number,
+            radius?: number
+      ) => {
             axios
                   .post("https://oursos-backend-production.up.railway.app/reportalert", {
                         message: message,
@@ -77,12 +80,81 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         longitude: long,
                         radius: radius,
                   })
-                  .then(async (response) => {
-                  })
+                  .then(async (response) => { })
                   .catch((error) => {
                         console.error(error);
                   });
       };
+
+      const updateVisibleMarkers = (type: alertFilter) => {
+            console.log("Current filter is : ", type);
+            switch (type) {
+                  case "All":
+                        setVisibleGeneratedMarkers(generatedMarkers);
+                        setVisibleEarthquakes(earthquakes);
+                        setVisibleFires(fires);
+                        setVisibleTsunamis(tsunamis);
+                        break;
+                  case "Earthquake":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes(earthquakes);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Wildfire":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes([]);
+                        setVisibleFires(fires);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Tsunami":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis(tsunamis);
+                        break;
+                  case "Fire":
+                        setVisibleGeneratedMarkers(
+                              generatedMarkers.filter((marker: any) => marker.type === "Fire")
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Hazard":
+                        setVisibleGeneratedMarkers(
+                              generatedMarkers.filter((marker: any) => marker.type === "Hazard")
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                  case "Police":
+                        setVisibleGeneratedMarkers(
+                              visibleGeneratedMarkers.filter(
+                                    (marker: any) => marker.type === "Police"
+                              )
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+            }
+      };
+
+      const alertTypes: alertFilter[] = [
+            "All",
+            "Hazard",
+            "Fire",
+            "Police",
+            "Earthquake",
+            "Tsunami",
+            "Wildfire",
+      ];
+      function getNextAlertType(currentType: alertFilter): alertFilter {
+            const currentIndex = alertTypes.indexOf(currentType);
+            const nextIndex = (currentIndex + 1) % alertTypes.length;
+            console.log(alertTypes[nextIndex]);
+            return alertTypes[nextIndex];
+      }
 
       const newMarker = useCallback(
             (desc: string, severity: number, type: string, date: string) => {
@@ -158,19 +230,79 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   );
             });
 
-            // setAllVisibleAlerts(allVisibleAlerts.push(...visibleAlerts, ...visibleEarthquakes, ...visibleFires, ...visibleTsunamis));
-            // console.log("ALL ALERTS: " + JSON.stringify(allVisibleAlerts));
-
-            setVisibleGeneratedMarkers(visibleGeneratedMarkers);
-            setVisibleAlerts(visibleAlerts);
-            setVisibleEarthquakes(visibleEarthquakes);
-            setVisibleFires(visibleFires);
-            setVisibleTsunamis(visibleTsunamis);
-
             //add on the types for the view feed
-            setVisibleFires(visibleFires.map((fire: any) => ({ ...fire, type: 'Wildfire' })))
-            setVisibleEarthquakes(visibleEarthquakes.map((earthquake: any) => ({ ...earthquake, type: 'Earthquake' })))
-            setVisibleTsunamis(visibleTsunamis.map((tsunami: any) => ({ ...tsunami, type: 'Tsunami' })))
+            setVisibleFires(
+                  visibleFires.map((fire: any) => ({ ...fire, type: "Wildfire" }))
+            );
+            setVisibleEarthquakes(
+                  visibleEarthquakes.map((earthquake: any) => ({
+                        ...earthquake,
+                        type: "Earthquake",
+                  }))
+            );
+            setVisibleTsunamis(
+                  visibleTsunamis.map((tsunami: any) => ({ ...tsunami, type: "Tsunami" }))
+            );
+
+            //NEW FILTER METHOD
+            switch (filter) {
+                  case "All":
+                        setVisibleGeneratedMarkers(visibleGeneratedMarkers);
+                        setVisibleEarthquakes(visibleEarthquakes);
+                        setVisibleFires(visibleFires);
+                        setVisibleTsunamis(visibleTsunamis);
+                        break;
+                  case "Earthquake":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes(visibleEarthquakes);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Wildfire":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes([]);
+                        setVisibleFires(visibleFires);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Tsunami":
+                        setVisibleGeneratedMarkers([]);
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis(visibleTsunamis);
+                        break;
+                  case "Fire":
+                        setVisibleGeneratedMarkers(
+                              visibleGeneratedMarkers.filter(
+                                    (marker: any) => marker.type === "Fire"
+                              )
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Hazard":
+                        setVisibleGeneratedMarkers(
+                              visibleGeneratedMarkers.filter(
+                                    (marker: any) => marker.type === "Hazard"
+                              )
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+                  case "Police":
+                        setVisibleGeneratedMarkers(
+                              visibleGeneratedMarkers.filter(
+                                    (marker: any) => marker.type === "Police"
+                              )
+                        );
+                        setVisibleEarthquakes([]);
+                        setVisibleFires([]);
+                        setVisibleTsunamis([]);
+                        break;
+            }
+
+            // updateVisibleMarkers(filter);
       }, 0);
 
       const retrieveAlerts = async () => {
@@ -294,12 +426,12 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                                     longitude: location.coords.longitude,
                                     latitudeDelta: 0.0922,
                                     longitudeDelta: 0.0421,
-                              });
+                              },
+                              1000
+                        );
                   }
             })();
-      }, [])
-      //Recently added jacks stuff
-
+      }, []);
 
       const getCircleColor = (severity: number) => {
             switch (severity) {
@@ -313,7 +445,13 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       };
 
       return (
-            <View style={showMapFeedModal ? {} : tw.style("border-solid border-4 border-[#001D3D]")}>
+            <View
+                  style={
+                        showMapFeedModal
+                              ? {}
+                              : tw.style("border-solid border-4 border-[#001D3D]")
+                  }
+            >
                   {showMapFeedModal === true ? (
                         <ScrollView style={tw.style("flex")}>
                               {visibleAlerts.length === 0 &&
@@ -335,11 +473,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                                     </View>
                               ) : (
                                     <View style={tw.style("flex pb-100")}>
-                                          {/* <ActivityIndicator size="large" color="#0000ff" /> */}
                                           {/* - TODO TASKS - */}
-                                          {/* 1. Merge all the visible alerts  */}
-                                          {/* 2. Sort the visible alerts by time */}
-                                          {/* 3. Render the visible alerts */}
+                                          {/* <ActivityIndicator size="large" color="#0000ff" /> */}
 
                                           <ModalViewAlerts
                                                 data={[
@@ -366,7 +501,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   ) : (
                         <MapView
                               ref={mapRef}
+                              spiralEnabled={false}
                               mapType={myMapType}
+                              minPoints={3}
                               mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
                               rotateEnabled={false}
                               provider={PROVIDER_GOOGLE}
@@ -378,99 +515,107 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                               customMapStyle={mapStyle}
                               initialRegion={currentRegion}
                               showsMyLocationButton={true}
+                              minZoomLevel={7}
                               showsUserLocation={true}
                               onUserLocationChange={(event) => {
-
                                     setMyAccurateLocation(event.nativeEvent.coordinate);
                               }}
                               onRegionChangeComplete={(region) => {
                                     handleRegionChange(region);
                                     setCurrentRegion(region);
+                                    console.log("line 453 visibleEarthquakes: ", visibleEarthquakes);
                               }}
                               clusterColor={"#001D3D"}
                         >
-                              {visibleAlerts.map((a, i) => {
-                                    return (
-                                          <Marker
-                                                key={i}
-                                                coordinate={{
-                                                      latitude: a.latitude,
-                                                      longitude: a.longitude,
-                                                }}
-                                          >
-                                                <Image
-                                                      source={require("../../../assets/LocationDot.png")}
-                                                      style={{ width: 20, height: 20 }}
-                                                />
-                                          </Marker>
-                                    );
-                              })}
-                              {visibleEarthquakes.map((a: any, i) => {
-                                    // Render visible earthquakes
-                                    return (
-                                          <Marker
-                                                key={i}
-                                                coordinate={{
-                                                      latitude: a.geometry.coordinates[1],
-                                                      longitude: a.geometry.coordinates[0],
-                                                }}
-                                          >
-                                                <Image
-                                                      source={require("../../../assets/mapIcons/Earthquake.png")}
-                                                      style={{ width: 20, height: 20 }}
-                                                />
-                                          </Marker>
-                                    );
-                              })}
-                              {visibleFires.map((a: any, i: number) => {
-                                    // Render visible fires
-                                    return (
-                                          <Marker
-                                                key={i}
-                                                coordinate={{
-                                                      latitude: parseFloat(a.latitude),
-                                                      longitude: parseFloat(a.longitude),
-                                                }}
-                                          >
-                                                <Image
-                                                      source={require("../../../assets/mapIcons/Wildfire.png")}
-                                                      style={{ width: 20, height: 20 }}
-                                                />
-                                          </Marker>
-                                    );
-                              })}
-                              {visibleTsunamis.map((a: any, i: number) => {
-                                    // Render visible tsunamis
-                                    return (
-                                          <Marker
-                                                key={i}
-                                                coordinate={{
-                                                      latitude: parseFloat(a.latitude),
-                                                      longitude: parseFloat(a.longitude),
-                                                }}
-                                          >
-                                                <Image
-                                                      source={require("../../../assets/mapIcons/Tsunami.png")}
-                                                      style={{ width: 20, height: 20 }}
-                                                />
-                                          </Marker>
-                                    );
-                              })}
-                              {friendsLocation &&
-                                    friendsLocation?.map((a: any, i: number) => {
+                              {/* {visibleAlerts.map((a, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: a.latitude,
+                  longitude: a.longitude,
+                }}
+              >
+                <Image
+                  source={require("../../../assets/LocationDot.png")}
+                  style={{ width: 20, height: 20 }} 
+                />
+              </Marker>
+            );
+          })} */}
+
+                              {visibleEarthquakes &&
+                                    visibleEarthquakes.length > 0 &&
+                                    visibleEarthquakes.map((a: any, i) => {
+                                          // Render visible earthquakes
                                           return (
-                                                <View key={i}>
-                                                      <Marker
-                                                            key={i}
-                                                            title={a.desc}
-                                                            coordinate={{
-                                                                  latitude: parseFloat(a.latitude),
-                                                                  longitude: parseFloat(a.longitude),
-                                                            }}
+                                                <Marker
+                                                      key={i}
+                                                      coordinate={{
+                                                            latitude: a.geometry.coordinates[1],
+                                                            longitude: a.geometry.coordinates[0],
+                                                      }}
+                                                >
+                                                      <Image
+                                                            source={require("../../../assets/mapIcons/Earthquake.png")}
+                                                            style={{ width: 20, height: 20 }}
                                                       />
-                                                </View>
+                                                </Marker>
                                           );
                                     })}
+                              {visibleTsunamis &&
+                                    visibleFires.length > 0 &&
+                                    visibleFires.map((a: any, i: number) => {
+                                          // Render visible fires
+                                          return (
+                                                <Marker
+                                                      key={i}
+                                                      coordinate={{
+                                                            latitude: parseFloat(a.latitude),
+                                                            longitude: parseFloat(a.longitude),
+                                                      }}
+                                                >
+                                                      <Image
+                                                            source={require("../../../assets/mapIcons/Wildfire.png")}
+                                                            style={{ width: 20, height: 20 }}
+                                                      />
+                                                </Marker>
+                                          );
+                                    })}
+                              {visibleTsunamis &&
+                                    visibleTsunamis.length > 0 &&
+                                    visibleTsunamis.map((a: any, i: number) => {
+                                          // Render visible tsunamis
+                                          return (
+                                                <Marker
+                                                      key={i}
+                                                      coordinate={{
+                                                            latitude: parseFloat(a.latitude),
+                                                            longitude: parseFloat(a.longitude),
+                                                      }}
+                                                >
+                                                      <Image
+                                                            source={require("../../../assets/mapIcons/Tsunami.png")}
+                                                            style={{ width: 20, height: 20 }}
+                                                      />
+                                                </Marker>
+                                          );
+                                    })}
+                              {/* {friendsLocation &&
+            friendsLocation?.map((a: any, i: number) => {
+              return (
+                <View key={i}>
+                  <Marker
+                    key={i}
+                    title={a.desc}
+                    coordinate={{
+                      latitude: parseFloat(a.latitude),
+                      longitude: parseFloat(a.longitude),
+                    }}
+                  />
+                </View>
+              );
+            })} */}
 
                               {/* {draggableMarker && (
             <Marker
@@ -502,11 +647,17 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     }
                   )
                   .then(async (response) => {
-                        // Handle response or update state as needed
+                    await axios
+                      .get(
+                        "https://oursos-backend-production.up.railway.app/alerts"
+                      )
+                      .then((response) => {
+                        setAlerts(response.data);
+                      });
+                    // console.log(response);
                   })
                   .catch((error) => {
-                        console.error(error);
-                        // Handle error appropriately
+                    console.error(error);
                   });
               }}
             />
@@ -562,8 +713,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                                                                         justifyContent: "center",
                                                                         alignItems: "center",
                                                                   }}
-                                                            >
-                                                            </View>
+                                                            ></View>
                                                       )}
                                                       <Image
                                                             source={imageSource}
@@ -581,13 +731,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                                                                   <Text style={tw.style("text-xl font-bold")}>
                                                                         {mark.type + " - " + getSeverityString(mark.severity)}
                                                                   </Text>
-                                                                  <Text>
-                                                                        {mark.date}
-                                                                  </Text>
-                                                                  <Text style={tw.style("")}>
-                                                                        {mark.desc}
-                                                                  </Text>
-
+                                                                  <Text>{mark.date}</Text>
+                                                                  <Text style={tw.style("")}>{mark.desc}</Text>
                                                             </View>
                                                       </Callout>
                                                 </Marker>
@@ -600,27 +745,35 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                         <View
                               style={tw`top-20 right-0 absolute bg-white p-1 rounded-bl-xl rounded-tl-xl`}
                         >
-                              <Pressable
-                                    onPress={() => {
-                                          if (myMapType === "standard") setMyMapType("satellite");
-                                          else if (myMapType === "satellite") setMyMapType("standard");
-                                    }}
-                              >
-                                    <Image
-                                          source={require("../../../assets/footerIcons/mapIcon.png")}
-                                          style={tw.style(`h-8 w-8 m-2`)}
-                                    />
-                              </Pressable>
-                              <Pressable
-                                    onPress={() => {
-                                          setShowAlertReportModal(!showAlertReportModal);
-                                    }}
-                              >
-                                    <Image
-                                          source={require("../../../assets/mapui/MapUI-NewPin.png")}
-                                          style={tw.style(`h-8 w-8 m-2`)}
-                                    />
-                              </Pressable>
+                              {showMapFeedModal === false ? (
+                                    <Pressable
+                                          onPress={() => {
+                                                if (myMapType === "standard") setMyMapType("satellite");
+                                                else if (myMapType === "satellite") setMyMapType("standard");
+                                          }}
+                                    >
+                                          <Image
+                                                source={require("../../../assets/footerIcons/mapIcon.png")}
+                                                style={tw.style(`h-8 w-8 m-2`)}
+                                          />
+                                    </Pressable>
+                              ) : (
+                                    <View></View>
+                              )}
+                              {showMapFeedModal === false ? (
+                                    <Pressable
+                                          onPress={() => {
+                                                setShowAlertReportModal(!showAlertReportModal);
+                                          }}
+                                    >
+                                          <Image
+                                                source={require("../../../assets/mapui/MapUI-NewPin.png")}
+                                                style={tw.style(`h-8 w-8 m-2`)}
+                                          />
+                                    </Pressable>
+                              ) : (
+                                    <View></View>
+                              )}
                               <TouchableOpacity onPress={() => router.push("/")}>
                                     <Image
                                           source={require("../../../assets/footerIcons/homeIcon.png")}
@@ -642,88 +795,20 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                                           style={tw.style(`h-8 w-8 m-2`)}
                                     />
                               </TouchableOpacity>
-                              {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={CustomAlertModel}
-            onRequestClose={() => {
-              setCustomAlertModel(!CustomAlertModel);
-            }}
-          >
-            <View
-              style={tw`flex-1 justify-center items-center mt-6 bg-black bg-opacity-50`}
-            >
-              <View style={tw`m-5 bg-white rounded-lg p-6 shadow-2xl`}>
-                <Text style={tw`text-xl font-semibold mb-6 text-center`}>
-                  Report Alert
-                </Text>
-
-              
-                <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
-                  onPress={() => {
-                    console.log("Fire Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Fire",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                    }
-                  }}
-                >
-                  <Text style={tw`text-white text-center font-medium`}>
-                    Fire
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
-                  onPress={() => {
-                    console.log("Earthquake Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Earthquake",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                    }
-                  }}
-                >
-                  <Text style={tw`text-white text-center font-medium`}>
-                    Earthquake
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
-                  onPress={() => {
-                    console.log("Tsunami Alert Pin Dropped");
-                    setCustomAlertModel(false);
-                    if (location) {
-                      setDraggableMarker({
-                        category: "Tsunami",
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                      });
-                    }
-                  }}
-                >
-                  <Text style={tw`text-white text-center font-medium`}>
-                    Tsunami
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={tw`rounded-lg py-3 my-2 bg-[#001d3d] shadow-md`}
-                  onPress={() => setCustomAlertModel(false)}
-                >
-                  <Text style={tw`text-white text-center font-medium`}>
-                    Close
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal> */}
+                              {showMapFeedModal === false ? (
+                                    <TouchableOpacity
+                                          onPress={() => {
+                                                if (showMapFeedModal === false) {
+                                                      setFilter(getNextAlertType(filter));
+                                                      updateVisibleMarkers(filter);
+                                                }
+                                          }}
+                                    >
+                                          <Text>{filter}</Text>
+                                    </TouchableOpacity>
+                              ) : (
+                                    <View></View>
+                              )}
                         </View>
                   ) : (
                         <View></View>
