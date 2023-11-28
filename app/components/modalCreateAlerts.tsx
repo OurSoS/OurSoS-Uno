@@ -17,7 +17,6 @@ type modalCreateAlertsProps = {
   setGenMarkers: (desc: string, severity: number, type: string, date:string) => void;
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
   updateMap: React.Dispatch<React.SetStateAction<boolean>>;
-  tick: boolean;
 };
 
 const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
@@ -65,7 +64,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
     
     alert("Report Submitted!");
     props.setter(false);
-    console.log(description, severity, selectedCategory);
+    // console.log(description, severity, selectedCategory);
     props.setGenMarkers(description, severity, selectedCategory, new Date().toISOString());
     
     //POST HERE
