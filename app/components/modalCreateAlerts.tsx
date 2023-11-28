@@ -16,6 +16,8 @@ type modalCreateAlertsProps = {
   setter: React.Dispatch<React.SetStateAction<boolean>>;
   setGenMarkers: (desc: string, severity: number, type: string, date:string) => void;
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
+  updateMap: React.Dispatch<React.SetStateAction<boolean>>;
+  tick: boolean;
 };
 
 const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
@@ -68,6 +70,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
     
     //POST HERE
     props.setMapType("satellite");
+
+    props.updateMap((prev) => !prev);
   };
 
   return (
