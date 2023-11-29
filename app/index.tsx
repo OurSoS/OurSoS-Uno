@@ -230,7 +230,7 @@ export default function Index() {
                 return e.properties.tsunami !== 0;
               })
             );
-            console.log(tsunamis);
+            // console.log(tsunamis);
           })
           .catch((error) => console.error(error));
 
