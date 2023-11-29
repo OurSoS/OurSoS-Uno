@@ -61,11 +61,9 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   useEffect(() => {
     setMarkers(props.data);
     props.data.map((alert: any) => {
-      if (alert.type === "Earthquake") {
-        console.log(alert);
-      }
+      // console.log(markers);
     });
-    // console.log(markers)
+    // console.log(props.data.map((alert:any) => alert.type))
   }, [props.data]);
 
   // console.log(props.data)
@@ -192,38 +190,11 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                       ) : null
                     ) : null}
                   </MapView>
-                ) : (
-                  <View></View>
-                )}
-
-                {alert.type === "Wildfire" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.latitude}, {alert.longitude}
-                  </Text>
-                ) : alert.type === "Earthquake" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.geometry?.coordinates[1]},{" "}
-                    {alert.geometry?.coordinates[0]}
-                  </Text>
-                ) : alert.type === "Tsunami" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.latitude}, {alert.longitude}
-                  </Text>
-                ) : alert.type === "Fire" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.lat}, {alert.long}
-                  </Text>
-                ) : alert.type === "Police" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.lat}, {alert.long}
-                  </Text>
-                ) : alert.type === "Hazard" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.lat}, {alert.long}
-                  </Text>
-                ) : null}
-                {alert.type === "Wildfire" ? (
+                ) : alert.type === "Wildfire" ? (
                   <>
+                    <Text style={tw.style("text-sm text-white")}>
+                      Location - {alert.latitude}, {alert.longitude}
+                    </Text>
                     <Text style={tw.style("text-sm text-white")}>
                       Time - {alert.acq_time}
                     </Text>
@@ -233,8 +204,6 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                     <Text style={tw.style("text-sm text-white")}>
                       Radius - {alert.scan}
                     </Text>
-
-                    {/* Add a View to represent the circle */}
                     {typeof alert.scan === "string" &&
                       !isNaN(parseFloat(alert.scan)) && (
                         <View
@@ -251,30 +220,15 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                         />
                       )}
                   </>
-                ) : null}
-                {alert.type === "User Alert" ? (
-                  <>
-                    <Text style={tw.style("text-sm text-white")}>
-                      Message - {alert.message}
-                    </Text>
-                    {/* <Text style={tw.style("text-sm text-white")}>Time - {alert.time}</Text> */}
-                    <Text style={tw.style("text-sm text-white")}>
-                      Radius - {alert.radius}{" "}
-                    </Text>
-                    {/* Add a View to represent the circle */}
-                    {/* <View
-                    style={{
-                      width: alert.radius * 2,
-                      height: alert.radius * 2,
-                      borderRadius: alert.radius,
-                      backgroundColor: "orange",
-                      borderColor: "red",
-                      borderWidth: 5,
-                      marginTop: 10,
-                      alignSelf: "center",
-                    }}
-                  /> */}
-                  </>
+                ) : alert.type === "Earthquake" ? (
+                  <Text style={tw.style("text-sm text-white")}>
+                    Location - {alert.geometry?.coordinates[1]},{" "}
+                    {alert.geometry?.coordinates[0]}
+                  </Text>
+                ) : alert.type === "Tsunami" ? (
+                  <Text style={tw.style("text-sm text-white")}>
+                    Location - {alert.latitude}, {alert.longitude}
+                  </Text>
                 ) : null}
               </View>
             </View>
