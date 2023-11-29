@@ -124,7 +124,7 @@ export default function App() {
               </ScrollView>
             </View>
 
-            <View style={tw.style("pb-12 pl-4 pr-4")}>
+            <View style={tw.style("pb-20 pl-4 pr-4")}>
               {/* @ts-ignore */}
 
               <TextInput
