@@ -143,7 +143,7 @@ export default function Dashboard({
           data={news}
           translatedData={translatedNews}
         />
-        <View style={tw.style( `w-full`, `pt-0`, `pb-15`)}>
+        <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
           {/* <View
             style={tw.style(
               `flex`,
