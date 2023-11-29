@@ -451,13 +451,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   return (
-    <View
-      style={
-        showMapFeedModal
-          ? {}
-          : tw.style("border-solid border-4 border-[#001D3D]")
-      }
-    >
+    <View>
       {showMapFeedModal === true ? (
         <ScrollView style={tw.style("flex")}>
           {visibleAlerts.length === 0 &&
@@ -733,7 +727,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     <View
                       style={{
                         position: "absolute",
-                        width: 40,
+                        width: 20,
                         height: 20,
                         borderRadius: 20,
                         backgroundColor: getCircleColor(mark.severity),
@@ -746,7 +740,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   )}
                   <Image
                     source={imageSource}
-                    style={{ width: 40, height: 40 }}
+                    style={{ width: 20, height: 20 }}
                   />
                   <Callout
                     style={tw.style(
