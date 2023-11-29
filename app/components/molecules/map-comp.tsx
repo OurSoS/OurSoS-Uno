@@ -60,8 +60,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [myAccurateLocation, setMyAccurateLocation] = useState<any>({});
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
-  const [updateTick, setUpdateTick] = useState(false)
-    const mapRef = React.useRef<MapView>(null);
+  const [updateTick, setUpdateTick] = useState(false);
+  const mapRef = React.useRef<MapView>(null);
 
   const reportAlert = async (
     long: number,
@@ -433,11 +433,11 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     })();
   }, []);
 
-//update region when alert created
-useEffect(() => {
-  handleRegionChange(currentRegion);
-  // console.log("new alert created")
-}, [updateTick])
+  //update region when alert created
+  useEffect(() => {
+    handleRegionChange(currentRegion);
+    // console.log("new alert created")
+  }, [updateTick]);
 
   const getCircleColor = (severity: number) => {
     switch (severity) {
@@ -504,14 +504,13 @@ useEffect(() => {
           setGenMarkers={newMarker}
           setMapType={setMyMapType}
           updateMap={setUpdateTick}
-          
         />
       ) : (
         <MapView
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
-          // minPoints={5}
+          minPoints={4}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
@@ -523,7 +522,7 @@ useEffect(() => {
           customMapStyle={mapStyle}
           initialRegion={currentRegion}
           showsMyLocationButton={true}
-          minZoomLevel={4}
+          // minZoomLevel={2}
           showsUserLocation={true}
           onUserLocationChange={(event) => {
             setMyAccurateLocation(event.nativeEvent.coordinate);
@@ -535,23 +534,6 @@ useEffect(() => {
           }}
           clusterColor={"#001D3D"}
         >
-          {/* {visibleAlerts.map((a, i) => {
-            return (
-              <Marker
-                key={i}
-                coordinate={{
-                  latitude: a.latitude,
-                  longitude: a.longitude,
-                }}
-              >
-                <Image
-                  source={require("../../../assets/LocationDot.png")}
-                  style={{ width: 20, height: 20 }} 
-                />
-              </Marker>
-            );
-          })} */}
-
           {visibleEarthquakes &&
             visibleEarthquakes.length > 0 &&
             visibleEarthquakes.map((a: any, i) => {
@@ -564,6 +546,19 @@ useEffect(() => {
                     longitude: a.geometry.coordinates[0],
                   }}
                 >
+                  <View
+                    style={{
+                      position: "absolute",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 20,
+                      backgroundColor: "lightgray",
+                      borderBlockColor: "black",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  ></View>
                   <Image
                     source={require("../../../assets/mapIcons/Earthquake.png")}
                     style={{ width: 20, height: 20 }}
@@ -571,7 +566,7 @@ useEffect(() => {
                 </Marker>
               );
             })}
-          {visibleTsunamis &&
+          {visibleFires &&
             visibleFires.length > 0 &&
             visibleFires.map((a: any, i: number) => {
               // Render visible fires
@@ -583,6 +578,19 @@ useEffect(() => {
                     longitude: parseFloat(a.longitude),
                   }}
                 >
+                  <View
+                    style={{
+                      position: "absolute",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 20,
+                      backgroundColor: "orange",
+                      borderBlockColor: "black",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  ></View>
                   <Image
                     source={require("../../../assets/mapIcons/Wildfire.png")}
                     style={{ width: 20, height: 20 }}
@@ -602,6 +610,19 @@ useEffect(() => {
                     longitude: parseFloat(a.longitude),
                   }}
                 >
+                  <View
+                    style={{
+                      position: "absolute",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 20,
+                      backgroundColor: "lightblue",
+                      borderBlockColor: "black",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  ></View>
                   <Image
                     source={require("../../../assets/mapIcons/Tsunami.png")}
                     style={{ width: 20, height: 20 }}
@@ -713,7 +734,7 @@ useEffect(() => {
                       style={{
                         position: "absolute",
                         width: 40,
-                        height: 40,
+                        height: 20,
                         borderRadius: 20,
                         backgroundColor: getCircleColor(mark.severity),
                         borderBlockColor: "black",
@@ -809,7 +830,7 @@ useEffect(() => {
                 if (showMapFeedModal === false) {
                   setFilter(getNextAlertType(filter));
                   updateVisibleMarkers(filter);
-                  setUpdateTick(!updateTick)
+                  setUpdateTick(!updateTick);
                 }
               }}
             >
