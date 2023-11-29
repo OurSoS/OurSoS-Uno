@@ -19,7 +19,7 @@ export default function Slider({
       horizontal
       showsHorizontalScrollIndicator={false}
       scrollEventThrottle={10}
-      style={{ padding: 10 }}
+      style={{ paddingVertical: 10 }}
       contentContainerStyle={{ justifyContent: "center" }}
     >
       {data.map((item, i) => {
