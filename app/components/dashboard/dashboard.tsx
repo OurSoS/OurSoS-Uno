@@ -123,20 +123,28 @@ export default function Dashboard({
             resizeMode="contain"
           />
         </View>
-
-        <MapComp height={300} />
-        <Pressable
-          onPress={() => {
-            router.push("/map");
-          }}
-          style={tw.style(
-            "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg text-white"
-          )}
-        >
-          <Text style={tw.style("text-xl text-white text-center")}>
-            Expand Map
-          </Text>
-        </Pressable>
+        <View style={tw.style(`flex`)}>
+          <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
+            <MapComp height={300} />
+          </View>
+          <Pressable
+            onPress={() => {
+              router.push("/map");
+            }}
+            style={tw.style("absolute bottom-55 right-6")}
+          >
+            <View 
+            style={tw.style(
+              "bg-[#ffefd4] bg-opacity-80 rounded-sm items-center justify-center w-[9.5] h-[9.5]"
+            )}>
+              <Image source={require("../../../assets/mapui/Expand-Map.png")} 
+                resizeMode={ 'contain' }
+                style={tw.style(
+                `h-7 aspect-1`,
+              )}/>
+            </View>
+          </Pressable>
+        </View>
 
         <Slider
           onToggleSnackBar={onToggleSnackBar}
@@ -194,8 +202,32 @@ export default function Dashboard({
           },
         }}
       >
-        <Text>{snackData.snippet}</Text>
-        <Text>{snackData.source}</Text>
+        <View style={tw.style(
+          `border-r`,
+          `pr-5`
+        )}>
+          <View style={tw.style(
+            `p-1`,
+            `border-t`,
+            `border-r`,
+            `border-l`,
+            `border-[#001D3D]`,
+            `rounded-t-lg`,
+          )}>
+            <Text >
+              {snackData.snippet}
+            </Text>
+          </View>
+          <View style={tw.style(
+              `bg-[#001D3D]`,
+              `border-transparent`, 
+              `rounded-b-lg`
+            )}>
+            <Text style={tw.style(`text-white text-center text-xs`)}>
+              Source: {snackData.source}
+            </Text>
+          </View>
+        </View>
       </Snackbar>
     </View>
   );
