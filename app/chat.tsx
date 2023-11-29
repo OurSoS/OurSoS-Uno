@@ -13,8 +13,8 @@ import React from "react";
 import Footer from "./components/molecules/Footer";
 
 const pubnub = new Pubnub({
-  publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
-  subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
+  publishKey: "",
+  subscribeKey: "",
   userId: "myUniqueUserId",
 });
 import axios from "axios";
@@ -124,7 +124,7 @@ export default function App() {
               </ScrollView>
             </View>
 
-            <View style={tw.style("pb-12 pl-4 pr-4")}>
+            <View style={tw.style("pb-20 pl-4 pr-4")}>
               {/* @ts-ignore */}
 
               <TextInput
