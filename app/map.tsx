@@ -21,7 +21,13 @@ export default function Map() {
         <View style={tw.style(`flex flex-col justify-between h-full`)}>
           <View>
             <View style={tw.style(`h-full`, `relative`)}>
-              <MapComp height={mapViewHeight} buttons={true} />
+              <MapComp
+                height={mapViewHeight}
+                pitchEnabled={true}
+                scrollEnabled={true}
+                toolbarEnabled={true}
+                buttons={true}
+              />
             </View>
           </View>
         </View>
