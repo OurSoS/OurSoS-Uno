@@ -112,7 +112,13 @@ export default function Dashboard({
                   "border-solid border-[3] rounded-md border-[#001D3D]"
                 )}
               >
-                <MapComp height={300} />
+                <MapComp
+                  zoomEnabled={false}
+                  pitchEnabled={false}
+                  scrollEnabled={false}
+                  toolbarEnabled={false}
+                  height={300}
+                />
               </View>
               <Pressable
                 onPress={() => {

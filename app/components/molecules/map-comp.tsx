@@ -30,7 +30,6 @@ import {
 
 export default function MapComp(props: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
-  const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
@@ -48,11 +47,12 @@ export default function MapComp(props: MapCompProps) {
     longitude: 0,
     latitude: 0,
   });
+  //current region temporary fix set to vancouver area
   const [currentRegion, setCurrentRegion] = useState({
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: 49.246292,
+    longitude: -123.116226,
+    latitudeDelta: 5,
+    longitudeDelta: 5,
   });
   const [generatedMarkers, setGeneratedMarkers] = useState<any>([]);
   const [visibleGeneratedMarkers, setVisibleGeneratedMarkers] = useState<any>(
@@ -62,32 +62,8 @@ export default function MapComp(props: MapCompProps) {
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false);
-    const mapRef = React.useRef<MapView>(null);
 
-  // const reportAlert = async (
-  //   long: number,
-  //   lat: number,
-  //   message: string,
-  //   category: string,
-  //   severity: number,
-  //   radius?: number
-  // ) => {
-  //   axios
-  //     .post("https://oursos-backend-production.up.railway.app/reportalert", {
-  //       message: message,
-  //       category: category,
-  //       severity: severity,
-  //       latitude: lat,
-  //       longitude: long,
-  //       radius: radius,
-  //     })
-  //     .then(async (response) => {})
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
-
-  
+  const mapRef = React.useRef<MapView>(null);
 
   const updateVisibleMarkers = (type: alertFilter) => {
     // console.log("Current filter is : ", type);
@@ -179,15 +155,7 @@ export default function MapComp(props: MapCompProps) {
   const handleRegionChange = debounce((region) => {
     if (!region) return;
 
-    const visibleAlerts = alerts?.filter((a) => {
-      // Check if the alert's latitude and longitude are within the visible region
-      return (
-        a.latitude >= region.latitude - region.latitudeDelta / 2 &&
-        a.latitude <= region.latitude + region.latitudeDelta / 2 &&
-        a.longitude >= region.longitude - region.longitudeDelta / 2 &&
-        a.longitude <= region.longitude + region.longitudeDelta / 2
-      );
-    });
+  
 
     const visibleEarthquakes = earthquakes?.filter((a) => {
       // Check if the earthquake's latitude and longitude are within the visible region
@@ -310,36 +278,43 @@ export default function MapComp(props: MapCompProps) {
     // updateVisibleMarkers(filter);
   }, 0);
 
-  const handleConfirmation = (alert: any) => {
-    console.log("ALERT: ", alert)
-    //TODO: put cool alert library here
-    Alert.alert(
-      "Confirm Alert",
-      "Are you sure you want to make a report?",
-      [{ text: "Cancel", onPress:() =>{
-        //TODO: only allow one report at a time
-        //TODO: cancel the alert
-        console.log("cancelled");
-      } }, { text: "Report Alert", onPress: () => {
-        //TODO report the alert
-        axios
-        .post("https://oursos-backend-production.up.railway.app/reportalert", {
-          message: alert.message,
-          type: alert.type,
-          severity: alert.severity,
-          lat: alert.lat,
-          long: alert.long,
-        })
-      .then(async (response) => {})
-      .catch((error) => {
-        console.error(error);
-      });
-        //TODO axios post the alert
-        console.log("Latitude: ",alert.lat, " ", "Longitude ",alert.long)
-        console.log("Alert reported");
-      } }]
-    );
-  }
+  const handleConfirmation = (alert: any): Promise<boolean> => {
+    return new Promise((resolve) => {
+      Alert.alert("Confirm Alert", "Are you sure you want to make a report?", [
+        {
+          text: "Cancel",
+          onPress: () => {
+            resolve(false);
+            Alert.alert("Your Report has been deleted. ❌")
+          },
+        },
+        {
+          text: "Report Alert",
+          onPress: () => {
+            Alert.alert("Your Report has been submitted. ✅")
+            axios
+              .post(
+                "https://oursos-backend-production.up.railway.app/reportalert",
+                {
+                  message: alert.message,
+                  type: alert.type,
+                  severity: alert.severity,
+                  lat: alert.lat,
+                  long: alert.long,
+                }
+              )
+              .then(async (response) => {
+                resolve(true);
+              })
+              .catch((error) => {
+                console.error(error);
+                resolve(true);
+              });
+          },
+        },
+      ]);
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -368,7 +343,7 @@ export default function MapComp(props: MapCompProps) {
       await axios
         .get("https://oursos-backend-production.up.railway.app/alerts")
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
           if (response.data === null) {
             console.log("No data received from the server");
             // setGeneratedMarkers([]);
@@ -376,9 +351,18 @@ export default function MapComp(props: MapCompProps) {
             setGeneratedMarkers(response.data);
           }
         })
-        .catch((error) => console.error(error));
-      
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        .catch((error) => {
+          if (error.response && error.response.status === 503) {
+            console.log(
+              "Service temporarily unavailable. Please try again later. (Backend /alerts broken)"
+            );
+            // Optionally, you can setGeneratedMarkers([]) or take other actions.
+          } else {
+            console.error(error);
+          }
+        });
+
+      let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
@@ -510,10 +494,11 @@ export default function MapComp(props: MapCompProps) {
           scrollEnabled={props.scrollEnabled}
           pitchEnabled={props.pitchEnabled}
           toolbarEnabled={props.toolbarEnabled}
+          zoomEnabled={props.zoomEnabled}
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
-          minPoints={4}
+          minPoints={3}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
@@ -649,52 +634,6 @@ export default function MapComp(props: MapCompProps) {
               );
             })} */}
 
-          {/* {draggableMarker && (
-            <Marker
-              coordinate={draggableMarker}
-              draggable
-              onDragEnd={(event) => {
-                const newLatitude = event.nativeEvent.coordinate.latitude;
-                const newLongitude = event.nativeEvent.coordinate.longitude;
-
-                console.log(
-                  `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}`
-                );
-
-                setDraggableMarker({
-                  ...draggableMarker,
-                  latitude: newLatitude,
-                  longitude: newLongitude,
-                });
-                axios
-                  .post(
-                    "https://oursos-backend-production.up.railway.app/reportalert",
-                    {
-                      message: draggableMarker.category + "Alert",
-                      category: draggableMarker.category,
-                      severity: "High",
-                      latitude: newLatitude,
-                      longitude: newLongitude,
-                      radius: 100.0,
-                    }
-                  )
-                  .then(async (response) => {
-                    await axios
-                      .get(
-                        "https://oursos-backend-production.up.railway.app/alerts"
-                      )
-                      .then((response) => {
-                        setAlerts(response.data);
-                      });
-                    // console.log(response);
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              }}
-            />
-          )} */}
-
           {visibleGeneratedMarkers &&
             visibleGeneratedMarkers.length > 0 &&
             visibleGeneratedMarkers.map((mark: any, i: number) => {
@@ -719,23 +658,31 @@ export default function MapComp(props: MapCompProps) {
                     longitude: mark.long,
                   }}
                   key={i}
-                  draggable={true}
-                  onDragEnd={(event) => {
-                      console.log(mark)
-                      const newLatitude = event.nativeEvent.coordinate.latitude;
-                      const newLongitude = event.nativeEvent.coordinate.longitude;
-                      console.log("moved to ", newLatitude, newLongitude)
-                      //TODO: make a state variable for draggable and set it to false
-                      mark.lat = newLatitude;
-                      mark.long = newLongitude;
+                  draggable={!mark.confirmed}
+                  onDragEnd={async (event) => {
+                    const newLatitude = event.nativeEvent.coordinate.latitude;
+                    const newLongitude = event.nativeEvent.coordinate.longitude;
 
-                      handleConfirmation(mark);
+                    // Update marker position
+                    mark.lat = newLatitude;
+                    mark.long = newLongitude;
 
-                      // mark.confirmed = true;
-                      // do alert -> alert will confirm -> if confirmed POST
-                    
-                  }
-                }
+                    const isConfirmed = await handleConfirmation(mark);
+
+                    if (isConfirmed) {
+                      //This currently fires whether the backend worked or not
+                      //TODO: check if went through to backend and handle
+                      mark.confirmed = true;
+                    } else {
+                      //This is if the user clicks cancel meaning they don't want to report the alert
+                      setGeneratedMarkers((prevMarkers: any) =>
+                        prevMarkers.slice(0, -1)
+                      );
+                      setFilter("All");
+                      updateVisibleMarkers(filter);
+                      setUpdateTick(!updateTick);
+                    }
+                  }}
                 >
                   {mark.severity && (
                     <View
@@ -744,11 +691,21 @@ export default function MapComp(props: MapCompProps) {
                         width: 20,
                         height: 20,
                         borderRadius: 20,
-                        backgroundColor: getCircleColor(mark.severity),
-                        borderBlockColor: "black",
-                        borderWidth: 1,
+                        backgroundColor: !mark.confirmed
+                          ? "black"
+                          : getCircleColor(mark.severity),
+                        borderWidth: !mark.confirmed ? 3 : 1, // Adjust border width based on drag state
+                        borderColor: !mark.confirmed ? "rgba(0, 0, 0, 1)" : "black", // Adjust border color based on drag state
                         justifyContent: "center",
                         alignItems: "center",
+
+                        // Additionl styling for the glowing effect when draggable
+                        shadowColor: !mark.confirmed ? "black" : "transparent",
+                        shadowOffset: !mark.confirmed
+                          ? { width: 10, height: 10 }
+                          : { width: 0, height: 0 },
+                        shadowOpacity: !mark.confirmed ? 1 : 0,
+                        shadowRadius: !mark.confirmed ? 10 : 0,
                       }}
                     ></View>
                   )}
@@ -761,9 +718,7 @@ export default function MapComp(props: MapCompProps) {
                       "flex justify-center items-center h-20 w-50 rounded-lg"
                     )}
                   >
-                    <View
-                      style={tw.style("flex m-2 rounded-lg")}
-                    ></View>
+                    <View style={tw.style("flex m-2 rounded-lg")}></View>
                     <View>
                       <Text style={tw.style("text-xl font-bold")}>
                         {mark.type + " - " + getSeverityString(mark.severity)}
@@ -777,7 +732,7 @@ export default function MapComp(props: MapCompProps) {
             })}
         </MapView>
       )}
-   
+
       {props.buttons === true ? (
         <View
           style={tw`top-20 right-0 absolute bg-white p-1 rounded-bl-xl rounded-tl-xl`}
@@ -832,7 +787,7 @@ export default function MapComp(props: MapCompProps) {
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
-         
+
           {showMapFeedModal === false ? (
             <TouchableOpacity
               onPress={() => {
@@ -845,7 +800,6 @@ export default function MapComp(props: MapCompProps) {
             >
               <Text>{filter}</Text>
             </TouchableOpacity>
-            
           ) : (
             <View></View>
           )}

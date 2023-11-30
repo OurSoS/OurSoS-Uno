@@ -13,24 +13,15 @@ const mapViewHeight =
 export default function Map() {
   return (
     <>
-      <ImageBackground
-        source={require("../assets/Intro/Map.png")}
-        style={styles.background}
-      />
-      <View style={tw.style("flex")}>
-        <View style={tw.style(`flex flex-col justify-between h-full`)}>
-          <View>
-            <View style={tw.style(`h-full`, `relative`)}>
-              <MapComp
-                height={mapViewHeight}
-                pitchEnabled={true}
-                scrollEnabled={true}
-                toolbarEnabled={true}
-                buttons={true}
-              />
-            </View>
-          </View>
-        </View>
+      <View style={tw.style(`h-full`, `relative`)}>
+        <MapComp
+          height={mapViewHeight}
+          zoomEnabled={true}
+          pitchEnabled={true}
+          scrollEnabled={true}
+          toolbarEnabled={true}
+          buttons={true}
+        />
       </View>
       <Footer />
     </>
