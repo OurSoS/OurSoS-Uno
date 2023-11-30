@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, SafeAreaView, Image } from "react-native";
+import React from "react";
+import { Dimensions, Platform, ImageBackground, View } from "react-native";
+import tw from "twrnc";
+import { styles } from "./styles/settingsStyles";
 
 import MapComp from "./components/molecules/map-comp";
-import tw from 'twrnc';
+import Footer from "./components/molecules/Footer";
 
-type alert = {
-  id: number;
-  message: string;
-  category: string;
-  latitude: string;
-  longitude: string;
-  radius: string;
-  time: string;
-  severity: string;
-};
+const screenHeight = Dimensions.get("window").height;
+const mapViewHeight =
+  Platform.OS === "ios" ? screenHeight * 0.87 : screenHeight * 0.9;
 
-export default function App() {
-
+export default function Map() {
   return (
-    <View style={tw.style(`h-full`, `relative`)}>
-      <MapComp zoomEnabled={true} pitchEnabled={true} scrollEnabled={true} toolbarEnabled={true} buttons={true} />
-      {/* <Footer /> */}
-    </View>
+    <>
+      <View style={tw.style(`h-full`, `relative`)}>
+        <MapComp
+          height={mapViewHeight}
+          zoomEnabled={true}
+          pitchEnabled={true}
+          scrollEnabled={true}
+          toolbarEnabled={true}
+          buttons={true}
+        />
+      </View>
+      <Footer />
+    </>
   );
 }

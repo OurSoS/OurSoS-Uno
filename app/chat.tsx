@@ -20,8 +20,8 @@ const getDeviceId = (): string => {
 };
 
 const pubnub = new Pubnub({
-  publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
-  subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
+  publishKey: "",
+  subscribeKey: "",
   userId: "myUniqueUserId",
 });
 
@@ -126,8 +126,6 @@ export default function App() {
             </View>
 
             <View style={tw.style("pb-20 pl-4 pr-4")}>
-              {/* @ts-ignore */}
-
               <TextInput
                 maxLength={50}
                 style={tw.style(

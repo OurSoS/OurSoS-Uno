@@ -1,266 +1,78 @@
-import React, { useState } from "react";
-import tw from "../lib/tailwind";
-import { useDeviceContext } from "twrnc";
-
+import Pubnub from "pubnub";
+import { useState, useEffect } from "react";
 import {
+  TextInput,
+  Pressable,
   Text,
   View,
-  ScrollView,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
   Image,
-  Pressable,
+  ImageBackground,
 } from "react-native";
 import { Link } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
+import tw from "twrnc";
+import React from "react";
 import Footer from "./components/molecules/Footer";
-import { styles } from "./styles/settingsStyles";
+import axios from "axios";
+import Constants from "expo-constants";
 
-// import Toggle from "react-native-toggle-element";
-// // https://github.com/mymai91/react-native-toggle-element
+const getDeviceId = (): string => {
+  // This gets the installation ID, not a hardware ID
+  return Constants.installationId;
+};
 
-// import Toggle from "react-native-toggle-input";
+const pubnub = new Pubnub({
+  publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
+  subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
+  userId: "myUniqueUserId",
+});
 
-const settingsArray = [
-//   "Notifications",
-//   "Manage Friends",
-  "Languages",
-//   "Locations",
-  "Light/Dark Mode",
-];
-
-export default function Settings() {
-  const [page, setPage] = React.useState("SettingsHome");
-  const [showFriendOnMap, setShowFriendOnMap] = useState(false);
-  const [notification, setNotification] = useState(false);
-
+export default function App() {
   return (
     <>
       <ImageBackground
         source={require("../assets/Intro/Map.png")}
-        style={styles.background}
+        style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
       >
-        <View style={styles.container}>
-          {page === "SettingsHome" && <SettingsHomeHeader />}
-          {page !== "SettingsHome" && (
-            <SpecificSettingHeader pageTitle={page} setPage={setPage} />
-          )}
-
-          {/* {page === "ManageFriends" && <ManageFriendsButton showFriendOnMap={showFriendOnMap} setShowFriendOnMap={setShowFriendOnMap(showFriendOnMap)}/> } */}
-
-          {page === "SettingsHome" && <SettingsBody setPage={setPage} />}
-          {page === "Notifications" && (
-            <ButtonMapping
-              settings={[
-                "Show Notifications",
-                "Allow Sound",
-                "Allow Vibration",
-                "Notification Priority",
-              ]}
-            />
-          )}
-
-          {/* TODO: this toggle button has some ts error, will fix later on  */}
-          {/* <Toggle toggle={notification} setToggle={setNotification} /> */}
-
-          {/* {page === "Manage Friends" && (
-            <View style={{ padding: 10, display: "flex" }}>
-              <Text style={{ fontSize: 26, borderBottomWidth: 3 }}>
-                Friends
-              </Text>
-              <ScrollView
-                style={{
-                  paddingHorizontal: 20,
-                  backgroundColor: "white",
-                  marginTop: 10,
-                  borderRadius: 10,
-                }}
+        <View style={tw.style("flex")}>
+          <View style={tw.style(`flex flex-col justify-between h-full`)}>
+            <View>
+              <Text
+                style={tw.style(
+                  `text-center text-2xl`,
+                  `font-bold`,
+                  `mt-2.5`,
+                  `mb-2.5`
+                )}
               >
-                <Friend name={"Judith"} />
-                <Friend name={"Eric"} />
-                <Friend name={"Sam"} />
-                <TouchableOpacity>
-                  <Text
-                    style={{ fontSize: 20, textAlign: "center", padding: 20 }}
-                  >
-                    Add Friend
-                  </Text>
-                </TouchableOpacity>
+                Settings
+              </Text>
+              <View style={tw.style("pt-8 pl-4 pr-4")}>
+                <Image
+                  source={require("../assets/avatars/Avatar.png")}
+                  style={tw.style(`w-full h-20`)}
+                  resizeMode="contain"
+                />
+                <Text style={tw.style(`text-center text-2xl`)}>Username</Text>
+              </View>
+              <ScrollView>
+                <View
+                  style={tw.style(
+                    `mt-8 mb-2 p-4 w-10/14 bg-white rounded-lg border border-gray-300 shadow-md self-center`
+                  )}
+                >
+                  <Link href="/selectLanguage">
+                    <Text style={tw.style(`text-[1rem] text-center`)}>
+                      Change Language
+                    </Text>
+                  </Link>
+                </View>
               </ScrollView>
             </View>
-          )} */}
-
-          {/* {page === "Locations" && (
-            <View style={{ padding: 10, display: "flex" }}>
-              <Text style={{ fontSize: 26, borderBottomWidth: 3 }}>
-                Manage Pins
-              </Text>
-              <ScrollView
-                style={{
-                  paddingHorizontal: 20,
-                  backgroundColor: "white",
-                  marginTop: 10,
-                  borderRadius: 10,
-                }}
-              >
-                <Pin name={"Vancouver"} />
-                <Pin name={"Kelowna"} />
-                <Pin name={"Tokyo"} />
-                <TouchableOpacity>
-                  <Text
-                    style={{ fontSize: 20, textAlign: "center", padding: 20 }}
-                  >
-                    Add Pins
-                  </Text>
-                </TouchableOpacity>
-              </ScrollView>
-            </View>
-          )} */}
-          {/* {page === "Accessibility" && (
-            <ButtonMapping
-              settings={["Enable Dark Mode", "Text to Speech", "Font Size"]}
-            />
-          )} */}
+          </View>
         </View>
       </ImageBackground>
       <Footer />
     </>
-  );
-}
-
-function SettingsHomeHeader() {
-  return (
-    <>
-      <View style={styles.userContainer}>
-        {/* <Image
-                                        style={styles.profileImage}
-                                        source={require("../assets/userimageskeleton.png")}
-                                /> */}
-        <Text style={styles.profileUsername}>My Username</Text>
-      </View>
-    </>
-  );
-}
-
-interface SettingsBodyProps {
-  setPage: React.Dispatch<React.SetStateAction<string>>;
-}
-
-function SettingsBody({ setPage }: SettingsBodyProps) {
-  return (
-    <>
-      <ScrollView style={styles.scrollView}>
-        {settingsArray.map((setting, i) => {
-          return (
-            <View style={styles.settingItem} key={i}>
-              <Pressable onPress={() => setPage(setting + "")}>
-                <TouchableOpacity
-                  onPress={() => setPage(setting + "")}
-                  style={styles.button}
-                >
-                  <View style={styles.leftContent}>
-                    <Text style={{color:"white",textAlign:"center"}}>{setting}</Text>
-                  </View>
-                </TouchableOpacity>
-              </Pressable>
-            </View>
-          );
-        })}
-      </ScrollView>
-    </>
-  );
-}
-
-interface ButtonMappingProps {
-  settings: string[];
-}
-
-function ButtonMapping({ settings }: ButtonMappingProps) {
-  return (
-    <ScrollView style={styles.scrollView}>
-      {settings.map((setting, i) => {
-        return (
-          <View style={styles.settingItem} key={i}>
-            <TouchableOpacity style={styles.button}>
-              <View style={styles.leftContent}>
-                <Text>{setting}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        );
-      })}
-    </ScrollView>
-  );
-}
-
-interface SpecificSettingHeaderProps {
-  pageTitle: string;
-  setPage: React.Dispatch<React.SetStateAction<string>>;
-}
-
-function SpecificSettingHeader({
-  pageTitle,
-  setPage,
-}: SpecificSettingHeaderProps) {
-  return (
-    <>
-      <View style={styles.userSpecificSettingContainer}>
-        <View style={styles.topHeader}>
-          <Text>
-            <TouchableOpacity onPress={() => setPage("SettingsHome")}>
-              <Text>Go Back</Text>
-            </TouchableOpacity>
-          </Text>
-          <Text style={{ fontSize: 36 }}>{pageTitle}</Text>
-        </View>
-      </View>
-    </>
-  );
-}
-
-type FriendProps = {
-  name: string;
-};
-function Friend({ name }: FriendProps) {
-  return (
-    <View
-      style={{
-        justifyContent: "space-between",
-        flexDirection: "row",
-        borderBottomWidth: 2,
-        padding: 15,
-      }}
-    >
-      <Text style={{ fontSize: 20 }}>{name}</Text>
-      <TouchableOpacity>
-        <Text style={{ fontSize: 20, color: "orange" }}>Edit</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-type PinProps = {
-  name: string;
-};
-function Pin({ name }: PinProps) {
-  return (
-    <View
-      style={{
-        justifyContent: "space-between",
-        flexDirection: "row",
-        borderBottomWidth: 2,
-        paddingVertical: 15,
-      }}
-    >
-      <View
-        style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-      >
-        {/* <Image source={require("../assets/PinIcon.png")} style={{ width: 20, height: 20, marginRight: 10 }} /> */}
-        <Text style={{ fontSize: 20 }}>{name}</Text>
-      </View>
-      <TouchableOpacity>
-        <Text style={{ fontSize: 20, color: "orange" }}>Edit</Text>
-      </TouchableOpacity>
-    </View>
   );
 }
