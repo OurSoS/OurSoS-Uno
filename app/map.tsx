@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, SafeAreaView, Image } from "react-native";
 
 import MapComp from "./components/molecules/map-comp";
-import tw from 'twrnc';
+import tw from "twrnc";
+import Footer from "./components/molecules/Footer";
 
 type alert = {
   id: number;
@@ -16,11 +17,10 @@ type alert = {
 };
 
 export default function App() {
-
   return (
     <View style={tw.style(`h-full`, `relative`)}>
       <MapComp buttons={true} />
-      {/* <Footer /> */}
+      <Footer />
     </View>
   );
 }
