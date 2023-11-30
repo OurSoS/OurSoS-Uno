@@ -1,17 +1,6 @@
-import { StatusBar } from "expo-status-bar";
-import { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  TextInput,
-  ScrollView,
-  Animated,
-  StyleSheet,
-} from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { Image } from "react-native";
 import { Link } from "expo-router";
-import axios from "axios";
-import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 import tw from "twrnc";
 import React from "react";
 import { Dimensions } from "react-native";
@@ -56,19 +45,6 @@ export default function Footer() {
         </Link>
       </View>
       <View>
-        <Link href="/settings">
-          <View
-            style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
-          >
-            <Image
-              source={require("../../../assets/footerIcons/dark/settingIcon-darkBlue.png")}
-              style={styles.footerImage}
-            />
-            <Text style={tw.style(`text-[1rem]`)}>Settings</Text>
-          </View>
-        </Link>
-      </View>
-      <View>
         <Link href="/chat">
           <View
             style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
@@ -78,6 +54,19 @@ export default function Footer() {
               style={styles.footerImage}
             />
             <Text style={tw.style(`text-[1rem]`)}>Chat</Text>
+          </View>
+        </Link>
+      </View>
+      <View>
+        <Link href="/settings">
+          <View
+            style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
+          >
+            <Image
+              source={require("../../../assets/footerIcons/dark/settingIcon-darkBlue.png")}
+              style={styles.footerImage}
+            />
+            <Text style={tw.style(`text-[1rem]`)}>Settings</Text>
           </View>
         </Link>
       </View>
