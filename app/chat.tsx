@@ -11,85 +11,86 @@ import { ScrollView } from "react-native-gesture-handler";
 import tw from "twrnc";
 import React from "react";
 import Footer from "./components/molecules/Footer";
+import axios from "axios";
+import Constants from "expo-constants";
+
+const getDeviceId = (): string => {
+  // This gets the installation ID, not a hardware ID
+  return Constants.installationId;
+};
 
 const pubnub = new Pubnub({
   publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
   subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
   userId: "myUniqueUserId",
 });
-import axios from "axios";
+
 export default function App() {
   const [messages, setMessages] = useState<string[]>([]);
-  const [text, onChangeText] = useState([]);
+  const [text, onChangeText] = useState("");
+
+  useEffect(() => {
+    const deviceId = getDeviceId();
+    console.log(
+      "=====================Device ID:",
+      deviceId,
+      "====================="
+    );
+  }, []);
 
   useEffect(() => {
     const showMessage = (msg: string) => {
-      setMessages((messages: string[]) => [...messages, msg]);
+      if (typeof msg === "string") {
+        setMessages((currentMessages) => [...currentMessages, msg]);
+      }
     };
 
-    // add listener
     const listener = {
-      // @ts-ignore
-      status: (statusEvent) => {
+      status: (statusEvent: { category: string }) => {
         if (statusEvent.category === "PNConnectedCategory") {
           console.log("Connected");
         }
       },
-      // @ts-ignore
-      message: (messageEvent) => {
-        showMessage(messageEvent.message.description);
+      message: (messageEvent: { message: { description: string } }) => {
+        if (
+          messageEvent &&
+          messageEvent.message &&
+          typeof messageEvent.message.description === "string"
+        ) {
+          showMessage(messageEvent.message.description);
+        }
       },
-      // @ts-ignore
-      presence: (presenceEvent) => {
-        // handle presence
-      },
+      presence: () => {},
     };
+
     pubnub.addListener(listener);
-    // cleanup listener
+    pubnub.subscribe({ channels: ["hello_world"] });
+
     return () => {
+      pubnub.unsubscribeAll();
       pubnub.removeListener(listener);
     };
-  }, [pubnub, setMessages]);
+  }, []);
 
-  // publish message
   const publishMessage = async (message: string) => {
-    // With the right payload, you can publish a message, add a reaction to a message,
-    // send a push notification, or send a small payload called a signal.
-    const publishPayload = {
-      channel: "hello_world",
-      message: {
-        title: "message",
-        description: message,
-      },
-    };
-
-    await pubnub.publish(publishPayload).then(async () => {
-      await axios
-        .post("https://oursos-backend-production.up.railway.app/chat", {
-          message: message,
-        })
-        .then(async (res) => {
-          await pubnub.publish({
-            channel: "hello_world",
-            message: {
-              title: "message",
-              description: res.data.response,
-            },
-          });
-        });
-    });
-  };
-
-  useEffect(() => {
-    pubnub.subscribe({
-      channels: ["hello_world"],
-    });
-    return () => {
-      pubnub.unsubscribe({
-        channels: ["hello_world"],
+    try {
+      const publishPayload = {
+        channel: "hello_world",
+        message: { title: "message", description: message },
+      };
+      await pubnub.publish(publishPayload);
+      const response = await axios.post(
+        "https://oursos-backend-production.up.railway.app/chat",
+        { message }
+      );
+      await pubnub.publish({
+        channel: "hello_world",
+        message: { title: "message", description: response.data.response },
       });
-    };
-  }, [pubnub]);
+    } catch (error) {
+      console.error("Error in publishMessage:", error);
+    }
+  };
 
   return (
     <>
@@ -116,7 +117,7 @@ export default function App() {
                     key={idx}
                     style={tw.style(
                       "bg-white mb-2 py-2 px-4 rounded-md border border-gray-300"
-                    )} // Adjusted for rounded and grey border
+                    )}
                   >
                     <Text>{message}</Text>
                   </View>
@@ -124,11 +125,9 @@ export default function App() {
               </ScrollView>
             </View>
 
-            <View style={tw.style("pb-12 pl-4 pr-4")}>
-              {/* @ts-ignore */}
-
+            <View style={tw.style("pb-14 pl-4 pr-4")}>
               <TextInput
-                maxLength={30}
+                maxLength={50}
                 style={tw.style(
                   "px-4",
                   "py-2",
@@ -140,10 +139,9 @@ export default function App() {
                 )}
                 onChangeText={onChangeText}
                 value={text}
-                placeholder="maximum 30 characters"
+                placeholder="maximum 50 characters"
                 placeholderTextColor="#4B5563"
               />
-              {/* @ts-ignore */}
               <Pressable
                 onPress={() => {
                   publishMessage(text);
