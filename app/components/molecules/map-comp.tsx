@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Marker, PROVIDER_GOOGLE, MapType, Callout } from "react-native-maps";
 import MapView from "react-native-map-clustering";
-import { ActivityIndicator, AlertType } from "react-native";
+import { ActivityIndicator, AlertType, Alert } from "react-native";
 import { alertFilter, alert } from "../../../utils/static-types";
 import {
   View,
@@ -22,12 +22,11 @@ import ModalCreateAlerts from "../modalCreateAlerts";
 import {
   mapStyle,
   MapCompProps,
-  LocationData,
   earthquake,
   getSeverityString,
 } from "../../../utils/static-types";
 
-export default function MapComp({ height, buttons }: MapCompProps) {
+export default function MapComp(props: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
   const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
@@ -61,30 +60,32 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false);
-  const mapRef = React.useRef<MapView>(null);
+    const mapRef = React.useRef<MapView>(null);
 
-  const reportAlert = async (
-    long: number,
-    lat: number,
-    message: string,
-    category: string,
-    severity: number,
-    radius?: number
-  ) => {
-    axios
-      .post("https://oursos-backend-production.up.railway.app/reportalert", {
-        message: message,
-        category: category,
-        severity: severity,
-        latitude: lat,
-        longitude: long,
-        radius: radius,
-      })
-      .then(async (response) => {})
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  // const reportAlert = async (
+  //   long: number,
+  //   lat: number,
+  //   message: string,
+  //   category: string,
+  //   severity: number,
+  //   radius?: number
+  // ) => {
+  //   axios
+  //     .post("https://oursos-backend-production.up.railway.app/reportalert", {
+  //       message: message,
+  //       category: category,
+  //       severity: severity,
+  //       latitude: lat,
+  //       longitude: long,
+  //       radius: radius,
+  //     })
+  //     .then(async (response) => {})
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
+
+  
 
   const updateVisibleMarkers = (type: alertFilter) => {
     // console.log("Current filter is : ", type);
@@ -307,34 +308,36 @@ export default function MapComp({ height, buttons }: MapCompProps) {
     // updateVisibleMarkers(filter);
   }, 0);
 
-  const retrieveAlerts = async () => {
-    await axios
-      .get("https://oursos-backend-production.up.railway.app/alerts")
-      .then((response) => {
-        setAlerts(response.data);
-      })
-      .catch((error) => console.error(error));
-    await axios
-      .get("https://oursos-backend-production.up.railway.app/earthquakes")
-      .then((response) => {
-        setEarthquakes(response.data.features);
-      })
-      .then(() => {
-        setTsunamis(
-          earthquakes.filter((e) => {
-            return e.properties.tsunami !== 0;
-          })
-        );
-        // console.log(tsunamis);
-      })
-      .catch((error) => console.error(error));
-    await axios
-      .get("https://oursos-backend-production.up.railway.app/fires")
-      .then((response) => {
-        setFires(response.data);
-      })
-      .catch((error) => console.error(error));
-  };
+  const handleConfirmation = (alert: any) => {
+    console.log("ALERT: ", alert)
+    //TODO: put cool alert library here
+    Alert.alert(
+      "Confirm Alert",
+      "Are you sure you want to make a report?",
+      [{ text: "Cancel", onPress:() =>{
+        //TODO: only allow one report at a time
+        //TODO: cancel the alert
+        console.log("cancelled");
+      } }, { text: "Report Alert", onPress: () => {
+        //TODO report the alert
+        axios
+        .post("https://oursos-backend-production.up.railway.app/reportalert", {
+          message: alert.message,
+          type: alert.type,
+          severity: alert.severity,
+          lat: alert.lat,
+          long: alert.long,
+        })
+      .then(async (response) => {})
+      .catch((error) => {
+        console.error(error);
+      });
+        //TODO axios post the alert
+        console.log("Latitude: ",alert.lat, " ", "Longitude ",alert.long)
+        console.log("Alert reported");
+      } }]
+    );
+  }
 
   useEffect(() => {
     (async () => {
@@ -363,10 +366,17 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       await axios
         .get("https://oursos-backend-production.up.railway.app/alerts")
         .then((response) => {
-          setAlerts(response.data);
+          console.log(response.data)
+          if (response.data === null) {
+            console.log("No data received from the server");
+            // setGeneratedMarkers([]);
+          } else {
+            setGeneratedMarkers(response.data);
+          }
         })
         .catch((error) => console.error(error));
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      
+        let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
@@ -374,13 +384,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       // console.log(location);
-
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/alerts")
-        .then((response) => {
-          setAlerts(response.data);
-        })
-        .catch((error) => console.error(error));
 
       await axios
         .get("https://oursos-backend-production.up.railway.app/users/1")
@@ -405,8 +408,6 @@ export default function MapComp({ height, buttons }: MapCompProps) {
         })
         .catch((error) => console.error(error));
     })();
-
-    retrieveAlerts();
   }, []);
 
   useEffect(() => {
@@ -453,13 +454,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   };
 
   return (
-    <View
-      style={
-        showMapFeedModal
-          ? {}
-          : tw.style("border-solid border-4 border-[#001D3D]")
-      }
-    >
+    <View>
       {showMapFeedModal === true ? (
         <ScrollView style={tw.style("flex")}>
           {visibleAlerts.length === 0 &&
@@ -506,9 +501,13 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           setGenMarkers={newMarker}
           setMapType={setMyMapType}
           updateMap={setUpdateTick}
+          myLocation={myAccurateLocation}
         />
       ) : (
         <MapView
+          scrollEnabled={props.scrollEnabled}
+          pitchEnabled={props.pitchEnabled}
+          toolbarEnabled={props.toolbarEnabled}
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
@@ -518,7 +517,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
           provider={PROVIDER_GOOGLE}
           loadingBackgroundColor={"#000000"}
           style={{
-            height: height !== undefined ? height : "100%",
+            height: props.height !== undefined ? props.height : "100%",
             borderRadius: 10,
           }}
           customMapStyle={mapStyle}
@@ -720,22 +719,27 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   key={i}
                   draggable={true}
                   onDragEnd={(event) => {
-                    const newLatitude = event.nativeEvent.coordinate.latitude;
-                    const newLongitude = event.nativeEvent.coordinate.longitude;
+                      console.log(mark)
+                      const newLatitude = event.nativeEvent.coordinate.latitude;
+                      const newLongitude = event.nativeEvent.coordinate.longitude;
+                      console.log("moved to ", newLatitude, newLongitude)
+                      //TODO: make a state variable for draggable and set it to false
+                      mark.lat = newLatitude;
+                      mark.long = newLongitude;
 
-                    console.log(
-                      `Marker moved to: Latitude ${newLatitude}, Longitude ${newLongitude}, Description: ${mark.desc}, Severity: ${mark.severity}, Type: ${mark.type}`
-                    );
+                      handleConfirmation(mark);
 
-                    mark.lat = newLatitude;
-                    mark.long = newLongitude;
-                  }}
+                      // mark.confirmed = true;
+                      // do alert -> alert will confirm -> if confirmed POST
+                    
+                  }
+                }
                 >
                   {mark.severity && (
                     <View
                       style={{
                         position: "absolute",
-                        width: 40,
+                        width: 20,
                         height: 20,
                         borderRadius: 20,
                         backgroundColor: getCircleColor(mark.severity),
@@ -748,7 +752,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                   )}
                   <Image
                     source={imageSource}
-                    style={{ width: 40, height: 40 }}
+                    style={{ width: 20, height: 20 }}
                   />
                   <Callout
                     style={tw.style(
@@ -756,7 +760,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
                     )}
                   >
                     <View
-                      style={tw.style("flex justify-left m-2 rounded-lg")}
+                      style={tw.style("flex m-2 rounded-lg")}
                     ></View>
                     <View>
                       <Text style={tw.style("text-xl font-bold")}>
@@ -771,8 +775,8 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             })}
         </MapView>
       )}
-
-      {buttons === true ? (
+   
+      {props.buttons === true ? (
         <View
           style={tw`top-20 right-0 absolute bg-white p-1 rounded-bl-xl rounded-tl-xl`}
         >
@@ -826,6 +830,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
+         
           {showMapFeedModal === false ? (
             <TouchableOpacity
               onPress={() => {
@@ -838,6 +843,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
             >
               <Text>{filter}</Text>
             </TouchableOpacity>
+            
           ) : (
             <View></View>
           )}

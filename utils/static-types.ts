@@ -84,6 +84,9 @@ export const mapStyle = [
 export type MapCompProps = {
   height?: number;
   buttons?: boolean;
+  scrollEnabled?: boolean;
+  pitchEnabled?:boolean;
+  toolbarEnabled?:boolean;
 };
 
 export type LocationData = {

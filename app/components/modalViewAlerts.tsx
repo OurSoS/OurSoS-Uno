@@ -60,9 +60,10 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
 
   useEffect(() => {
     setMarkers(props.data);
-    props.data.map((alert: any) => {
-      // console.log(markers);
-    });
+    console.log(props.data);
+    const testLog = props.data.map((alert: any) => alert.type);
+    console.log(testLog);
+
     // console.log(props.data.map((alert:any) => alert.type))
   }, [props.data]);
 
@@ -121,114 +122,122 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
 
             <View style={tw.style("flex-1 flex-col ")}>
               <View>
-                <Text style={tw.style("font-bold text-4xl text-white ")}>
-                  {alert.type}
-                </Text>
+                {alert.geometry !== undefined ? (
+                  <Text style={tw.style("font-bold text-4xl text-white ")}>
+                    Earthquake
+                  </Text>
+                ) : alert.scan !== undefined ? (
+                  <Text style={tw.style("font-bold text-4xl text-white ")}>
+                    Wildfire
+                  </Text>
+                ) : (
+                  <Text style={tw.style("font-bold text-4xl text-white ")}>
+                    {alert.type}
+                  </Text>
+                )}
+                <Text style={tw.style("font-bold text-4xl text-white ")}></Text>
               </View>
+              {/* PROBLEM STARTS HERE */}
               <View>
                 {alert.type === "Fire" ||
                 alert.type === "Police" ||
-                alert.type === "Hazard" ? (
-                  <MapView
-                    liteMode={true}
-                    scrollEnabled={false}
-                    zoomEnabled={false}
-                    mapType={"satellite"}
-                    rotateEnabled={false}
-                    loadingBackgroundColor={"#000000"}
-                    style={{
-                      height: 200,
-                      width: 200,
-                      borderRadius: 10,
-                    }}
-                    initialRegion={
-                      (alert.type === "Fire" ||
-                        alert.type === "Police" ||
-                        alert.type === "Hazard") &&
-                      alert.long &&
-                      alert.lat
-                        ? {
-                            latitude: parseFloat(alert.lat || "0"),
-                            longitude: parseFloat(alert.long || "0"),
-                            latitudeDelta: 0.001,
-                            longitudeDelta: 0.001,
-                          }
-                        : {
-                            latitude: 0,
-                            longitude: 0,
-                            latitudeDelta: 0.001,
-                            longitudeDelta: 0.001,
-                          }
-                    }
-                  >
-                    {(alert.latitude && alert.longitude) ||
-                    (alert.lat !== undefined && alert.long !== undefined) ? (
-                      alert.lat !== undefined && alert.long !== undefined ? (
-                        <Marker
-                          coordinate={{
-                            latitude: parseFloat(alert.lat) || 0,
-                            longitude: parseFloat(alert.long) || 0,
-                          }}
-                        >
-                          <Image
-                            source={getAlertIcon(alert.type)}
-                            style={{ width: 20, height: 20 }}
-                          />
-                        </Marker>
-                      ) : alert.latitude && alert.longitude ? (
-                        <Marker
-                          coordinate={{
-                            latitude: alert.latitude || 0,
-                            longitude: alert.longitude || 0,
-                          }}
-                        >
-                          <Image
-                            source={getAlertIcon(alert.type)}
-                            style={{ width: 20, height: 20 }}
-                          />
-                        </Marker>
-                      ) : null
-                    ) : null}
-                  </MapView>
-                ) : alert.type === "Wildfire" ? (
+                alert.type === "Hazard" ||
+                alert.scan !== undefined ||
+                alert.geometry !== undefined ? (
                   <>
-                    <Text style={tw.style("text-sm text-white")}>
-                      Location - {alert.latitude}, {alert.longitude}
-                    </Text>
-                    <Text style={tw.style("text-sm text-white")}>
-                      Time - {alert.acq_time}
-                    </Text>
-                    <Text style={tw.style("text-sm text-white")}>
-                      Date - {alert.acq_date}
-                    </Text>
-                    <Text style={tw.style("text-sm text-white")}>
-                      Radius - {alert.scan}
-                    </Text>
-                    {typeof alert.scan === "string" &&
-                      !isNaN(parseFloat(alert.scan)) && (
-                        <View
-                          style={{
-                            width: parseFloat(alert.scan) * 2,
-                            height: parseFloat(alert.scan) * 2,
-                            borderRadius: parseFloat(alert.scan),
-                            backgroundColor: "orange",
-                            borderColor: "red",
-                            borderWidth: 5,
-                            marginTop: 10,
-                            alignSelf: "center",
-                          }}
-                        />
-                      )}
+                    <MapView
+                      liteMode={true}
+                      scrollEnabled={false}
+                      zoomEnabled={false}
+                      mapType={"satellite"}
+                      rotateEnabled={false}
+                      loadingBackgroundColor={"#000000"}
+                      style={{
+                        height: 200,
+                        width: 200,
+                        borderRadius: 10,
+                      }}
+                      initialRegion={
+                        (alert.type === "Fire" ||
+                          alert.type === "Police" ||
+                          alert.type === "Hazard") &&
+                        alert.long &&
+                        alert.lat
+                          ? {
+                              latitude: parseFloat(alert.lat || "0"),
+                              longitude: parseFloat(alert.long || "0"),
+                              latitudeDelta: 0.001,
+                              longitudeDelta: 0.001,
+                            }
+                          : alert &&
+                            alert.geometry &&
+                            alert.geometry.coordinates
+                          ? {
+                              latitude: alert.geometry?.coordinates[1] || 0,
+                              longitude: alert.geometry?.coordinates[0] || 0,
+                              latitudeDelta: 0.001,
+                              longitudeDelta: 0.001,
+                            }
+                          : alert && alert.scan
+                          ? // PROBLEM HERE
+                            {
+                              latitude: 0,
+                              longitude: 0,
+                              latitudeDelta: 0.001,
+                              longitudeDelta: 0.001,
+                            }
+                          : {
+                              latitude: 0,
+                              longitude: 0,
+                              latitudeDelta: 0.001,
+                              longitudeDelta: 0.001,
+                            }
+                      }
+                    >
+                      {(alert.latitude && alert.longitude) ||
+                      (alert.lat !== undefined && alert.long !== undefined) ? (
+                        alert.lat !== undefined && alert.long !== undefined ? (
+                          <Marker
+                            coordinate={{
+                              latitude: parseFloat(alert.lat) || 0,
+                              longitude: parseFloat(alert.long) || 0,
+                            }}
+                          >
+                            <Image
+                              source={getAlertIcon(alert.type)}
+                              style={{ width: 20, height: 20 }}
+                            />
+                          </Marker>
+                        ) : alert.latitude && alert.longitude ? (
+                          <Marker
+                            coordinate={{
+                              latitude: alert.latitude || 0,
+                              longitude: alert.longitude || 0,
+                            }}
+                          >
+                            <Image
+                              source={getAlertIcon(alert.type)}
+                              style={{ width: 20, height: 20 }}
+                            />
+                          </Marker>
+                        ) : null
+                      ) : null}
+                    </MapView>
+                    {alert.geometry ? (
+                      <Text style={tw.style("text-sm text-white")}>
+                        Location - {alert.geometry?.coordinates[1]}
+                        {alert.geometry?.coordinates[0]}
+                      </Text>
+                    ) : alert.type ? (
+                      <Text style={tw.style("text-sm text-white")}>
+                        Location - {alert.lat}, {alert.long}
+                      </Text>
+                    ) : (
+                      <Text style={tw.style("text-sm text-white")}>
+                        Location - {alert.latitude}, {alert.longitude}
+                      </Text>
+                    )}
                   </>
-                ) : alert.type === "Earthquake" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.geometry?.coordinates[1]},{" "}
-                    {alert.geometry?.coordinates[0]}
-                  </Text>
-                ) : alert.type === "Tsunami" ? (
-                  <Text style={tw.style("text-sm text-white")}>
-                    Location - {alert.latitude}, {alert.longitude}
-                  </Text>
                 ) : null}
               </View>
             </View>
