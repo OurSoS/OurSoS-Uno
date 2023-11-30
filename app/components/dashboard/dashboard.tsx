@@ -50,7 +50,10 @@ export default function Dashboard({
   const [visible, setVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
   const [pins, setPins] = useState(user?.locations);
-  const [friends, setFriends] = useState(user?.friends);
+  {
+    /*const [friends, setFriends] = useState(user?.friends); */
+  }
+  const [friends, setFriends] = useState<friendType[]>(fakeFriends);
   const [snackData, setSnackData] = useState<any>({});
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
