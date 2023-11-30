@@ -174,7 +174,9 @@ export default function MapComp({ height, buttons }: MapCompProps) {
   );
 
   const handleRegionChange = debounce((region) => {
-    const visibleAlerts = alerts.filter((a) => {
+    if (!region) return;
+
+    const visibleAlerts = alerts?.filter((a) => {
       // Check if the alert's latitude and longitude are within the visible region
       return (
         a.latitude >= region.latitude - region.latitudeDelta / 2 &&
@@ -184,7 +186,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    const visibleEarthquakes = earthquakes.filter((a) => {
+    const visibleEarthquakes = earthquakes?.filter((a) => {
       // Check if the earthquake's latitude and longitude are within the visible region
       return (
         a.geometry.coordinates[1] >=
@@ -198,7 +200,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    const visibleFires = fires.filter((a: any) => {
+    const visibleFires = fires?.filter((a: any) => {
       // Check if the fire's latitude and longitude are within the visible region
       return (
         parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
@@ -209,7 +211,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    const visibleTsunamis = tsunamis.filter((a: any) => {
+    const visibleTsunamis = tsunamis?.filter((a: any) => {
       // Check if the tsunami's latitude and longitude are within the visible region
       return (
         parseFloat(a.latitude) >= region.latitude - region.latitudeDelta / 2 &&
@@ -220,7 +222,7 @@ export default function MapComp({ height, buttons }: MapCompProps) {
       );
     });
 
-    const visibleGeneratedMarkers = generatedMarkers.filter((a: any) => {
+    const visibleGeneratedMarkers = generatedMarkers?.filter((a: any) => {
       // Check if the tsunami's latitude and longitude are within the visible region
       return (
         parseFloat(a.lat) >= region.latitude - region.latitudeDelta / 2 &&
