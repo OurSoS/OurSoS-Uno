@@ -28,7 +28,6 @@ import {
 
 export default function MapComp(props: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
-  const [alerts, setAlerts] = useState<alert[]>([]);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
@@ -61,7 +60,6 @@ export default function MapComp(props: MapCompProps) {
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false);
-  const [isDraggable, setIsDraggable] = useState(true);
 
   const mapRef = React.useRef<MapView>(null);
 
@@ -155,15 +153,7 @@ export default function MapComp(props: MapCompProps) {
   const handleRegionChange = debounce((region) => {
     if (!region) return;
 
-    const visibleAlerts = alerts?.filter((a) => {
-      // Check if the alert's latitude and longitude are within the visible region
-      return (
-        a.latitude >= region.latitude - region.latitudeDelta / 2 &&
-        a.latitude <= region.latitude + region.latitudeDelta / 2 &&
-        a.longitude >= region.longitude - region.longitudeDelta / 2 &&
-        a.longitude <= region.longitude + region.longitudeDelta / 2
-      );
-    });
+  
 
     const visibleEarthquakes = earthquakes?.filter((a) => {
       // Check if the earthquake's latitude and longitude are within the visible region
@@ -292,13 +282,14 @@ export default function MapComp(props: MapCompProps) {
         {
           text: "Cancel",
           onPress: () => {
-            console.log("cancelled");
             resolve(false);
+            Alert.alert("Your Report has been deleted. ❌")
           },
         },
         {
           text: "Report Alert",
           onPress: () => {
+            Alert.alert("Your Report has been submitted. ✅")
             axios
               .post(
                 "https://oursos-backend-production.up.railway.app/reportalert",
@@ -310,13 +301,13 @@ export default function MapComp(props: MapCompProps) {
                   long: alert.long,
                 }
               )
-              .then(async (response) => {})
+              .then(async (response) => {
+                resolve(true);
+              })
               .catch((error) => {
                 console.error(error);
+                resolve(true);
               });
-            console.log("Latitude: ", alert.lat, " ", "Longitude ", alert.long);
-            console.log("Alert reported");
-            resolve(true);
           },
         },
       ]);
@@ -665,7 +656,7 @@ export default function MapComp(props: MapCompProps) {
                     longitude: mark.long,
                   }}
                   key={i}
-                  draggable={isDraggable}
+                  draggable={!mark.confirmed}
                   onDragEnd={async (event) => {
                     const newLatitude = event.nativeEvent.coordinate.latitude;
                     const newLongitude = event.nativeEvent.coordinate.longitude;
@@ -675,25 +666,19 @@ export default function MapComp(props: MapCompProps) {
                     mark.long = newLongitude;
 
                     const isConfirmed = await handleConfirmation(mark);
-                    // Handle confirmation
+
                     if (isConfirmed) {
-                      // Disable dragging
-                      setIsDraggable(false);
+                      //This currently fires whether the backend worked or not
+                      //TODO: check if went through to backend and handle
+                      mark.confirmed = true;
                     } else {
-                      if (mapRef.current)
-                        // Reset marker position
-                        mark.lat = myAccurateLocation.latitude;
-                      mark.long = myAccurateLocation.longitude;
-                      //@ts-ignore
-                      mapRef.current.animateToRegion(
-                        {
-                          latitude: myAccurateLocation.latitude,
-                          longitude: myAccurateLocation.longitude,
-                          latitudeDelta: 0.001,
-                          longitudeDelta: 0.001,
-                        },
-                        1000
+                      //This is if the user clicks cancel meaning they don't want to report the alert
+                      setGeneratedMarkers((prevMarkers: any) =>
+                        prevMarkers.slice(0, -1)
                       );
+                      setFilter("All");
+                      updateVisibleMarkers(filter);
+                      setUpdateTick(!updateTick);
                     }
                   }}
                 >
@@ -704,23 +689,21 @@ export default function MapComp(props: MapCompProps) {
                         width: 20,
                         height: 20,
                         borderRadius: 20,
-                        backgroundColor: getCircleColor(mark.severity),
-                        borderWidth: isDraggable ? 3 : 1, // Adjust border width based on drag state
-                        borderColor: isDraggable
-                          ? "rgba(255, 165, 0, 0.7)"
-                          : "black", // Adjust border color based on drag state
+                        backgroundColor: !mark.confirmed
+                          ? "black"
+                          : getCircleColor(mark.severity),
+                        borderWidth: !mark.confirmed ? 3 : 1, // Adjust border width based on drag state
+                        borderColor: !mark.confirmed ? "rgba(0, 0, 0, 1)" : "black", // Adjust border color based on drag state
                         justifyContent: "center",
                         alignItems: "center",
 
                         // Additionl styling for the glowing effect when draggable
-                        shadowColor: isDraggable
-                          ? "rgba(255, 165, 0, 0.7)"
-                          : "transparent",
-                        shadowOffset: isDraggable
+                        shadowColor: !mark.confirmed ? "black" : "transparent",
+                        shadowOffset: !mark.confirmed
                           ? { width: 10, height: 10 }
                           : { width: 0, height: 0 },
-                        shadowOpacity: isDraggable ? 1 : 0,
-                        shadowRadius: isDraggable ? 10 : 0,
+                        shadowOpacity: !mark.confirmed ? 1 : 0,
+                        shadowRadius: !mark.confirmed ? 10 : 0,
                       }}
                     ></View>
                   )}
