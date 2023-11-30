@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import Loading from "./components/loading";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import * as Notification from "expo-notifications";
+import Footer from "./components/molecules/Footer";
 
 type alert = {
   id?: number;
@@ -410,6 +411,7 @@ export default function Index() {
           <Dashboard user={currentUser} userLang={userLang}></Dashboard>
         )}
       </View>
+      <Footer />
     </>
   );
 }

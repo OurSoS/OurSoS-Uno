@@ -1,52 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, SafeAreaView, Image } from "react-native";
+import React from "react";
+import { Dimensions, Platform, ImageBackground, View } from "react-native";
+import tw from "twrnc";
+import { styles } from "./styles/settingsStyles";
 
 import MapComp from "./components/molecules/map-comp";
-import tw from "twrnc";
 import Footer from "./components/molecules/Footer";
 
-type alert = {
-  id: number;
-  message: string;
-  category: string;
-  latitude: string;
-  longitude: string;
-  radius: string;
-  time: string;
-  severity: string;
-};
+const screenHeight = Dimensions.get("window").height;
+const mapViewHeight =
+  Platform.OS === "ios" ? screenHeight * 0.87 : screenHeight * 0.9;
 
-export default function App() {
+export default function Map() {
   return (
-    <View style={tw.style(`h-full`, `relative`)}>
-      <MapComp buttons={true} />
+    <>
+      <ImageBackground
+        source={require("../assets/Intro/Map.png")}
+        style={styles.background}
+      />
+      <View style={tw.style("flex")}>
+        <View style={tw.style(`flex flex-col justify-between h-full`)}>
+          <View>
+            <View style={tw.style(`h-full`, `relative`)}>
+              <MapComp height={mapViewHeight} buttons={true} />
+            </View>
+          </View>
+        </View>
+      </View>
       <Footer />
-    </View>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
-  searchInput: {
-    borderRadius: 62,
-    backgroundColor: "white",
-    padding: 10,
-    marginBottom: 0,
-    marginHorizontal: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginRight: 10,
-  },
-});

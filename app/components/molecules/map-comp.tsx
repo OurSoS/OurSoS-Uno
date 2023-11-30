@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Marker, PROVIDER_GOOGLE, MapType, Callout } from "react-native-maps";
+import { Dimensions } from "react-native";
 import MapView from "react-native-map-clustering";
 import { ActivityIndicator, AlertType } from "react-native";
 import { alertFilter, alert } from "../../../utils/static-types";
@@ -26,6 +27,7 @@ import {
   earthquake,
   getSeverityString,
 } from "../../../utils/static-types";
+
 
 export default function MapComp({ height, buttons }: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);

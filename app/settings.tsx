@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import tw from "../lib/tailwind";
-
 import {
   Text,
   View,
   ScrollView,
-  StyleSheet,
   ImageBackground,
-  TouchableOpacity,
   Image,
-  Pressable,
 } from "react-native";
 import { Link } from "expo-router";
-import Footer from "./components/molecules/Footer";
+import tw from "../lib/tailwind";
 import { styles } from "./styles/settingsStyles";
+
+import Footer from "./components/molecules/Footer";
 
 export default function Settings() {
   return (

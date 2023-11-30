@@ -14,12 +14,19 @@ import axios from "axios";
 import { useFonts, NotoSans_400Regular } from "@expo-google-fonts/dev";
 import tw from "twrnc";
 import React from "react";
+import { Dimensions } from "react-native";
+import { Platform } from "react-native";
+
+const screenHeight = Dimensions.get("window").height;
+const footerHeight =
+  Platform.OS === "ios" ? screenHeight * 0.09 : screenHeight * 0.09;
 
 export default function Footer() {
   return (
     <View
       style={tw.style(
-        `border-t border-gray-300 flex bg-white py-2 px-6 flex-row justify-between items-center h-[4rem] absolute bottom-0 w-full`
+        `border-t border-gray-300 flex bg-white py-2 px-6 flex-row justify-between items-center absolute bottom-0 w-full`,
+        { height: footerHeight }
       )}
     >
       <View>
