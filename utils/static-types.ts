@@ -87,6 +87,7 @@ export type MapCompProps = {
   scrollEnabled?: boolean;
   pitchEnabled?:boolean;
   toolbarEnabled?:boolean;
+  zoomEnabled?:boolean;
 };
 
 export type LocationData = {
