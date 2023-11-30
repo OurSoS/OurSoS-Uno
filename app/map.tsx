@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <View style={tw.style(`h-full`, `relative`)}>
-      <MapComp buttons={true} />
+      <MapComp pitchEnabled={true} scrollEnabled={true} toolbarEnabled={true} buttons={true} />
       {/* <Footer /> */}
     </View>
   );
