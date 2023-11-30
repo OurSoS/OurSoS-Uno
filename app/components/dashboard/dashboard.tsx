@@ -125,7 +125,7 @@ export default function Dashboard({
         </View>
         <View style={tw.style(`flex`)}>
           <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
-            <MapComp pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
+            <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
           </View>
           <Pressable
             onPress={() => {
