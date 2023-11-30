@@ -20,6 +20,12 @@ type newsItemType = {
   title: string;
 };
 
+type friendType = {
+  id: number;
+  name: string;
+  image: any;
+};
+
 export default function Dashboard({
   userLang,
   user,
