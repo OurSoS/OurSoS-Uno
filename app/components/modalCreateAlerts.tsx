@@ -78,7 +78,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
     // FOR REAL|BACKEND - Starts here
     if (props.myLocation) {
-      alert("Report Submitted!");
+      alert("Drag the marker to the alert location.\nPress OK to proceed.");
 
       props.setter(false);
 
