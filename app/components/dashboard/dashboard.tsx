@@ -26,6 +26,16 @@ type friendType = {
   image: any;
 };
 
+const fakeFriends: friendType[] = [
+  { id: 1, name: "Tony", image: require("../../../assets/avatars/Avatar.png") },
+  { id: 2, name: "Moh", image: require("../../../assets/avatars/Avatar.png") },
+  {
+    id: 3,
+    name: "Paarth",
+    image: require("../../../assets/avatars/Avatar.png"),
+  },
+];
+
 export default function Dashboard({
   userLang,
   user,
