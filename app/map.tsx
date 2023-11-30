@@ -6,11 +6,8 @@ import MapComp from "./components/molecules/map-comp";
 import Footer from "./components/molecules/Footer";
 
 const screenHeight = Dimensions.get("window").height;
-const footerHeight =
-  Platform.OS === "ios" ? screenHeight * 0.09 : screenHeight * 0.09;
-
 const mapViewHeight =
-  Platform.OS === "ios" ? screenHeight - footerHeight : undefined;
+  Platform.OS === "ios" ? screenHeight * 0.87 : screenHeight * 0.9;
 
 export default function Map() {
   return (

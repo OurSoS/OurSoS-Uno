@@ -27,7 +27,6 @@ import {
   getSeverityString,
 } from "../../../utils/static-types";
 
-
 export default function MapComp(props: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
@@ -154,8 +153,6 @@ export default function MapComp(props: MapCompProps) {
 
   const handleRegionChange = debounce((region) => {
     if (!region) return;
-
-  
 
     const visibleEarthquakes = earthquakes?.filter((a) => {
       // Check if the earthquake's latitude and longitude are within the visible region
@@ -285,13 +282,13 @@ export default function MapComp(props: MapCompProps) {
           text: "Cancel",
           onPress: () => {
             resolve(false);
-            Alert.alert("Your Report has been deleted. ❌")
+            Alert.alert("Your Report has been deleted. ❌");
           },
         },
         {
           text: "Report Alert",
           onPress: () => {
-            Alert.alert("Your Report has been submitted. ✅")
+            Alert.alert("Your Report has been submitted. ✅");
             axios
               .post(
                 "https://oursos-backend-production.up.railway.app/reportalert",
@@ -695,7 +692,9 @@ export default function MapComp(props: MapCompProps) {
                           ? "black"
                           : getCircleColor(mark.severity),
                         borderWidth: !mark.confirmed ? 3 : 1, // Adjust border width based on drag state
-                        borderColor: !mark.confirmed ? "rgba(0, 0, 0, 1)" : "black", // Adjust border color based on drag state
+                        borderColor: !mark.confirmed
+                          ? "rgba(0, 0, 0, 1)"
+                          : "black", // Adjust border color based on drag state
                         justifyContent: "center",
                         alignItems: "center",
 
