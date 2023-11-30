@@ -56,19 +56,6 @@ export default function Footer() {
         </Link>
       </View>
       <View>
-        <Link href="/chat">
-          <View
-            style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
-          >
-            <Image
-              source={require("../../../assets/footerIcons/dark/robotIcon-darkBlue.png")}
-              style={styles.footerImage}
-            />
-            <Text style={tw.style(`text-[1rem]`)}>Chat</Text>
-          </View>
-        </Link>
-      </View>
-      <View>
         <Link href="/settings">
           <View
             style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
@@ -78,6 +65,19 @@ export default function Footer() {
               style={styles.footerImage}
             />
             <Text style={tw.style(`text-[1rem]`)}>Settings</Text>
+          </View>
+        </Link>
+      </View>
+      <View>
+        <Link href="/chat">
+          <View
+            style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
+          >
+            <Image
+              source={require("../../../assets/footerIcons/dark/robotIcon-darkBlue.png")}
+              style={styles.footerImage}
+            />
+            <Text style={tw.style(`text-[1rem]`)}>Chat</Text>
           </View>
         </Link>
       </View>
