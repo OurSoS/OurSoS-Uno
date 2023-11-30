@@ -56,17 +56,15 @@ export default function App() {
                 <Text style={tw.style(`text-center text-2xl`)}>Username</Text>
               </View>
               <ScrollView>
-                <View>
+                <View
+                  style={tw.style(
+                    `mt-8 mb-2 p-4 w-10/14 bg-white rounded-lg border border-gray-300 shadow-md self-center`
+                  )}
+                >
                   <Link href="/selectLanguage">
-                    <View
-                      style={tw.style(
-                        `pt-2 flex flex-col items-center justify-center`
-                      )}
-                    >
-                      <Text style={tw.style(`text-[1rem]`)}>
-                        Change Language
-                      </Text>
-                    </View>
+                    <Text style={tw.style(`text-[1rem] text-center`)}>
+                      Change Language
+                    </Text>
                   </Link>
                 </View>
               </ScrollView>
