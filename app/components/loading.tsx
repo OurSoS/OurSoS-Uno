@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet} from "react-native";
 
 export default function Loading() {
   // Define your animation logic here using Animated API
