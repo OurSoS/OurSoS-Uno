@@ -1,13 +1,12 @@
 import React from "react";
 import { View, Image, ScrollView, Pressable } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 // import tw from "twrnc";
 import axios from "axios";
 import Slider from "../molecules/slider";
 import MapComp from "../molecules/map-comp";
 import { Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
-import Footer from "../molecules/Footer";
 import tw from "../../../lib/tailwind";
 
 type newsItemType = {
@@ -36,6 +35,12 @@ export default function Dashboard({
   const [pins, setPins] = useState(user?.locations);
   const [friends, setFriends] = useState(user?.friends);
   const [snackData, setSnackData] = useState<any>({});
+  const [isMapReady, setIsMapReady] = useState(false);
+
+  const onMapLayout = useCallback(() => {
+    setIsMapReady(true);
+  }, []);
+
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
     setVisible(!visible);
@@ -109,17 +114,21 @@ export default function Dashboard({
             <View style={tw.style(`flex`)}>
               <View
                 style={tw.style(
-                  "border-solid border-[3] rounded-md border-[#001D3D]"
+                  "border-solid border-[3] rounded-md border-[#001D3D]",
+                  { height: 300 }
                 )}
+                onLayout={onMapLayout}
               >
-                <MapComp
-                  zoomEnabled={false}
-                  pitchEnabled={false}
-                  scrollEnabled={false}
-                  toolbarEnabled={false}
-                  height={300}
-                />
+                {isMapReady && (
+                  <MapComp
+                    zoomEnabled={false}
+                    pitchEnabled={false}
+                    scrollEnabled={false}
+                    toolbarEnabled={false}
+                  />
+                )}
               </View>
+
               <Pressable
                 onPress={() => {
                   router.push("/map");

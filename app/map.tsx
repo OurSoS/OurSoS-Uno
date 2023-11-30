@@ -1,7 +1,6 @@
 import React from "react";
-import { Dimensions, Platform, ImageBackground, View } from "react-native";
+import { Dimensions, Platform, View, StyleSheet } from "react-native";
 import tw from "twrnc";
-import { styles } from "./styles/settingsStyles";
 
 import MapComp from "./components/molecules/map-comp";
 import Footer from "./components/molecules/Footer";
@@ -13,9 +12,8 @@ const mapViewHeight =
 export default function Map() {
   return (
     <>
-      <View style={tw.style(`h-full`, `relative`)}>
+      <View style={[tw.style(`h-full`), { height: mapViewHeight ?? "100%" }]}>
         <MapComp
-          height={mapViewHeight}
           zoomEnabled={true}
           pitchEnabled={true}
           scrollEnabled={true}

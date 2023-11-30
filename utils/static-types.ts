@@ -85,9 +85,9 @@ export type MapCompProps = {
   height?: number;
   buttons?: boolean;
   scrollEnabled?: boolean;
-  pitchEnabled?:boolean;
-  toolbarEnabled?:boolean;
-  zoomEnabled?:boolean;
+  pitchEnabled?: boolean;
+  toolbarEnabled?: boolean;
+  zoomEnabled?: boolean;
 };
 
 export type LocationData = {
@@ -152,4 +152,12 @@ export const getSeverityString = (severity: number) => {
   }
 };
 
-export type alertFilter = "All" | "Hazard" | "Fire" | "Police" |  "Earthquake" | "Tsunami" | "Earthquake" | "Wildfire";
+export type alertFilter =
+  | "All"
+  | "Hazard"
+  | "Fire"
+  | "Police"
+  | "Earthquake"
+  | "Tsunami"
+  | "Earthquake"
+  | "Wildfire";
