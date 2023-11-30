@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import {
   View,
@@ -14,9 +15,16 @@ import tw from "twrnc";
 
 type modalCreateAlertsProps = {
   setter: React.Dispatch<React.SetStateAction<boolean>>;
-  setGenMarkers: (desc: string, severity: number, type: string, date:string) => void;
+  setGenMarkers: (
+    desc: string,
+    severity: number,
+    type: string,
+    date: string,
+    confirmed?: boolean
+  ) => void;
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
   updateMap: React.Dispatch<React.SetStateAction<boolean>>;
+  myLocation: any;
 };
 
 const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
@@ -60,17 +68,35 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   };
 
   const handleSubmit = () => {
-    // Implement submission logic here (front-end logic for now)
-    
-    alert("Report Submitted!");
-    props.setter(false);
-    // console.log(description, severity, selectedCategory);
-    props.setGenMarkers(description, severity, selectedCategory, new Date().toISOString());
-    
-    //POST HERE
-    props.setMapType("satellite");
+    // FOR TESTING - Starts here
+    // alert("Report Submitted!");
+    // props.setter(false);
+    // props.setGenMarkers(description, severity, selectedCategory, new Date().toISOString());
+    // props.setMapType("satellite");
+    // props.updateMap((prev) => !prev);
+    // FOR TESTING - Ends here
 
-    props.updateMap((prev) => !prev);
+    // FOR REAL|BACKEND - Starts here
+    if (props.myLocation) {
+      alert("Report Submitted!");
+
+      props.setter(false);
+
+      props.setGenMarkers(
+        description,
+        severity,
+        selectedCategory,
+        new Date().toISOString(),
+        false
+      );
+
+      props.setMapType("satellite");
+
+      props.updateMap((prev) => !prev);
+    } else {
+      alert("Please enable location services and try again");
+    }
+    // FOR REAL|BACKEND - Ends here
   };
 
   return (
