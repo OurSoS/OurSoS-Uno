@@ -1,6 +1,6 @@
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
-export const mapStyle = [
+export const nostalgicMapStyle = [
   {
     elementType: "geometry.fill",
     stylers: [
@@ -76,6 +76,45 @@ export const mapStyle = [
     stylers: [
       {
         visibility: "off",
+      },
+    ],
+  },
+];
+
+export const mapStyle = [
+  {
+    featureType: "landscape.natural",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#88d5be",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#a9bbd4",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#8194bb",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#9ee1f4",
       },
     ],
   },
