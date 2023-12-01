@@ -9,6 +9,7 @@ import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 type Alert = {
   type: string;
+  desc?:string;
   latitude: number;
   longitude: number;
   geometry?: {
@@ -16,6 +17,7 @@ type Alert = {
   };
   properties?: {
     tsunami: number;
+    title: string;
   };
   acq_time?: string;
   acq_date?: string;
@@ -126,7 +128,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
 
   return (
     <View style={tw.style("pl-2 pr-18")}>
-      <View style={tw.style("h-10 bg-black ")}>
+      <View style={tw.style("h-10")}>
         <Pressable
           onPress={() => {
             const nextFilter = getNextAlertType(filter);
@@ -158,18 +160,24 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
 
             <View style={tw.style("flex-1 flex-col ")}>
               <View>
-                {alert.geometry !== undefined ? (
+                {alert.properties && alert.properties.title !== undefined ? (<>
                   <Text style={tw.style("font-bold text-4xl  ")}>
                     Earthquake
                   </Text>
-                ) : alert.scan !== undefined ? (
+                  <Text style={tw.style("italic text-xl")}>
+                  {alert.properties.title}
+                  </Text>
+                  </>) : alert.scan !== undefined ? (
                   <Text style={tw.style("font-bold text-4xl  ")}>Wildfire</Text>
-                ) : (
+                ) : alert.message ? (<>
                   <Text style={tw.style("font-bold text-4xl  ")}>
                     {alert.type}
                   </Text>
-                )}
-                <Text style={tw.style("font-bold text-4xl  ")}></Text>
+                  <Text style={tw.style("italic text-xl")}>
+                    {alert.message}
+                  </Text>
+                  </>) : null}
+                <Text style={tw.style("font-bold text-4xl")}></Text>
               </View>
               {/* PROBLEM STARTS HERE */}
               <View>
@@ -257,20 +265,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                         ) : null
                       ) : null}
                     </MapView>
-                    {alert.geometry ? (
-                      <Text style={tw.style("text-sm ")}>
-                        Location - {alert.geometry?.coordinates[1].toFixed(2)},{" "}
-                        {alert.geometry?.coordinates[0].toFixed(2)}
-                      </Text>
-                    ) : alert.type ? (
-                      <Text style={tw.style("text-sm ")}>
-                        Location - {alert.lat}, {alert.long}
-                      </Text>
-                    ) : alert && alert.data ? (
-                      <Text style={tw.style("text-sm ")}>
-                        Location - {alert.data[0].latitude}, {alert.data[0].longitude}
-                      </Text>
-                    ) : null}
+                   
                   </>
                 ) : null}
               </View>
