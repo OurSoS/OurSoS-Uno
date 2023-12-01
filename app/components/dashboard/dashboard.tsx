@@ -8,7 +8,8 @@ import MapComp from "../molecules/map-comp";
 import { Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
 import tw from "../../../lib/tailwind";
-import Footer from "../molecules/Footer"; 
+import Footer from "../molecules/Footer";
+import FriendSlider from "../molecules/friend-slider";
 
 type newsItemType = {
   date: string;
@@ -155,43 +156,9 @@ export default function Dashboard({
               data={news}
               translatedData={translatedNews}
             />
-            <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
-              {/* <View
-            style={tw.style(
-              `flex`,
-              `flex-row`,
-              `justify-between`,
-              `w-full`,
-              `items-center`
-            )}
-          >
-            <Text style={tw.style(`text-[1.5rem]`)}>Friends</Text>
-            <Button>View More</Button>
-          </View> */}
-              {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={10}
-            pagingEnabled
-            style={{ padding: 10 }}
-            contentContainerStyle={{ justifyContent: "flex-start" }}
-          >
-            {friends?.map((pin: any, i: number) => {
-              let text = "Henry";
-              let imgUrl = "https://i.imgur.com/0LKZQYM.png";
-              return (
-                <ImageText
-                  key={i}
-                  text={text}
-                  style="circle"
-                  imageUrl={imgUrl}
-                />
-              );
-            })}
-           
-          </ScrollView> */}
-            </View>
-            {/* <FriendsList /> */}
+            <FriendSlider 
+              data={currentUser.friends}
+            />
           </ScrollView>
           <Footer />
           <Snackbar

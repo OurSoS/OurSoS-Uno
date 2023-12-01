@@ -3,8 +3,9 @@ import tw from 'twrnc';
 import React from 'react';
 
 import { Card, Text} from 'react-native-paper';
+import { Friend } from "./friend-slider";
 
-export default function FriendCard( {friend} : {friend: {pfpSrc: string, username: string}}) {
+export default function FriendCard( {friend} : {friend: Friend}) {
       return (
             <View style={tw.style("text-white w-50 pr-2")}>
                   <TouchableOpacity
