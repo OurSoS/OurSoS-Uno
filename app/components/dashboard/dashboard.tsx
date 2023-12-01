@@ -135,7 +135,7 @@ export default function Dashboard({
             onPress={() => {
               router.push("/map");
             }}
-            style={tw.style("absolute bottom-55 right-6")}
+            style={tw.style("absolute top-7 left-7")}
           >
             <View 
             style={tw.style(
