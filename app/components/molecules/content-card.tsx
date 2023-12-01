@@ -21,12 +21,12 @@ export default function ContentCard({ imgSrc, data, heading, snippet, onToggleSn
                   activeOpacity={0.6}
                   onPress={() => onToggleSnackBar(data)}
                   >
-                        <Card style={tw.style(`mt-2 p-4 bg-[#001D3D] p-[10] h-60 flex justify-between`)}>
+                        <Card style={tw.style(`mt-2 p-4 bg-[#001D3D] p-[10] h-48 flex justify-between`)}>
                               <Card.Cover
                               style={tw.style(`h-30 bg-[#001D3D]`)}
                               source={{ uri: imgSrc }}
                               />
-                              <Text style={tw.style("text-white text-left pt-2")}>{heading}</Text>
+                              <Text numberOfLines={ 2 } style={tw.style("text-white text-left pt-2 truncate")}>{heading}</Text>
                               {/* <Card.Content style={tw.style("text-white")}>
                               <Text style={tw.style("text-white")}>{snippet}</Text>
                               </Card.Content> */}

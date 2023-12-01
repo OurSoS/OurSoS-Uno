@@ -1,13 +1,25 @@
-import React from "react";
-import { View, Image, ScrollView, Pressable } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import React, { Suspense } from "react";
+import {
+  View,
+  Image,
+  ScrollView,
+  Pressable,
+  ImageBackground,
+} from "react-native";
+import { useEffect, useState } from "react";
 // import tw from "twrnc";
 import axios from "axios";
 import Slider from "../molecules/slider";
+import { Searchbar } from "react-native-paper";
 import MapComp from "../molecules/map-comp";
-import { Text, Snackbar } from "react-native-paper";
+import { Avatar, Button, Card, Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
+import Footer from "../molecules/Footer";
+import ImageText from "../molecules/image-text-block";
+import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
+import MapLoading from "../molecules/map-loading";
+import CardLoading from "../molecules/card-loading";
 
 type newsItemType = {
   date: string;
@@ -35,12 +47,6 @@ export default function Dashboard({
   const [pins, setPins] = useState(user?.locations);
   const [friends, setFriends] = useState(user?.friends);
   const [snackData, setSnackData] = useState<any>({});
-  const [isMapReady, setIsMapReady] = useState(false);
-
-  const onMapLayout = useCallback(() => {
-    setIsMapReady(true);
-  }, []);
-
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
     setVisible(!visible);
@@ -93,69 +99,68 @@ export default function Dashboard({
   }, [userLang]);
 
   return (
-    <>
-      <View style={tw.style("flex")}>
-        <View style={tw.style(`flex flex-col justify-between h-full`)}>
-          <ScrollView style={tw.style(`p-4`)}>
-            {/* <Searchbar
+    <View
+      style={tw.style(
+        `flex`,
+        `h-full`,
+        `flex-col`,
+        `justify-between`,
+        `w-full`,
+        `relative`
+      )}
+    >
+      <ImageBackground
+        source={require("../../../assets/Intro/Map.png")}
+        style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
+      >
+      <ScrollView style={tw.style(`p-4`)}>
+        {/* <Searchbar
           placeholder="Search"
           onChangeText={onChangeSearch}
           value={searchQuery}
         /> */}
 
-            <View style={tw.style(`flex`)}>
-              {/* <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text> */}
-              <Image
-                source={require("../../../assets/header_logo.png")}
-                style={tw.style(`w-full h-20`)}
-                resizeMode="contain"
-              />
-            </View>
-            <View style={tw.style(`flex`)}>
-              <View
+        <View style={tw.style(`flex`)}>
+          {/* <Text style={tw.style(`text-[1.75rem]`)}>Vancouver</Text> */}
+          <Image
+            source={require("../../../assets/header_logo.png")}
+            style={tw.style(`w-full h-20`)}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={tw.style(`flex`)}>
+          <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
+            <Suspense fallback={<MapLoading/>}>
+              <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
+            </Suspense>
+          </View>
+          <Pressable
+            onPress={() => {
+              router.push("/map");
+            }}
+            style={tw.style("absolute bottom-55 right-6")}
+          >
+            <View 
+            style={tw.style(
+              "bg-[#ffefd4] bg-opacity-80 rounded-sm items-center justify-center w-[9.5] h-[9.5]"
+            )}>
+              <Image source={require("../../../assets/mapui/Expand-Map.png")} 
+                resizeMode={ 'contain' }
                 style={tw.style(
-                  "border-solid border-[3] rounded-md border-[#001D3D]",
-                  { height: 300 }
-                )}
-                onLayout={onMapLayout}
-              >
-                {isMapReady && (
-                  <MapComp
-                    zoomEnabled={false}
-                    pitchEnabled={false}
-                    scrollEnabled={false}
-                    toolbarEnabled={false}
-                  />
-                )}
-              </View>
-
-              <Pressable
-                onPress={() => {
-                  router.push("/map");
-                }}
-                style={tw.style("absolute top-7 left-7")}
-              >
-                <View
-                  style={tw.style(
-                    "bg-[#ffefd4] bg-opacity-80 rounded-sm items-center justify-center w-[9.5] h-[9.5]"
-                  )}
-                >
-                  <Image
-                    source={require("../../../assets/mapui/Expand-Map.png")}
-                    resizeMode={"contain"}
-                    style={tw.style(`h-7 aspect-1`)}
-                  />
-                </View>
-              </Pressable>
+                `h-7 aspect-1`,
+              )}/>
             </View>
-
-            <Slider
-              onToggleSnackBar={onToggleSnackBar}
-              data={news}
-              translatedData={translatedNews}
-            />
-            <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
-              {/* <View
+          </Pressable>
+        </View>
+        <Suspense fallback={< CardLoading />}>
+          <Slider
+            onToggleSnackBar={onToggleSnackBar}
+            data={news}
+            translatedData={translatedNews}
+          />
+        </Suspense>
+        <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
+          {/* <View
             style={tw.style(
               `flex`,
               `flex-row`,
@@ -167,7 +172,7 @@ export default function Dashboard({
             <Text style={tw.style(`text-[1.5rem]`)}>Friends</Text>
             <Button>View More</Button>
           </View> */}
-              {/* <ScrollView
+          {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             scrollEventThrottle={10}
@@ -189,49 +194,50 @@ export default function Dashboard({
             })}
            
           </ScrollView> */}
-            </View>
-            {/* <FriendsList /> */}
-          </ScrollView>
-
-          <Snackbar
-            style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
-            visible={visible}
-            onDismiss={onDismissSnackBar}
-            action={{
-              label: "Read More",
-              onPress: () => {
-                router.push(snackData.link);
-              },
-            }}
-          >
-            <View style={tw.style(`border-r`, `pr-5`)}>
-              <View
-                style={tw.style(
-                  `p-1`,
-                  `border-t`,
-                  `border-r`,
-                  `border-l`,
-                  `border-[#001D3D]`,
-                  `rounded-t-lg`
-                )}
-              >
-                <Text>{snackData.snippet}</Text>
-              </View>
-              <View
-                style={tw.style(
-                  `bg-[#001D3D]`,
-                  `border-transparent`,
-                  `rounded-b-lg`
-                )}
-              >
-                <Text style={tw.style(`text-white text-center text-xs`)}>
-                  Source: {snackData.source}
-                </Text>
-              </View>
-            </View>
-          </Snackbar>
         </View>
-      </View>
-    </>
+        {/* <FriendsList /> */}
+      </ScrollView>
+
+      <Footer />
+      <Snackbar
+        style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: "Read More",
+          onPress: () => {
+            router.push(snackData.link);
+          },
+        }}
+      >
+        <View style={tw.style(
+          `border-r`,
+          `pr-5`
+        )}>
+          <View style={tw.style(
+            `p-1`,
+            `border-t`,
+            `border-r`,
+            `border-l`,
+            `border-[#001D3D]`,
+            `rounded-t-lg`,
+          )}>
+            <Text >
+              {snackData.snippet}
+            </Text>
+          </View>
+          <View style={tw.style(
+              `bg-[#001D3D]`,
+              `border-transparent`, 
+              `rounded-b-lg`
+            )}>
+            <Text style={tw.style(`text-white text-center text-xs`)}>
+              Source: {snackData.source}
+            </Text>
+          </View>
+        </View>
+      </Snackbar>
+      </ImageBackground>
+    </View>
   );
 }
