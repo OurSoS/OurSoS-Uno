@@ -5,6 +5,7 @@ import {
   ScrollView,
   Pressable,
   ImageBackground,
+  Platform,
 } from "react-native";
 import { useEffect, useState } from "react";
 // import tw from "twrnc";
@@ -45,6 +46,7 @@ export default function Dashboard({
   const [friends, setFriends] = useState(user?.friends);
   const [snackData, setSnackData] = useState<any>({});
   const [city, setCity] = useState("");
+
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
     setVisible(!visible);
@@ -57,6 +59,7 @@ export default function Dashboard({
   useEffect(() => {
     publicIP()
       .then((ip) => {
+        console.log("==================ip==================", ip);
         axios
           .get(`http://ip-api.com/json/${ip}`)
           .then((response) => {
@@ -158,6 +161,7 @@ export default function Dashboard({
             data={news}
             translatedData={translatedNews}
           />
+
           <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
             <View
               style={tw.style(
@@ -195,7 +199,12 @@ export default function Dashboard({
           <AddFriend />
         </ScrollView>
         <Snackbar
-          style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
+          style={[
+            tw.style(`bg-white dark:bg-black rounded-t-lg`),
+            Platform.OS === "android"
+              ? tw.style(`bg-white dark:bg-black rounded-t-lg mb-19`)
+              : {},
+          ]}
           visible={visible}
           onDismiss={onDismissSnackBar}
           action={{
@@ -208,22 +217,13 @@ export default function Dashboard({
           <View style={tw.style(`border-r`, `pr-5`)}>
             <View
               style={tw.style(
-                `p-1`,
-                `border-t`,
-                `border-r`,
-                `border-l`,
-                `border-[#001D3D]`,
-                `rounded-t-lg`
+                `p-1 border-t border-r border-l border-[#001D3D] rounded-t-lg`
               )}
             >
               <Text>{snackData.snippet}</Text>
             </View>
             <View
-              style={tw.style(
-                `bg-[#001D3D]`,
-                `border-transparent`,
-                `rounded-b-lg`
-              )}
+              style={tw.style(`bg-[#001D3D] border-transparent rounded-b-lg`)}
             >
               <Text style={tw.style(`text-white text-center text-xs`)}>
                 Source: {snackData.source}
