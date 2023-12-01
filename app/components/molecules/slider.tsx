@@ -23,7 +23,7 @@ export default function Slider({
       style={{ paddingVertical: 10 }}
       contentContainerStyle={{ justifyContent: "center" }}
     >
-      <Suspense fallback={< CardLoading />}>
+      <Suspense fallback={<CardLoading />}>
         {data.map((item, i) => {
           const displayData =
             translatedData && translatedData[i] ? translatedData[i] : item;
