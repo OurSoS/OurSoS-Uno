@@ -103,7 +103,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   };
 
   return (
-    <ScrollView style={tw.style("pl-2 pr-18")}>
+    <ScrollView style={tw.style("p-4")}>
       {view === 1 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
           <Text> Page 1/3</Text>
@@ -153,11 +153,6 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                   </>
                 )}
               </Pressable>
-              //       <Pressable
-              //         key={category}
-              //         title={category}
-              //         onPress={() => handleSelectCategory(category)}
-              //       />
             ))}
           </View>
           {/* Severity Scale Slider */}
@@ -204,7 +199,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                   )
                 : tw.style("border-2 border-black h-50 rounded-md p-2")
             }
-            maxLength={30}
+            maxLength={maximum}
             textAlign="left"
             textAlignVertical="top"
             textBreakStrategy="highQuality"
@@ -219,17 +214,10 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             )}
             onPress={() => setView(3)}
           >
-            {/* pt-2 flex flex-col items-center justify-center  */}
             <Text style={tw.style("text-xl text-white text-center")}>Next</Text>
           </Pressable>
         </View>
       )}
-
-      {/* <View style={tw.style("flex h-full flex-grow justify-center")}>
-          <Text> Page 1/3</Text>
-          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
-            What did you see?
-          </Text>*/}
 
       {view === 3 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
