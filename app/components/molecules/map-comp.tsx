@@ -61,6 +61,7 @@ export default function MapComp(props: MapCompProps) {
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
   const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   const mapRef = React.useRef<MapView>(null);
 
@@ -117,6 +118,10 @@ export default function MapComp(props: MapCompProps) {
         setVisibleTsunamis([]);
     }
   };
+
+  const onMapLayout = () => {
+    setIsMapReady(true);
+  }
 
   const alertTypes: alertFilter[] = [
     "All",
@@ -276,6 +281,7 @@ export default function MapComp(props: MapCompProps) {
   }, 0);
 
   const handleConfirmation = (alert: any): Promise<boolean> => {
+    let combineDesc = "";
     return new Promise((resolve) => {
       Alert.alert("Confirm Alert", "Are you sure you want to make a report?", [
         {
@@ -289,24 +295,39 @@ export default function MapComp(props: MapCompProps) {
           text: "Report Alert",
           onPress: () => {
             Alert.alert("Your Report has been submitted. ✅");
+            alert.confirmed = true;
+            //TODO: fetch .principalSubdivision && .locality
             axios
-              .post(
-                "https://oursos-backend-production.up.railway.app/reportalert",
-                {
-                  message: alert.message,
-                  type: alert.type,
-                  severity: alert.severity,
-                  lat: alert.lat,
-                  long: alert.long,
-                }
+              .get(
+                `https://api-bdc.net/data/reverse-geocode?latitude=${alert.lat}&longitude=${alert.long}&localityLanguage=en&key=bdc_60a73c32772246e09c3f6e8bed5ca65e`
               )
-              .then(async (response) => {
-                resolve(true);
+              .then((response) => {
+                combineDesc +=
+                  response.data.locality +
+                  ", " +   
+                  response.data.principalSubdivision;
+                  alert.desc = alert.desc + " - " + combineDesc;
+
+                axios
+                  .post(
+                    "https://oursos-backend-production.up.railway.app/reportalert",
+                    {
+                      message: alert.desc + " - " + combineDesc,
+                      type: alert.type,
+                      severity: alert.severity,
+                      lat: alert.lat,
+                      long: alert.long,
+                    }
+                  )
+                  .then(async (response) => {
+                    resolve(true);
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    resolve(true);
+                  });
               })
-              .catch((error) => {
-                console.error(error);
-                resolve(true);
-              });
+              .catch((error) => console.log(error));
           },
         },
       ]);
@@ -518,8 +539,10 @@ export default function MapComp(props: MapCompProps) {
             // console.log("line 453 visibleEarthquakes: ", visibleEarthquakes);
           }}
           clusterColor={"#001D3D"}
+          onMapReady={onMapLayout}
+          
         >
-          {visibleEarthquakes &&
+          {isMapReady && visibleEarthquakes &&
             visibleEarthquakes.length > 0 &&
             visibleEarthquakes.map((a: any, i) => {
               // Render visible earthquakes
@@ -530,6 +553,7 @@ export default function MapComp(props: MapCompProps) {
                     latitude: a.geometry.coordinates[1],
                     longitude: a.geometry.coordinates[0],
                   }}
+                  title={a.properties.title}
                 >
                   <View
                     style={{
@@ -551,9 +575,12 @@ export default function MapComp(props: MapCompProps) {
                 </Marker>
               );
             })}
-          {visibleFires &&
+          {isMapReady && visibleFires &&
             visibleFires.length > 0 &&
             visibleFires.map((a: any, i: number) => {
+
+              
+
               // Render visible fires
               return (
                 <Marker
@@ -562,6 +589,7 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
+                  
                 >
                   <View
                     style={{
@@ -583,7 +611,7 @@ export default function MapComp(props: MapCompProps) {
                 </Marker>
               );
             })}
-          {visibleTsunamis &&
+          {isMapReady && visibleTsunamis &&
             visibleTsunamis.length > 0 &&
             visibleTsunamis.map((a: any, i: number) => {
               // Render visible tsunamis
@@ -631,7 +659,7 @@ export default function MapComp(props: MapCompProps) {
               );
             })} */}
 
-          {visibleGeneratedMarkers &&
+          {isMapReady && visibleGeneratedMarkers &&
             visibleGeneratedMarkers.length > 0 &&
             visibleGeneratedMarkers.map((mark: any, i: number) => {
               // console.log(generatedMarkers[0])
