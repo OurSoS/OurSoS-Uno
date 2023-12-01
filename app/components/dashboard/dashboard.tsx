@@ -232,6 +232,7 @@ export default function Dashboard({
           </Snackbar>
         </View>
       </View>
+      
     </>
   );
 }

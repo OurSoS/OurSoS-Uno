@@ -112,7 +112,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("map");
+  const [introComponent, setIntroComponent] = useState("welcome");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -128,19 +128,19 @@ export default function Index() {
       friends: [2, 3],
       profile: "https://picsum.photos/200/300?grayscale",
     };
-    // if (userLang) {
-    //   setUserLang(userLang);
+    if (userLang) {
+      setUserLang(userLang);
 
-    //   await axios
-    //     .post<{ translateObject: staticType; lang: string }>(
-    //       "https://oursos-backend-production.up.railway.app/translateobject",
-    //       { translateObject: staticText, lang: userLang }
-    //     )
-    //     .then((res) => {
-    //       setTranslatedStaticContent(res.data);
-    //       setIntroComponent("newsFeed");
-    //     });
-    // }
+      await axios
+        .post<{ translateObject: staticType; lang: string }>(
+          "https://oursos-backend-production.up.railway.app/translateobject",
+          { translateObject: staticText, lang: userLang }
+        )
+        .then((res) => {
+          setTranslatedStaticContent(res.data);
+          setIntroComponent("newsFeed");
+        });
+    }
   };
 
   async function registerForPushNotificationsAsync() {
@@ -197,11 +197,11 @@ export default function Index() {
 
   useEffect(() => {
     (async () => {
-      // await axios
-      //   .get("https://oursos-backend-production.up.railway.app/languages")
-      //   .then((res) => {
-      //     setLanguages(res.data);
-      //   });
+      await axios
+        .get("https://oursos-backend-production.up.railway.app/languages")
+        .then((res) => {
+          setLanguages(res.data);
+        });
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -411,7 +411,7 @@ export default function Index() {
           <Dashboard user={currentUser} userLang={userLang}></Dashboard>
         )}
       </View>
-      <Footer />
+      {introComponent === "dashboard" && <Footer />}
     </>
   );
 }
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
