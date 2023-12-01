@@ -8,6 +8,7 @@ import MapComp from "../molecules/map-comp";
 import { Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
 import tw from "../../../lib/tailwind";
+import Footer from "../molecules/Footer"; 
 
 type newsItemType = {
   date: string;
@@ -192,7 +193,7 @@ export default function Dashboard({
             </View>
             {/* <FriendsList /> */}
           </ScrollView>
-
+          <Footer />
           <Snackbar
             style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
             visible={visible}
