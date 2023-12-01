@@ -2,9 +2,7 @@ import React from "react";
 import {
   View,
   Image,
-  TextInput,
   ScrollView,
-  SafeAreaView,
   Pressable,
   ImageBackground,
 } from "react-native";
@@ -12,12 +10,9 @@ import { useEffect, useState } from "react";
 // import tw from "twrnc";
 import axios from "axios";
 import Slider from "../molecules/slider";
-import { Searchbar } from "react-native-paper";
 import MapComp from "../molecules/map-comp";
-import { Avatar, Button, Card, Text, Snackbar } from "react-native-paper";
+import { Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
-import Footer from "../molecules/Footer";
-import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
 import AddFriend from "../../components/molecules/AddFriend";
