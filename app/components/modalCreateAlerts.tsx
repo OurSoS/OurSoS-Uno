@@ -33,7 +33,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const [description, setDescription] = useState("");
   const [severity, setSeverity] = useState(1);
   const [redText, setRedText] = useState(false);
-  const maximum = 50;
+  const maximum = 200;
+  const minimum = 10;
   const progress = useSharedValue(1);
   const min = useSharedValue(1);
   const max = useSharedValue(2);
@@ -59,7 +60,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const handleDescriptionChange = (value: string) => {
     setDescription(value);
 
-    if(description.length >=25) {
+    if(description.length >=5) {
       setRedText(false);
     }
   };
@@ -74,8 +75,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   const handleSubmit = () => {
    
-    if( description.length < 20 ) {
-      alert("Please enter a description with a minimum of 25 characters.");
+    if( description.length < minimum ) {
+      alert("Please enter a description with a minimum of 5 characters.");
       setRedText(true);
       setView(2);
       return;
@@ -188,7 +189,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       {view === 2 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
           <Text style={tw.style("text-2xl")}> Page 2/3</Text>
-          <Text>Minimum 25 Characters. {description.length}/50 Characters used.</Text>
+          <Text>{description.length}/{maximum} Characters used.</Text>
           <TextInput
             placeholder="What happened?"
             value={description}
