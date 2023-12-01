@@ -19,6 +19,7 @@ import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
 import MapLoading from "../molecules/map-loading";
+import CardLoading from "../molecules/card-loading";
 
 type newsItemType = {
   date: string;
@@ -129,8 +130,9 @@ export default function Dashboard({
         </View>
         <View style={tw.style(`flex`)}>
           <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
-            <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
-            <Suspense fallback={<MapLoading/>}></Suspense>
+            <Suspense fallback={<MapLoading/>}>
+              <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
+            </Suspense>
           </View>
           <Pressable
             onPress={() => {
@@ -150,12 +152,13 @@ export default function Dashboard({
             </View>
           </Pressable>
         </View>
-
-        <Slider
-          onToggleSnackBar={onToggleSnackBar}
-          data={news}
-          translatedData={translatedNews}
-        />
+        <Suspense fallback={< CardLoading />}>
+          <Slider
+            onToggleSnackBar={onToggleSnackBar}
+            data={news}
+            translatedData={translatedNews}
+          />
+        </Suspense>
         <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
           {/* <View
             style={tw.style(
