@@ -428,9 +428,9 @@ export default function MapComp(props: MapCompProps) {
   const getCircleColor = (severity: number) => {
     switch (severity) {
       case 1:
-        return "yellow"; // Adjust this color based on your design
+        return "yellow"; 
       case 2:
-        return "red"; // Adjust this color based on your design
+        return "red"; 
       default:
         return "gray";
     }

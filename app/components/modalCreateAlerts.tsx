@@ -42,9 +42,9 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const getCircleColor = (severity: number) => {
     switch (severity) {
       case 1:
-        return "yellow"; // Adjust this color based on your design
+        return "yellow";
       case 2:
-        return "red"; // Adjust this color based on your design
+        return "red";
       default:
         return "gray";
     }
@@ -104,7 +104,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       {view === 1 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
           <Text> Page 1/3</Text>
-          <Text style={tw.style("text-3xl text-center")}>
+          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
             What did you see?
           </Text>
           <View
@@ -117,7 +117,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
               >
                 {category === "Hazard" && (
                   <>
-                    <Text style={tw.style("text-center text-xl")}>
+                    <Text style={tw.style("text-center text-xl mb-2")}>
                       {category}
                     </Text>
 
@@ -129,7 +129,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 )}
                 {category === "Fire" && (
                   <>
-                    <Text style={tw.style("text-center text-xl")}>
+                    <Text style={tw.style("text-center text-xl mb-2")}>
                       {category}
                     </Text>
                     <Image
@@ -158,7 +158,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             ))}
           </View>
           {/* Severity Scale Slider */}
-          <View style={tw.style("p-2")}>
+          <View style={tw.style("p-2 mt-3")}>
             <Text
               style={
                 severity === 1
@@ -171,7 +171,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
               How Severe? ({severity})
             </Text>
             <Slider
-              style={tw.style("justify-center h-20")}
+              style={tw.style("justify-center h-15 ml-6 mr-6")}
               progress={progress}
               minimumValue={min}
               maximumValue={max}
@@ -184,56 +184,84 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
       {view === 2 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
-          <Text style={tw.style("text-2xl")}> Page 2/3</Text>
-          <Text>Characters used {description.length}/30</Text>
+          <Text style={tw.style("")}> Page 2/3</Text>
+          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+            Tell us more
+          </Text>
+
           <TextInput
             placeholder="What happened?"
+            placeholderTextColor="text-gray-500"
             value={description}
             onChangeText={handleDescriptionChange}
-            style={tw.style("border-2 border-black h-50 rounded-md p-2")}
-            maxLength={30}
+            style={tw.style(
+              "text-xl border-2 border-black h-30 rounded-md p-2 mt-3"
+            )}
+            maxLength={50}
             textAlign="left"
             textAlignVertical="top"
             textBreakStrategy="highQuality"
             multiline={true}
           />
+          <Text style={tw.style("mt-2 text-gray-400")}>
+            Characters used {description.length}/50
+          </Text>
           <Pressable
             style={tw.style(
-              "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg text-white"
+              "bg-[#001D3D] mr-25 ml-25 p-1 mt-4 rounded-lg text-white"
             )}
             onPress={() => setView(3)}
           >
+            {/* pt-2 flex flex-col items-center justify-center  */}
             <Text style={tw.style("text-xl text-white text-center")}>Next</Text>
           </Pressable>
         </View>
       )}
 
+      {/* <View style={tw.style("flex h-full flex-grow justify-center")}>
+          <Text> Page 1/3</Text>
+          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+            What did you see?
+          </Text>*/}
+
       {view === 3 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
-          <Text style={tw.style("text-2xl")}> Page 3/3</Text>
-          <Text style={tw.style("text-2xl")}>
-            Selected Category: {selectedCategory}
+          <Text> Page 3/3</Text>
+          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+            {selectedCategory}
           </Text>
-          <Text style={tw.style("text-2xl")}>Description: {description}</Text>
-          <Text style={tw.style("text-2xl")}>Severity: {severity}</Text>
-          <Pressable
+          <View
             style={tw.style(
-              "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg text-white"
+              "flex flex-col justify-center border-2 rounded-lg border-[#001D3D] p-4 my-4"
             )}
-            onPress={handleEdit}
           >
-            <Text style={tw.style("text-xl text-white text-center")}>Edit</Text>
-          </Pressable>
-          <Pressable
-            style={tw.style(
-              "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg text-white"
-            )}
-            onPress={handleSubmit}
-          >
-            <Text style={tw.style("text-xl text-white text-center")}>
-              Report
+            <Text style={tw.style("text-xl pb-6")}>
+              Description: {description}
             </Text>
-          </Pressable>
+            <Text style={tw.style("text-xl")}>Severity: {severity}</Text>
+          </View>
+          <View style={tw.style("flex flex-row justify-evenly")}>
+            <Pressable
+              style={tw.style(
+                "bg-[#001D3D] w-20 p-1 mt-4 rounded-lg text-white"
+              )}
+              onPress={handleEdit}
+            >
+              <Text style={tw.style("text-xl text-white text-center")}>
+                Edit
+              </Text>
+            </Pressable>
+            <Pressable
+              style={tw.style(
+                "bg-[#001D3D] w-20 p-1 mt-4 rounded-lg text-white"
+              )}
+              onPress={handleSubmit}
+            >
+              <Text style={tw.style("text-xl text-white text-center")}>
+                Report
+              </Text>
+            </Pressable>
+          </View>
         </View>
       )}
     </ScrollView>
