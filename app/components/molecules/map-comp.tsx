@@ -767,7 +767,7 @@ export default function MapComp(props: MapCompProps) {
           )}
           <TouchableOpacity onPress={() => router.push("/")}>
             <Image
-              source={require("../../../assets/footerIcons/homeIcon.png")}
+              source={require("../../../assets/mapui/Shrink-Map.png")}
               style={tw.style(`h-8 w-8 m-2`)}
             />
           </TouchableOpacity>
