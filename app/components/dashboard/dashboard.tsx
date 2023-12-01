@@ -1,8 +1,10 @@
-import React, { Suspense } from "react";
+import React from "react";
 import {
   View,
   Image,
+  TextInput,
   ScrollView,
+  SafeAreaView,
   Pressable,
   ImageBackground,
 } from "react-native";
@@ -18,8 +20,7 @@ import Footer from "../molecules/Footer";
 import ImageText from "../molecules/image-text-block";
 import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
-import MapLoading from "../molecules/map-loading";
-import CardLoading from "../molecules/card-loading";
+import AddFriend from "../../components/molecules/AddFriend";
 
 type newsItemType = {
   date: string;
@@ -129,11 +130,7 @@ export default function Dashboard({
           />
         </View>
         <View style={tw.style(`flex`)}>
-          <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
-            <Suspense fallback={<MapLoading/>}>
-              <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
-            </Suspense>
-          </View>
+          
           <Pressable
             onPress={() => {
               router.push("/map");
@@ -152,52 +149,20 @@ export default function Dashboard({
             </View>
           </Pressable>
         </View>
-        <Suspense fallback={< CardLoading />}>
-          <Slider
-            onToggleSnackBar={onToggleSnackBar}
-            data={news}
-            translatedData={translatedNews}
-          />
-        </Suspense>
+
+        <Slider
+          onToggleSnackBar={onToggleSnackBar}
+          data={news}
+          translatedData={translatedNews}
+        />
         <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
-          {/* <View
-            style={tw.style(
-              `flex`,
-              `flex-row`,
-              `justify-between`,
-              `w-full`,
-              `items-center`
-            )}
-          >
-            <Text style={tw.style(`text-[1.5rem]`)}>Friends</Text>
-            <Button>View More</Button>
-          </View> */}
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={10}
-            pagingEnabled
-            style={{ padding: 10 }}
-            contentContainerStyle={{ justifyContent: "flex-start" }}
-          >
-            {friends?.map((pin: any, i: number) => {
-              let text = "Henry";
-              let imgUrl = "https://i.imgur.com/0LKZQYM.png";
-              return (
-                <ImageText
-                  key={i}
-                  text={text}
-                  style="circle"
-                  imageUrl={imgUrl}
-                />
-              );
-            })}
-           
-          </ScrollView> */}
+          <View style={tw.style("border-solid border-[3] rounded-md border-[#001D3D]")}>
+            <MapComp zoomEnabled={false} pitchEnabled={false} scrollEnabled={false} toolbarEnabled={false} height={300} />
+          </View>
         </View>
         {/* <FriendsList /> */}
+        <AddFriend />
       </ScrollView>
-
       <Footer />
       <Snackbar
         style={tw.style(`bg-white dark:bg-black`, `rounded-t-lg`)}
