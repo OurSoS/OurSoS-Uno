@@ -14,6 +14,9 @@ type Alert = {
   geometry?: {
     coordinates: [number, number];
   };
+  properties?: {
+    tsunami: number;
+  };
   acq_time?: string;
   acq_date?: string;
   scan?: string;
@@ -21,6 +24,25 @@ type Alert = {
   radius?: string;
   lat?: string;
   long?: string;
+  data?: [
+    {
+      country_id: string,
+      latitude: string,
+      longitude: string,
+      bright_ti4: string,
+      scan: string,
+      track: string,
+      acq_date: string,
+      acq_time: string,
+      satellite: string,
+      instrument: string,
+      confidence: string,
+      version: string,
+      bright_ti5: string,
+      frp: string,
+      daynight: string
+    },
+  ]
 };
 
 type ModalViewAlertsProps = {
@@ -59,12 +81,26 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   const [filter, setFilter] = useState<alertFilter>("All");
 
   useEffect(() => {
-    setMarkers(props.data);
-    console.log(props.data);
-    const testLog = props.data.map((alert: any) => alert.type);
+    console.log(JSON.stringify(props))
+    setMarkers(
+      props.data.map((marker) => {
+        console.log(marker.type)
+        if(marker.type === "WildFire")
+        console.log(marker)
+        let newMarker = { ...marker }; // create a copy of marker to avoid directly mutating props
+        if (newMarker.geometry) {
+          newMarker.type = "Earthquake";
+        } else if (newMarker.scan) {
+          newMarker.type = "Wildfire";
+        } else if (newMarker.properties && newMarker.properties.tsunami === 1) {
+          newMarker.type = "Tsunami";
+        }
+        return newMarker; // return the modified marker
+      })
+    );
+    // console.log(markers);
+    const testLog = markers.map((alert: any) => alert.type);
     console.log(testLog);
-
-    // console.log(props.data.map((alert:any) => alert.type))
   }, [props.data]);
 
   // console.log(props.data)
@@ -90,7 +126,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
 
   return (
     <View style={tw.style("pl-2 pr-18")}>
-      <View style={tw.style("h-10 bg-black text-white")}>
+      <View style={tw.style("h-10 bg-black ")}>
         <Pressable
           onPress={() => {
             const nextFilter = getNextAlertType(filter);
@@ -106,13 +142,13 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
           }}
           style={tw.style("h-10 bg-black justify-center items-center")}
         >
-          <Text style={tw.style("text-white text-lg font-bold")}>{filter}</Text>
+          <Text style={tw.style(" text-lg font-bold")}>{filter}</Text>
         </Pressable>
       </View>
       {markers.map((alert: Alert, index: number) => (
         <View
           key={index}
-          style={tw.style("flex flex-col bg-[#001D3D] rounded shadow-md  m-1")}
+          style={tw.style("flex flex-col  rounded shadow-md  m-1")}
         >
           <View style={tw.style("flex flex-row p-2 m-2")}>
             <Image
@@ -123,19 +159,17 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
             <View style={tw.style("flex-1 flex-col ")}>
               <View>
                 {alert.geometry !== undefined ? (
-                  <Text style={tw.style("font-bold text-4xl text-white ")}>
+                  <Text style={tw.style("font-bold text-4xl  ")}>
                     Earthquake
                   </Text>
                 ) : alert.scan !== undefined ? (
-                  <Text style={tw.style("font-bold text-4xl text-white ")}>
-                    Wildfire
-                  </Text>
+                  <Text style={tw.style("font-bold text-4xl  ")}>Wildfire</Text>
                 ) : (
-                  <Text style={tw.style("font-bold text-4xl text-white ")}>
+                  <Text style={tw.style("font-bold text-4xl  ")}>
                     {alert.type}
                   </Text>
                 )}
-                <Text style={tw.style("font-bold text-4xl text-white ")}></Text>
+                <Text style={tw.style("font-bold text-4xl  ")}></Text>
               </View>
               {/* PROBLEM STARTS HERE */}
               <View>
@@ -224,19 +258,19 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                       ) : null}
                     </MapView>
                     {alert.geometry ? (
-                      <Text style={tw.style("text-sm text-white")}>
-                        Location - {alert.geometry?.coordinates[1]}
-                        {alert.geometry?.coordinates[0]}
+                      <Text style={tw.style("text-sm ")}>
+                        Location - {alert.geometry?.coordinates[1].toFixed(2)},{" "}
+                        {alert.geometry?.coordinates[0].toFixed(2)}
                       </Text>
                     ) : alert.type ? (
-                      <Text style={tw.style("text-sm text-white")}>
+                      <Text style={tw.style("text-sm ")}>
                         Location - {alert.lat}, {alert.long}
                       </Text>
-                    ) : (
-                      <Text style={tw.style("text-sm text-white")}>
-                        Location - {alert.latitude}, {alert.longitude}
+                    ) : alert && alert.data ? (
+                      <Text style={tw.style("text-sm ")}>
+                        Location - {alert.data[0].latitude}, {alert.data[0].longitude}
                       </Text>
-                    )}
+                    ) : null}
                   </>
                 ) : null}
               </View>
