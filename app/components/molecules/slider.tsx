@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { ScrollView } from "react-native";
 import ContentCard from "./content-card";
+import CardLoading from "./card-loading";
 
 export default function Slider({
   data,
@@ -22,23 +23,25 @@ export default function Slider({
       style={{ paddingVertical: 10 }}
       contentContainerStyle={{ justifyContent: "center" }}
     >
-      {data.map((item, i) => {
-        const displayData =
-          translatedData && translatedData[i] ? translatedData[i] : item;
+      <Suspense fallback={< CardLoading />}>
+        {data.map((item, i) => {
+          const displayData =
+            translatedData && translatedData[i] ? translatedData[i] : item;
 
-        // console.log(`Item at index ${i}:`, item, `; Translated:`, displayData);
+          // console.log(`Item at index ${i}:`, item, `; Translated:`, displayData);
 
-        return (
-          <ContentCard
-            onToggleSnackBar={onToggleSnackBar}
-            key={i}
-            data={item}
-            imgSrc={item.thumbnail}
-            heading={displayData.title}
-            snippet={displayData.snippet}
-          />
-        );
-      })}
+          return (
+            <ContentCard
+              onToggleSnackBar={onToggleSnackBar}
+              key={i}
+              data={item}
+              imgSrc={item.thumbnail}
+              heading={displayData.title}
+              snippet={displayData.snippet}
+            />
+          );
+        })}
+      </Suspense>
     </ScrollView>
   );
 }
