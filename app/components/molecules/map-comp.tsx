@@ -26,7 +26,7 @@ import {
   earthquake,
   getSeverityString,
 } from "../../../utils/static-types";
-
+import { getDeviceId } from "../../chat";
 export default function MapComp(props: MapCompProps) {
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
@@ -362,7 +362,7 @@ export default function MapComp(props: MapCompProps) {
       await axios
         .get("https://oursos-backend-production.up.railway.app/alerts")
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           if (response.data === null) {
             console.log("No data received from the server");
             // setGeneratedMarkers([]);
@@ -381,6 +381,29 @@ export default function MapComp(props: MapCompProps) {
           }
         });
 
+      await fetch(
+        `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
+      )
+        .then((response) => response.json())
+        .then(async (response) => {
+          const res = await fetch(
+            `https://oursos-backend-production.up.railway.app/getfriendsforuser/${response.id}`
+          );
+          const data = await res.json();
+          data.map((friend: any) => {
+            setFriendsLocation((prev: any) => [
+              ...prev,
+              {
+                id: friend.id,
+                longitude: friend.long,
+                latitude: friend.lat,
+                username: friend.username,
+                profile: friend.profile,
+              },
+            ]);
+          });
+        });
+
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -388,30 +411,6 @@ export default function MapComp(props: MapCompProps) {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      // console.log(location);
-
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/users/1")
-        .then((response) => {
-          return response.data.friends;
-        })
-        .then((response) => {
-          response.map((friend: any) => {
-            axios
-              .get(
-                `https://oursos-backend-production.up.railway.app/users/${friend}`
-              )
-              .then((response) => {
-                let long = response.data.longitude;
-                let lat = response.data.latitude;
-                setFriendsLocation((friendsLocation: any) => [
-                  ...friendsLocation,
-                  { longitude: long, latitude: lat },
-                ]);
-              });
-          });
-        })
-        .catch((error) => console.error(error));
     })();
   }, []);
 
@@ -529,7 +528,7 @@ export default function MapComp(props: MapCompProps) {
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
-          minPoints={3}
+          minPoints={2}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
@@ -654,21 +653,24 @@ export default function MapComp(props: MapCompProps) {
                 </Marker>
               );
             })}
-          {/* {friendsLocation &&
-            friendsLocation?.map((a: any, i: number) => {
+          {friendsLocation &&
+            friendsLocation?.map((friend: any, i: number) => {
               return (
-                <View key={i}>
-                  <Marker
-                    key={i}
-                    title={a.desc}
-                    coordinate={{
-                      latitude: parseFloat(a.latitude),
-                      longitude: parseFloat(a.longitude),
-                    }}
+                <Marker
+                  key={i}
+                  title={friend.username}
+                  coordinate={{
+                    latitude: parseFloat(friend.latitude),
+                    longitude: parseFloat(friend.longitude),
+                  }}
+                >
+                  <Image
+                    source={{ uri: friend.profile }}
+                    style={{ width: 20, height: 20 }}
                   />
-                </View>
+                </Marker>
               );
-            })} */}
+            })}
 
           {isMapReady &&
             visibleGeneratedMarkers &&
