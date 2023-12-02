@@ -668,7 +668,6 @@ export default function MapComp(props: MapCompProps) {
                 case "Police":
                   imageSource = require("../../../assets/alert-categorys/Police.png");
                   break;
-
                 case "Fire":
                   imageSource = require("../../../assets/alert-categorys/Fire.png");
                   break;
@@ -818,7 +817,7 @@ export default function MapComp(props: MapCompProps) {
             <Text style={{ textAlign: 'center' }}>Feed</Text>
             <Image
               source={require("../../../assets/mapui/apps-sort.png")}
-              style={tw.style(`h-8 w-8ml-2`)}
+              style={tw.style(`h-8 w-8 ml-2`)}
             />
             <Text style={tw.style("text-center mb-2")}>List</Text>
           </TouchableOpacity>
