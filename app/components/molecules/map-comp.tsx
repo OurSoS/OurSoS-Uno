@@ -121,7 +121,7 @@ export default function MapComp(props: MapCompProps) {
 
   const onMapLayout = () => {
     setIsMapReady(true);
-  }
+  };
 
   const alertTypes: alertFilter[] = [
     "All",
@@ -304,9 +304,9 @@ export default function MapComp(props: MapCompProps) {
               .then((response) => {
                 combineDesc +=
                   response.data.locality +
-                  ", " +   
+                  ", " +
                   response.data.principalSubdivision;
-                  alert.desc = alert.desc + " - " + combineDesc;
+                alert.desc = alert.desc + " - " + combineDesc;
 
                 axios
                   .post(
@@ -449,9 +449,9 @@ export default function MapComp(props: MapCompProps) {
   const getCircleColor = (severity: number) => {
     switch (severity) {
       case 1:
-        return "yellow"; 
+        return "yellow";
       case 2:
-        return "red"; 
+        return "red";
       default:
         return "gray";
     }
@@ -540,9 +540,9 @@ export default function MapComp(props: MapCompProps) {
           }}
           clusterColor={"#001D3D"}
           onMapReady={onMapLayout}
-          
         >
-          {isMapReady && visibleEarthquakes &&
+          {isMapReady &&
+            visibleEarthquakes &&
             visibleEarthquakes.length > 0 &&
             visibleEarthquakes.map((a: any, i) => {
               // Render visible earthquakes
@@ -575,12 +575,10 @@ export default function MapComp(props: MapCompProps) {
                 </Marker>
               );
             })}
-          {isMapReady && visibleFires &&
+          {isMapReady &&
+            visibleFires &&
             visibleFires.length > 0 &&
             visibleFires.map((a: any, i: number) => {
-
-              
-
               // Render visible fires
               return (
                 <Marker
@@ -589,7 +587,6 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
-                  
                 >
                   <View
                     style={{
@@ -611,7 +608,8 @@ export default function MapComp(props: MapCompProps) {
                 </Marker>
               );
             })}
-          {isMapReady && visibleTsunamis &&
+          {isMapReady &&
+            visibleTsunamis &&
             visibleTsunamis.length > 0 &&
             visibleTsunamis.map((a: any, i: number) => {
               // Render visible tsunamis
@@ -659,7 +657,8 @@ export default function MapComp(props: MapCompProps) {
               );
             })} */}
 
-          {isMapReady && visibleGeneratedMarkers &&
+          {isMapReady &&
+            visibleGeneratedMarkers &&
             visibleGeneratedMarkers.length > 0 &&
             visibleGeneratedMarkers.map((mark: any, i: number) => {
               // console.log(generatedMarkers[0])
@@ -773,8 +772,9 @@ export default function MapComp(props: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/footerIcons/mapIcon.png")}
-                style={tw.style(`h-8 w-8 m-2`)}
+                style={tw.style(`h-8 w-8 ml-2`)}
               />
+              <Text style={tw.style("text-center mb-2")}>Map</Text>
             </Pressable>
           ) : (
             <View></View>
@@ -787,8 +787,9 @@ export default function MapComp(props: MapCompProps) {
             >
               <Image
                 source={require("../../../assets/mapui/MapUI-NewPin.png")}
-                style={tw.style(`h-8 w-8 m-2`)}
+                style={tw.style(`h-8 w-8 ml-2`)}
               />
+              <Text style={tw.style("text-center mb-2")}>Report</Text>
             </Pressable>
           ) : (
             <View></View>
@@ -796,8 +797,9 @@ export default function MapComp(props: MapCompProps) {
           <TouchableOpacity onPress={() => router.push("/")}>
             <Image
               source={require("../../../assets/mapui/Shrink-Map.png")}
-              style={tw.style(`h-8 w-8 m-2`)}
+              style={tw.style(`h-8 w-8 ml-2`)}
             />
+            <Text style={tw.style("text-center mb-2")}>Resize</Text>
           </TouchableOpacity>
 
           {/* <Pressable onPress={handleReportAlert}>
@@ -811,8 +813,9 @@ export default function MapComp(props: MapCompProps) {
           >
             <Image
               source={require("../../../assets/mapui/apps-sort.png")}
-              style={tw.style(`h-8 w-8 m-2`)}
+              style={tw.style(`h-8 w-8ml-2`)}
             />
+            <Text style={tw.style("text-center mb-2")}>List</Text>
           </TouchableOpacity>
 
           {showMapFeedModal === false ? (
