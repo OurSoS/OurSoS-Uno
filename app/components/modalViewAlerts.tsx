@@ -11,8 +11,8 @@ import { router } from "expo-router";
 type Alert = {
   type: string;
   desc?: string;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   geometry?: {
     coordinates: [number, number];
   };
@@ -85,28 +85,27 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   const [filter, setFilter] = useState<alertFilter>("All");
 
   useEffect(() => {
-    console.log(JSON.stringify(props.data));
     setMarkers(
       props.data.map((marker) => {
-        console.log(marker.type);
-        if (marker.type === "WildFire") console.log(marker);
-        let newMarker = { ...marker }; // create a copy of marker to avoid directly mutating props
-        if (newMarker.geometry) {
-          newMarker.type = "Earthquake";
-        } else if (newMarker.scan) {
-          newMarker.type = "Wildfire";
-        } else if (newMarker.properties && newMarker.properties.tsunami === 1) {
-          newMarker.type = "Tsunami";
+        if (marker.geometry) {
+          return { ...marker, type: "Earthquake" };
+        } else if (marker.scan) {
+          return { ...marker, type: "Wildfire" };
+        } else if (marker.properties && marker.properties.tsunami === 1) {
+          return { ...marker, type: "Tsunami" };
         }
-        return newMarker; // return the modified marker
+
+        // For markers with existing types like "Hazard", "Police", "Fire"
+        return marker;
       })
     );
-    // console.log(markers);
-    const testLog = markers.map((alert: any) => alert.type);
-    console.log(testLog);
+
+    console.log(markers);
   }, [props.data]);
 
-  // console.log(props.data)
+  useEffect(() => {
+    console.log(markers);
+  }, [markers]);
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -130,16 +129,16 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   return (
     <View style={tw.style("")}>
       <View style={tw.style("")}>
-      <Pressable
-                style={tw.style(
-                  "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-                )}
-                onPress={() => {
-                  props.setShowModal(false);
-                }}
-              >
-                <Text style={tw.style("text-white")}>Back</Text>
-              </Pressable>
+        <Pressable
+          style={tw.style(
+            "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+          )}
+          onPress={() => {
+            props.setShowModal(false);
+          }}
+        >
+          <Text style={tw.style("text-white")}>Back</Text>
+        </Pressable>
         <Pressable
           onPress={() => {
             const nextFilter = getNextAlertType(filter);
@@ -153,7 +152,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
             // Update the markers state with the filtered array
             setMarkers(filteredMarkers);
           }}
-          style={tw.style("h-10 bg-black justify-center items-center")}
+          style={tw.style("h-10 justify-center items-center")}
         >
           <Text style={tw.style(" text-lg font-bold")}>{filter}</Text>
         </Pressable>
@@ -161,125 +160,87 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
       {markers.map((alert: Alert, index: number) => (
         <View
           key={index}
-          style={tw.style("flex flex-col  rounded shadow-md  m-1")}
+          style={tw.style("flex-row p-2 mb-2 bg-white rounded-lg shadow-md", {
+            backgroundColor: "#fff",
+          })}
         >
-          <View style={tw.style("flex flex-row p-2 m-2")}>
-            <Image
-              source={getAlertIcon(alert.type)}
-              style={tw.style("w-10 h-10 mr-2 mt-1 self-center")}
-            />
+          {/* Left column for alert details */}
+          <View style={tw.style("flex-1")}>
+            {/* Top left padding for the icon */}
+            <View style={tw.style("flex-row")}>
+              <Image
+                source={getAlertIcon(alert.type)}
+                style={tw.style("w-4 h-4 mt-1")}
+              />
+              {/* Title next to the icon */}
+              <Text style={tw.style("text-lg font-bold ml-1")}>{alert.type}</Text>
+            </View>
 
-            <View style={tw.style("flex-1 flex-col ")}>
-              <View>
-                {alert.properties && alert.properties.title !== undefined ? (<>
-                  <Text style={tw.style("font-bold text-4xl  ")}>
-                    Earthquake
-                  </Text>
-                  <Text style={tw.style("italic text-xl")}>
-                  {alert.properties.title}
-                  </Text>
-                  </>) : alert.scan !== undefined ? (
-                  <Text style={tw.style("font-bold text-4xl  ")}>Wildfire</Text>
-                ) : alert.message ? (<>
-                  <Text style={tw.style("font-bold text-4xl  ")}>
-                    {alert.type}
-                  </Text>
-                  <Text style={tw.style("italic text-xl")}>
-                    {alert.message}
-                  </Text>
-                  </>) : null}
-                <Text style={tw.style("font-bold text-4xl")}></Text>
-              </View>
-              {/* PROBLEM STARTS HERE */}
-              <View>
-                {alert.type === "Fire" ||
-                alert.type === "Police" ||
-                alert.type === "Hazard" ||
-                alert.scan !== undefined ||
-                alert.geometry !== undefined ? (
-                  <>
-                    <MapView
-                      liteMode={true}
-                      scrollEnabled={false}
-                      zoomEnabled={false}
-                      mapType={"satellite"}
-                      rotateEnabled={false}
-                      loadingBackgroundColor={"#000000"}
-                      style={{
-                        height: 200,
-                        width: 200,
-                        borderRadius: 10,
-                      }}
-                      initialRegion={
-                        (alert.type === "Fire" ||
-                          alert.type === "Police" ||
-                          alert.type === "Hazard") &&
-                        alert.long &&
-                        alert.lat
-                          ? {
-                              latitude: parseFloat(alert.lat || "0"),
-                              longitude: parseFloat(alert.long || "0"),
-                              latitudeDelta: 0.001,
-                              longitudeDelta: 0.001,
-                            }
-                          : alert &&
-                            alert.geometry &&
-                            alert.geometry.coordinates
-                          ? {
-                              latitude: alert.geometry?.coordinates[1] || 0,
-                              longitude: alert.geometry?.coordinates[0] || 0,
-                              latitudeDelta: 0.001,
-                              longitudeDelta: 0.001,
-                            }
-                          : alert && alert.scan
-                          ? // PROBLEM HERE
-                            {
-                              latitude: 0,
-                              longitude: 0,
-                              latitudeDelta: 0.001,
-                              longitudeDelta: 0.001,
-                            }
-                          : {
-                              latitude: 0,
-                              longitude: 0,
-                              latitudeDelta: 0.001,
-                              longitudeDelta: 0.001,
-                            }
-                      }
-                    >
-                      {(alert.latitude && alert.longitude) ||
-                      (alert.lat !== undefined && alert.long !== undefined) ? (
-                        alert.lat !== undefined && alert.long !== undefined ? (
-                          <Marker
-                            coordinate={{
-                              latitude: parseFloat(alert.lat) || 0,
-                              longitude: parseFloat(alert.long) || 0,
-                            }}
-                          >
-                            <Image
-                              source={getAlertIcon(alert.type)}
-                              style={{ width: 20, height: 20 }}
-                            />
-                          </Marker>
-                        ) : alert.latitude && alert.longitude ? (
-                          <Marker
-                            coordinate={{
-                              latitude: alert.latitude || 0,
-                              longitude: alert.longitude || 0,
-                            }}
-                          >
-                            <Image
-                              source={getAlertIcon(alert.type)}
-                              style={{ width: 20, height: 20 }}
-                            />
-                          </Marker>
-                        ) : null
-                      ) : null}
-                    </MapView>
-                   
-                  </>
-                ) : null}
-              </View>
+            {/* Message or title in italic text */}
+            <Text style={tw.style("italic mt-1")}>
+              {alert.message || alert.properties?.title || ""}
+            </Text>
+          </View>
+
+          {/* Right column for the MapView */}
+          <View style={tw.style("flex-1")}>
+            {/* PROBLEM STARTS HERE */}
+            <View>
+              {alert.type === "Fire" ||
+              alert.type === "Police" ||
+              alert.type === "Hazard" ||
+              alert.scan !== undefined ||
+              alert.geometry !== undefined ? (
+                <>
+                  <MapView
+                    liteMode={true}
+                    scrollEnabled={false}
+                    zoomEnabled={false}
+                    mapType={"satellite"}
+                    rotateEnabled={false}
+                    loadingBackgroundColor={"#000000"}
+                    style={{
+                      height: 100,
+                      width: 200,
+                      borderRadius: 10,
+                    }}
+                    initialRegion={
+                      (alert.type === "Fire" ||
+                        alert.type === "Police" ||
+                        alert.type === "Hazard") &&
+                      alert.lat !== undefined &&
+                      alert.long !== undefined
+                        ? {
+                            latitude: parseFloat(alert.lat),
+                            longitude: parseFloat(alert.long),
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.001,
+                          }
+                        : alert.type === "Earthquake" ||
+                          alert.type === "Tsunami"
+                        ? {
+                            latitude: alert?.geometry?.coordinates[1],
+                            longitude: alert?.geometry?.coordinates[0],
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.001,
+                          }
+                        : alert.type === "Wildfire"
+                        ? {
+                            latitude: parseFloat(alert?.latitude),
+                            longitude: parseFloat(alert?.longitude),
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.001,
+                          }
+                        : {
+                            latitude: 0,
+                            longitude: 0,
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.001,
+                          }
+                    }
+                  ></MapView>
+                </>
+              ) : null}
             </View>
           </View>
         </View>
