@@ -296,6 +296,7 @@ export default function MapComp(props: MapCompProps) {
           onPress: () => {
             Alert.alert("Your Report has been submitted. ✅");
             alert.confirmed = true;
+            setFilter("All");
             //TODO: fetch .principalSubdivision && .locality
             axios
               .get(
