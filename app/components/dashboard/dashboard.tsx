@@ -140,7 +140,6 @@ export default function Dashboard({
           onChangeText={onChangeSearch}
           value={searchQuery}
          /> */}
-
           <View style={tw.style(`flex-row items-center justify-between`)}>
             <View style={tw.style(`flex-row items-center`)}>
               <Image
@@ -156,6 +155,7 @@ export default function Dashboard({
               resizeMode="contain"
             />
           </View>
+          <Text style={tw.style(`text-2xl font-bold mt-2`)}>NEWS</Text>
           <Slider
             onToggleSnackBar={onToggleSnackBar}
             data={news}
@@ -163,6 +163,7 @@ export default function Dashboard({
           />
 
           <View style={tw.style(`w-full`, `pt-0`, `pb-15`)}>
+            <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>MAP</Text>
             <View
               style={tw.style(
                 "border-solid border-[3] rounded-md border-[#001D3D]"
@@ -180,7 +181,7 @@ export default function Dashboard({
               onPress={() => {
                 router.push("/map");
               }}
-              style={tw.style("absolute top-7 left-7")}
+              style={tw.style("absolute top-18 left-7")}
             >
               <View
                 style={tw.style(
@@ -190,9 +191,29 @@ export default function Dashboard({
                 <Image
                   source={require("../../../assets/mapui/Expand-Map.png")}
                   resizeMode={"contain"}
-                  style={tw.style(`h-7 aspect-1`)}
+                  style={tw.style(`h-7 as18ect-1`)}
                 />
               </View>
+            </Pressable>
+          </View>
+          <View>
+            <Pressable
+              onPress={() => {
+                router.push("/chat");
+              }}
+              style={tw.style(
+                "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md bottom-12 transform -translate-x-1/2"
+              )}
+            >
+              <Image
+                source={require("../../../assets/footerIcons/dark/robotIcon-darkBlue.png")}
+                style={tw.style("ml-4 h-10 w-10")}
+              />
+              <Text
+                style={tw.style("flex-1 text-xl font-semibold text-center")}
+              >
+                Get AI Help
+              </Text>
             </Pressable>
           </View>
           {/* <FriendsList /> */}
