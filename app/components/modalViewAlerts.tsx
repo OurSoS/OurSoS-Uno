@@ -204,6 +204,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                       width: 200,
                       borderRadius: 10,
                     }}
+                    //@ts-ignore
                     initialRegion={
                       (alert.type === "Fire" ||
                         alert.type === "Police" ||
