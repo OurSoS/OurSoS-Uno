@@ -6,6 +6,7 @@ import {
       FlatList,
       ImageBackground,
 } from "react-native";
+
 import { Link } from "expo-router";
 import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
@@ -164,7 +165,6 @@ export default function Index() {
             const init = async () => {
                   await registerForPushNotificationsAsync();
             };
-
             init();
       }, []);
 
