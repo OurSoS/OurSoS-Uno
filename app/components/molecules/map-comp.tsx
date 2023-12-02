@@ -281,6 +281,7 @@ export default function MapComp(props: MapCompProps) {
   }, 0);
 
   const handleConfirmation = (alert: any): Promise<boolean> => {
+    console.log(generatedMarkers);
     let combineDesc = "";
     return new Promise((resolve) => {
       Alert.alert("Confirm Alert", "Are you sure you want to make a report?", [
@@ -368,6 +369,8 @@ export default function MapComp(props: MapCompProps) {
             // setGeneratedMarkers([]);
           } else {
             setGeneratedMarkers(response.data);
+            setGeneratedMarkers(response.data.map((marker:any) => ({ ...marker, confirmed: true })));
+
           }
         })
         .catch((error) => {
@@ -764,7 +767,7 @@ export default function MapComp(props: MapCompProps) {
                         {mark.type + " - " + getSeverityString(mark.severity)}
                       </Text>
                       <Text>{mark.date}</Text>
-                      <Text style={tw.style("")}>{mark.desc}</Text>
+                      <Text style={tw.style("")}>{mark.message}</Text>
                     </View>
                   </Callout>
                 </Marker>
