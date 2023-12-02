@@ -6,10 +6,11 @@ import { alert, alertFilter } from "../../utils/static-types";
 import MapView from "react-native-map-clustering";
 import { mapStyle } from "../../utils/static-types";
 import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { router } from "expo-router";
 
 type Alert = {
   type: string;
-  desc?:string;
+  desc?: string;
   latitude: number;
   longitude: number;
   geometry?: {
@@ -28,23 +29,23 @@ type Alert = {
   long?: string;
   data?: [
     {
-      country_id: string,
-      latitude: string,
-      longitude: string,
-      bright_ti4: string,
-      scan: string,
-      track: string,
-      acq_date: string,
-      acq_time: string,
-      satellite: string,
-      instrument: string,
-      confidence: string,
-      version: string,
-      bright_ti5: string,
-      frp: string,
-      daynight: string
-    },
-  ]
+      country_id: string;
+      latitude: string;
+      longitude: string;
+      bright_ti4: string;
+      scan: string;
+      track: string;
+      acq_date: string;
+      acq_time: string;
+      satellite: string;
+      instrument: string;
+      confidence: string;
+      version: string;
+      bright_ti5: string;
+      frp: string;
+      daynight: string;
+    }
+  ];
 };
 
 type ModalViewAlertsProps = {
@@ -60,6 +61,7 @@ type ModalViewAlertsProps = {
     latitude: number;
   };
   type: string;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const alertTypes: alertFilter[] = [
@@ -83,12 +85,11 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   const [filter, setFilter] = useState<alertFilter>("All");
 
   useEffect(() => {
-    console.log(JSON.stringify(props))
+    console.log(JSON.stringify(props.data));
     setMarkers(
       props.data.map((marker) => {
-        console.log(marker.type)
-        if(marker.type === "WildFire")
-        console.log(marker)
+        console.log(marker.type);
+        if (marker.type === "WildFire") console.log(marker);
         let newMarker = { ...marker }; // create a copy of marker to avoid directly mutating props
         if (newMarker.geometry) {
           newMarker.type = "Earthquake";
@@ -127,8 +128,18 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   };
 
   return (
-    <View>
-      <View style={tw.style("h-10")}>
+    <View style={tw.style("")}>
+      <View style={tw.style("")}>
+      <Pressable
+                style={tw.style(
+                  "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+                )}
+                onPress={() => {
+                  props.setShowModal(false);
+                }}
+              >
+                <Text style={tw.style("text-white")}>Back</Text>
+              </Pressable>
         <Pressable
           onPress={() => {
             const nextFilter = getNextAlertType(filter);

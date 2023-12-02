@@ -25,6 +25,7 @@ type modalCreateAlertsProps = {
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
   updateMap: React.Dispatch<React.SetStateAction<boolean>>;
   myLocation: any;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
@@ -75,7 +76,9 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   const handleSubmit = () => {
     if (description.length < minimum) {
-      alert(`Please enter a description with a minimum of ${minimum} characters.`);
+      alert(
+        `Please enter a description with a minimum of ${minimum} characters.`
+      );
       setRedText(true);
       setView(2);
       return;
@@ -104,6 +107,16 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   return (
     <ScrollView style={tw.style("p-4")}>
+      <Pressable
+        style={tw.style(
+          "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+        )}
+        onPress={() => {
+          props.setShowModal(false);
+        }}
+      >
+        <Text style={tw.style("text-white")}>Back</Text>
+      </Pressable>
       {view === 1 && (
         <View style={tw.style("flex h-full flex-grow justify-center")}>
           <Text> Page 1/3</Text>
@@ -156,7 +169,11 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             ))}
           </View>
           {/* Severity Scale Slider */}
-          <View style={tw.style("p-2 mt-3")}>
+          <View
+            style={tw.style(
+              "flex flex-row p-2 mt-3 justify-center items-center"
+            )}
+          >
             <Text
               style={
                 severity === 1
@@ -166,10 +183,11 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                   : null
               }
             >
-              How Severe? ({severity})
+              Severity? ({severity === 1 ? "Low" : "High"})
             </Text>
+
             <Slider
-              style={tw.style("justify-center h-15 ml-6 mr-6")}
+              style={tw.style("w-10 h-25 ml-6 mr-6")}
               progress={progress}
               minimumValue={min}
               maximumValue={max}
