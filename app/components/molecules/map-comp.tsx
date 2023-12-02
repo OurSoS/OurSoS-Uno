@@ -478,6 +478,16 @@ export default function MapComp(props: MapCompProps) {
               <Text style={tw.style("text-center text-sm")}>
                 Try moving the map to a new area!
               </Text>
+              <Pressable
+                style={tw.style(
+                  "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+                )}
+                onPress={() => {
+                  setShowMapFeedModal(false);
+                }}
+              >
+                <Text style={tw.style("text-white")}>Back To Map</Text>
+              </Pressable>
             </View>
           ) : (
             <View style={tw.style("flex pb-100")}>
@@ -494,6 +504,7 @@ export default function MapComp(props: MapCompProps) {
                 type={"Combined"} // You can choose a type that represents the combined data
                 setJumpToLocation={setJumpToLocation}
                 jumpToLocation={jumpToLocation}
+                setShowModal={setShowMapFeedModal}
               />
 
               {/* <ModalViewAlerts data={allVisibleAlerts} type={"Fire"} setJumpToLocation={setJumpToLocation} jumpToLocation={jumpToLocation} /> */}
@@ -507,6 +518,7 @@ export default function MapComp(props: MapCompProps) {
           setMapType={setMyMapType}
           updateMap={setUpdateTick}
           myLocation={myAccurateLocation}
+          setShowModal={setShowAlertReportModal}
         />
       ) : (
         <MapView
@@ -759,10 +771,13 @@ export default function MapComp(props: MapCompProps) {
         </MapView>
       )}
 
-      {props.buttons === true ? (
+      {props.buttons === true &&
+      showAlertReportModal === false &&
+      showMapFeedModal === false ? (
         <View
           style={tw`top-15 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}
         >
+          {/* //SATELLITE BUTTON */}
           {showMapFeedModal === false ? (
             <Pressable
               onPress={() => {
@@ -780,6 +795,7 @@ export default function MapComp(props: MapCompProps) {
           ) : (
             <View></View>
           )}
+          {/* //REPORT ALERT BUTTON */}
           {showMapFeedModal === false ? (
             <Pressable
               onPress={() => {
@@ -796,17 +812,18 @@ export default function MapComp(props: MapCompProps) {
           ) : (
             <View></View>
           )}
+          {/* //SRINK BUTTON */}
           <TouchableOpacity onPress={() => router.push("/")}>
             <Image
               source={require("../../../assets/mapui/Shrink-Map.png")}
               style={tw.style(`h-8 w-8 ml-2`)}
             />
-                      <Text style={tw.style("text-center mb-2")}>Shrink</Text>
+            <Text style={tw.style("text-center mb-2")}>Shrink</Text>
 
             {/* <Text style={tw.style("text-center mb-2")}>Resize</Text> */}
           </TouchableOpacity>
 
-         
+          {/* //LIST BUTTON */}
           <TouchableOpacity
             onPress={() => setShowMapFeedModal(!showMapFeedModal)}
           >
@@ -816,7 +833,7 @@ export default function MapComp(props: MapCompProps) {
             />
             <Text style={tw.style("text-center mb-2")}>List</Text>
           </TouchableOpacity>
-
+          {/* //FILTER BUTTON */}
           {showMapFeedModal === false ? (
             <TouchableOpacity
               onPress={() => {
@@ -827,11 +844,15 @@ export default function MapComp(props: MapCompProps) {
                 }
               }}
             >
-              <Text style={{ textAlign: 'center' }}>Show</Text>
+              <Text style={{ textAlign: "center" }}>Show</Text>
               {filter === "Police" || filter === "All" ? (
-                <Text style={tw.style("text-center mb-2 text-xs")}>{filter}</Text>
+                <Text style={tw.style("text-center mb-2 text-xs")}>
+                  {filter}
+                </Text>
               ) : (
-                <Text style={tw.style("text-center mb-2 text-xs")}>{filter}s</Text>
+                <Text style={tw.style("text-center mb-2 text-xs")}>
+                  {filter}s
+                </Text>
               )}
             </TouchableOpacity>
           ) : (
