@@ -18,7 +18,7 @@ export default function FriendCard( {friend} : {friend: Friend}) {
                               style={tw.style(`h-30 bg-[#001D3D]`)}
                               source={{ uri: friend.pfpSrc }}
                               />
-                              <Text style={tw.style("text-white text-left pt-2 truncate")}>{ friend.username }</Text>
+                              <Text style={tw.style("text-white text-left pt-2")}>{ friend.username }</Text>
                         </Card>
                   </TouchableOpacity>
             </View>
