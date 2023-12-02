@@ -386,15 +386,15 @@ export default function MapComp(props: MapCompProps) {
                         .then(async (response) => {
                               const res = await fetch(`https://oursos-backend-production.up.railway.app/getfriendsforuser/${response.id}`);
                               const data = await res.json();
-                              data.map((friend: any) => {
+                              data?.map((friend: any) => {
                                     setFriendsLocation((prev: any) => [
                                           ...prev,
                                           {
-                                                id: friend.id,
-                                                longitude: friend.long,
-                                                latitude: friend.lat,
-                                                username: friend.username,
-                                                profile: friend.profile,
+                                                id: friend?.id,
+                                                longitude: friend?.long,
+                                                latitude: friend?.lat,
+                                                username: friend?.username,
+                                                profile: friend?.profile,
                                           },
                                     ]);
                               })
@@ -649,10 +649,10 @@ export default function MapComp(props: MapCompProps) {
                                                 <Marker
                                                       style={tw.style("flex justify-center items-center bg-black")}
                                                       key={i}
-                                                      title={friend.username}
+                                                      title={friend?.username}
                                                       coordinate={{
-                                                            latitude: parseFloat(friend.latitude),
-                                                            longitude: parseFloat(friend.longitude),
+                                                            latitude: parseFloat(friend?.latitude),
+                                                            longitude: parseFloat(friend?.longitude),
                                                       }}
                                                 >
                                                       <View
@@ -669,7 +669,7 @@ export default function MapComp(props: MapCompProps) {
                                                             }}
                                                       ></View>
                                                       <Image
-                                                            source={{ uri: friend.profile }}
+                                                            source={{ uri: friend?.profile }}
                                                             style={{ width: 20, height: 20 }}
                                                       />
                                                 </Marker>

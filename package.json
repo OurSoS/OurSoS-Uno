@@ -16,6 +16,7 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/drawer": "^6.6.6",
     "axios": "^1.5.1",
+    "crypto": "^1.0.1",
     "expo": "~49.0.13",
     "expo-app-loading": "^2.1.1",
     "expo-constants": "~14.4.2",

@@ -18,9 +18,12 @@ import tw, { create } from "twrnc";
 import Dashboard from "./components/dashboard/dashboard";
 import { Suspense } from "react";
 import Loading from "./components/loading";
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
+// import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import * as Notification from "expo-notifications";
 import Footer from "./components/molecules/Footer";
+
+import { getDeviceId } from "./chat";
+// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 type alert = {
       id?: number;
@@ -128,14 +131,6 @@ export default function Index() {
 
       const tw = create(require("../tailwind.config.ts"));
       const setUserLanguage = async () => {
-            const updateUserRequest = {
-                  username: "sam",
-                  latitude: 49.26357,
-                  longitude: -123.13857,
-                  languagepreference: userLang, // Ensure that languageTag is defined and has a valid value
-                  friends: [2, 3],
-                  profile: "https://picsum.photos/200/300?grayscale",
-            };
             if (userLang) {
                   setUserLang(userLang);
 
@@ -204,6 +199,38 @@ export default function Index() {
 
       useEffect(() => {
             (async () => {
+                  let deviceId = getDeviceId();
+                  try {
+                        fetch(`https://oursos-backend-production.up.railway.app/users/${deviceId}`)
+                              .then(response => response.json())
+                              .then(data => {
+                                    console.log(data);
+                                    if (data === null) {
+                                          let userData = {
+                                                "deviceId": deviceId,
+                                                "username": "user-" + deviceId,
+                                                "lat": parseFloat(location?.coords?.latitude),
+                                                "long": parseFloat(location?.coords?.longitude),
+                                                "languagepreference": "en",
+                                                "friends": null,
+                                                "profile": "https://picsum.photos/200/300?grayscale",
+                                          };
+                                          fetch('https://oursos-backend-production.up.railway.app/createuser', {
+                                                method: 'POST',
+                                                headers: {
+                                                      'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify(userData),
+                                          }).then(response => response.json())
+                                                .then(data => { console.log('Success:', data); })
+                                    }
+                              });
+
+                  } catch (error) {
+                        console.log(error);
+                  }
+
+
                   await axios
                         .get("https://oursos-backend-production.up.railway.app/languages")
                         .then((res) => {
