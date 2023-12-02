@@ -75,7 +75,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   const handleSubmit = () => {
     if (description.length < minimum) {
-      alert("Please enter a description with a minimum of 5 characters.");
+      alert(`Please enter a description with a minimum of ${minimum} characters.`);
       setRedText(true);
       setView(2);
       return;
@@ -189,7 +189,6 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
           <TextInput
             placeholder="What happened?"
-            placeholderTextColor="text-gray-500"
             value={description}
             onChangeText={handleDescriptionChange}
             style={

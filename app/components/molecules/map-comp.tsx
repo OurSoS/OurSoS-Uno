@@ -296,6 +296,7 @@ export default function MapComp(props: MapCompProps) {
                               onPress: () => {
                                     Alert.alert("Your Report has been submitted. ✅");
                                     alert.confirmed = true;
+                                    setFilter("All");
                                     //TODO: fetch .principalSubdivision && .locality
                                     axios
                                           .get(
@@ -380,8 +381,24 @@ export default function MapComp(props: MapCompProps) {
                               }
                         });
 
-
-
+                  await fetch(`https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`)
+                        .then(response => response.json())
+                        .then(async (response) => {
+                              const res = await fetch(`https://oursos-backend-production.up.railway.app/getfriendsforuser/${response.id}`);
+                              const data = await res.json();
+                              data.map((friend: any) => {
+                                    setFriendsLocation((prev: any) => [
+                                          ...prev,
+                                          {
+                                                id: friend.id,
+                                                longitude: friend.long,
+                                                latitude: friend.lat,
+                                                username: friend.username,
+                                                profile: friend.profile,
+                                          },
+                                    ]);
+                              })
+                        })
 
 
                   let { status } = await Location.requestForegroundPermissionsAsync();
@@ -393,28 +410,6 @@ export default function MapComp(props: MapCompProps) {
                   setLocation(location);
 
             })();
-
-            fetch('https://oursos-backend-production.up.railway.app/users/efe49b2f-4380-4c71-a969-d230f6c3199b')
-                  .then(response => response.json())
-                  .then(async (response) => {
-                        console.log(response.id)
-                        const res = await fetch(`https://oursos-backend-production.up.railway.app/getfriendsforuser/${response.id}`);
-                        const data = await res.json();
-                        data.map((friend: any) => {
-                              console.log({ friend })
-                              setFriendsLocation((prev: any) => [
-                                    ...prev,
-                                    {
-                                          id: friend.id,
-                                          longitude: friend.long,
-                                          latitude: friend.lat,
-                                          username: friend.username,
-                                          profile: friend.profile,
-                                    },
-                              ]);
-                        })
-                  })
-
       }, []);
 
       useEffect(() => {
@@ -444,7 +439,6 @@ export default function MapComp(props: MapCompProps) {
 
             })();
       }, []);
-
 
       //update region when alert created
       useEffect(() => {
@@ -651,7 +645,6 @@ export default function MapComp(props: MapCompProps) {
                                     })}
                               {friendsLocation &&
                                     friendsLocation?.map((friend: any, i: number) => {
-                                          console.log({ friend })
                                           return (
                                                 <Marker
                                                       style={tw.style("flex justify-center items-center bg-black")}

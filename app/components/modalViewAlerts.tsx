@@ -127,7 +127,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   };
 
   return (
-    <View style={tw.style("pl-2 pr-18")}>
+    <View>
       <View style={tw.style("h-10")}>
         <Pressable
           onPress={() => {
