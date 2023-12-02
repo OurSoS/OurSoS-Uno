@@ -206,7 +206,7 @@ export default function Dashboard({
               )}
             >
               <Image
-                source={require("../../../assets/footerIcons/dark/robotIcon-darkBlue.png")}
+                source={require("../../../assets/footerIcons/dark/Brain-Icon.png")}
                 style={tw.style("ml-4 h-10 w-10")}
               />
               <Text
