@@ -6,6 +6,8 @@ import {
   Text,
   View,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import tw from "twrnc";
@@ -20,8 +22,8 @@ export const getDeviceId = (): string => {
 };
 
 const pubnub = new Pubnub({
-  publishKey: process.env.EXPO_PUBLIC_PUBLISH_KEY,
-  subscribeKey: process.env.EXPO_PUBLIC_SUBSCRIBE_KEY,
+  publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
+  subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
   userId: "myUniqueUserId",
 });
 
@@ -109,7 +111,7 @@ export default function App() {
                   `mb-2.5`
                 )}
               >
-                Chat Bot
+                AI Help
               </Text>
               <ScrollView style={tw.style("pt-8 pl-4 pr-4")}>
                 {messages.map((message, idx) => (
@@ -124,38 +126,37 @@ export default function App() {
                 ))}
               </ScrollView>
             </View>
-
-            <View style={tw.style("pb-20 pl-4 pr-4")}>
-              <TextInput
-                maxLength={50}
-                style={tw.style(
-                  "px-4",
-                  "py-2",
-                  "border",
-                  "border-gray-300",
-                  "rounded-md",
-                  "text-lg",
-                  "bg-white"
-                )}
-                onChangeText={onChangeText}
-                value={text}
-                placeholder="maximum 50 characters"
-                placeholderTextColor="#4B5563"
-              />
-              <Pressable
-                onPress={() => {
-                  publishMessage(text);
-                  onChangeText("");
-                }}
-                style={tw.style(
-                  "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg"
-                )}
-              >
-                <Text style={tw.style("text-xl text-white text-center")}>
-                  Send
-                </Text>
-              </Pressable>
-            </View>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={tw.style("flex-1")}
+            >
+              <View style={tw.style("pb-20 pl-4 pr-4")}>
+                <TextInput
+                  maxLength={50}
+                  style={tw.style(
+                    "px-4 py-2 border border-gray-300 rounded-md text-lg bg-white",
+                    "textAlignVertical-center"
+                  )}
+                  onChangeText={onChangeText}
+                  value={text}
+                  placeholder="maximum 50 characters"
+                  placeholderTextColor="#4B5563"
+                />
+                <Pressable
+                  onPress={() => {
+                    publishMessage(text);
+                    onChangeText("");
+                  }}
+                  style={tw.style(
+                    "w-full bg-[#001D3D] pt-4 pb-4 mt-4 rounded-lg"
+                  )}
+                >
+                  <Text style={tw.style("text-xl text-white text-center")}>
+                    Send
+                  </Text>
+                </Pressable>
+              </View>
+            </KeyboardAvoidingView>
           </View>
         </View>
       </ImageBackground>
