@@ -129,6 +129,18 @@ export default function Index() {
       const [errorMsg, setErrorMsg] = useState<string>("");
       const [currentUser, setCurrentUser] = useState<any>(null);
 
+      // declare all characters
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      function generateString(length: number) {
+            let result = ' ';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+                  result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+
+            return result;
+      }
       const tw = create(require("../tailwind.config.ts"));
       const setUserLanguage = async () => {
             if (userLang) {
@@ -209,11 +221,10 @@ export default function Index() {
                               if (data === null) {
                                     let userData = {
                                           "deviceId": deviceId,
-                                          "username": "sam",
+                                          "username": deviceId,
                                           "lat": location?.coords?.latitude,
                                           "long": location?.coords?.longitude,
                                           "languagepreference": "en",
-                                          "friends": [],
                                           "profile": "https://picsum.photos/200/300?grayscale",
                                     };
                                     fetch(
@@ -225,7 +236,12 @@ export default function Index() {
                                                 },
                                                 body: JSON.stringify(userData),
                                           }
-                                    );
+                                    )
+                                          .then((response) => response.json())
+                                          .then((data) => { console.log(data); })
+                                          .catch((error) => {
+                                                console.error("Error:", error);
+                                          });
                               }
                         });
 
@@ -316,7 +332,7 @@ export default function Index() {
                               ++i;
                               console.log("alert", alert.category, alert.id);
                               await sendLocalNotification(
-                                    `Emergency Alert: Immediate danger in your area due to a ${alert.category}. Seek safety immediately as per local guidelines and stay informed.`
+                                    `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
                               );
                         }
                   }
@@ -377,7 +393,7 @@ export default function Index() {
                                     <IntroLayout>
                                           <Text style={styles.header}>Select your language</Text>
                                           <FlatList
-                                                style={tw.style(`w-full`, `flex`, `flex-col`)}
+                                                style={tw.style(`w - full`, `flex`, `flex - col`)}
                                                 data={languages}
                                                 renderItem={({
                                                       item,
@@ -391,13 +407,13 @@ export default function Index() {
                                                                   setUserLang(languages[index]?.tag);
                                                             }}
                                                             style={tw.style(
-                                                                  `text-white`,
-                                                                  `bg-white`,
-                                                                  `px-7`,
-                                                                  `py-3`,
-                                                                  `rounded-lg`,
+                                                                  `text - white`,
+                                                                  `bg - white`,
+                                                                  `px - 7`,
+                                                                  `py - 3`,
+                                                                  `rounded - lg`,
                                                                   `border`,
-                                                                  `mb-3`
+                                                                  `mb - 3`
                                                             )}
                                                       >
                                                             <Text style={styles.text}>{item.name}</Text>
@@ -409,14 +425,14 @@ export default function Index() {
                                                       setUserLanguage();
                                                 }}
                                                 style={tw.style(
-                                                      `text-white`,
-                                                      `bg-[#003566]`,
-                                                      `px-7`,
-                                                      `py-3`,
-                                                      `rounded-lg`
+                                                      `text - white`,
+                                                      `bg - [#003566]`,
+                                                      `px - 7`,
+                                                      `py - 3`,
+                                                      `rounded - lg`
                                                 )}
                                           >
-                                                <Text style={tw.style(`text-white`)}>Continue</Text>
+                                                <Text style={tw.style(`text - white`)}>Continue</Text>
                                           </Pressable>
                                     </IntroLayout>
                               ) : introComponent === "newsFeed" ? (

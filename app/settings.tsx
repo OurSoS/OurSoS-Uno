@@ -14,20 +14,24 @@ import tw from "twrnc";
 import React from "react";
 import Footer from "./components/molecules/Footer";
 import axios from "axios";
-import Constants from "expo-constants";
+import { getDeviceId } from "./chat";
 
-const getDeviceId = (): string => {
-      // This gets the installation ID, not a hardware ID
-      return Constants.sessionId;
-};
+export default function Settings() {
+      const [profileImage, setProfileImage] = useState();
+      const [currentUserName, setCurrentUserName] = useState();
+      useEffect(() => {
+            console.log(getDeviceId());
+            (async () => {
+                  await axios.get(`https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`)
+                        .then((response) => {
+                              setProfileImage(response.data.profile);
+                              setCurrentUserName(response.data.username);
+                        })
 
-const pubnub = new Pubnub({
-      publishKey: "pub-c-3b2d833a-75f6-4161-91ea-e3a5752344eb",
-      subscribeKey: "sub-c-7cec6aac-008e-4260-a63b-af4eb66b1272",
-      userId: "myUniqueUserId",
-});
+            })()
+      }, []);
 
-export default function App() {
+
       return (
             <>
                   <ImageBackground
@@ -48,12 +52,27 @@ export default function App() {
                                                 Settings
                                           </Text>
                                           <View style={tw.style("pt-8 pl-4 pr-4")}>
-                                                <Image
-                                                      source={require("../assets/avatars/Avatar.png")}
-                                                      style={tw.style(`w-full h-20`)}
-                                                      resizeMode="contain"
-                                                />
-                                                <Text style={tw.style(`text-center text-2xl`)}>Username</Text>
+                                                {
+                                                      profileImage ?
+                                                            <Image
+                                                                  source={{ uri: profileImage }}
+                                                                  style={tw.style(`w-full h-20`)}
+                                                                  resizeMode="contain"
+                                                            />
+                                                            : <Image
+                                                                  source={require("../assets/avatars/Avatar.png")}
+                                                                  style={tw.style(`w-full h-20`)}
+                                                                  resizeMode="contain"
+                                                            />
+                                                }
+
+                                                {
+                                                      currentUserName ? (
+                                                            <Text style={tw.style(`text-center text-2xl`)}>{currentUserName}</Text>
+                                                      ) :
+                                                            <Text style={tw.style(`text-center text-2xl`)}>Username</Text>
+                                                }
+
                                           </View>
                                           <ScrollView>
                                                 <View

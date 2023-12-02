@@ -16,7 +16,6 @@ import { Text, Snackbar } from "react-native-paper";
 import { router } from "expo-router";
 import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
-import AddFriend from "../../components/molecules/AddFriend";
 import publicIP from "react-native-public-ip";
 
 type newsItemType = {
@@ -134,7 +133,7 @@ export default function Dashboard({
                         source={require("../../../assets/Intro/Map.png")}
                         style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
                   >
-                        <ScrollView style={tw.style(`p-4`)}>
+                        <ScrollView style={tw.style(`p-4 mb-10`)}>
                               {/* <Searchbar
           placeholder="Search"
           onChangeText={onChangeSearch}
@@ -217,7 +216,6 @@ export default function Dashboard({
                                     </Pressable>
                               </View>
                               {/* <FriendsList /> */}
-                              <AddFriend />
                         </ScrollView>
                         <Snackbar
                               style={[
