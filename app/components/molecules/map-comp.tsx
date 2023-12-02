@@ -770,12 +770,12 @@ export default function MapComp(props: MapCompProps) {
                 else if (myMapType === "satellite") setMyMapType("standard");
               }}
             >
-              <Text style={{ textAlign: 'center' }}>{myMapType}</Text>
               <Image
                 source={require("../../../assets/footerIcons/mapIcon.png")}
                 style={tw.style(`h-8 w-8 ml-2`)}
               />
-              <Text style={tw.style("text-center mb-2")}>Map</Text>
+              <Text style={tw.style("text-center mb-2")}>{myMapType}</Text>
+              {/* <Text style={tw.style("text-center mb-2")}>Map</Text> */}
             </Pressable>
           ) : (
             <View></View>
@@ -786,7 +786,7 @@ export default function MapComp(props: MapCompProps) {
                 setShowAlertReportModal(!showAlertReportModal);
               }}
             >
-              <Text style={{ textAlign: 'center' }}>Report</Text>
+              {/* <Text style={{ textAlign: 'center' }}>Report</Text> */}
               <Image
                 source={require("../../../assets/mapui/MapUI-NewPin.png")}
                 style={tw.style(`h-8 w-8 ml-2`)}
@@ -797,24 +797,19 @@ export default function MapComp(props: MapCompProps) {
             <View></View>
           )}
           <TouchableOpacity onPress={() => router.push("/")}>
-          <Text style={{ textAlign: 'center' }}>Shrink</Text>
             <Image
               source={require("../../../assets/mapui/Shrink-Map.png")}
               style={tw.style(`h-8 w-8 ml-2`)}
             />
-            <Text style={tw.style("text-center mb-2")}>Resize</Text>
+                      <Text style={tw.style("text-center mb-2")}>Shrink</Text>
+
+            {/* <Text style={tw.style("text-center mb-2")}>Resize</Text> */}
           </TouchableOpacity>
 
-          {/* <Pressable onPress={handleReportAlert}>
-            <Image
-              source={require("../../../assets/mapui/MapUI-NewPin.png")}
-              style={tw.style(`h-8 w-8 m-2`)}
-            />
-          </Pressable> */}
+         
           <TouchableOpacity
             onPress={() => setShowMapFeedModal(!showMapFeedModal)}
           >
-            <Text style={{ textAlign: 'center' }}>Feed</Text>
             <Image
               source={require("../../../assets/mapui/apps-sort.png")}
               style={tw.style(`h-8 w-8 ml-2`)}
@@ -834,9 +829,9 @@ export default function MapComp(props: MapCompProps) {
             >
               <Text style={{ textAlign: 'center' }}>Show</Text>
               {filter === "Police" || filter === "All" ? (
-                <Text style={{ textAlign: 'center' }}>{filter}</Text>
+                <Text style={tw.style("text-center mb-2 text-xs")}>{filter}</Text>
               ) : (
-                <Text style={{ textAlign: 'center' }}>{filter}s</Text>
+                <Text style={tw.style("text-center mb-2 text-xs")}>{filter}s</Text>
               )}
             </TouchableOpacity>
           ) : (
