@@ -189,7 +189,6 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
           <TextInput
             placeholder="What happened?"
-            placeholderTextColor="text-gray-500"
             value={description}
             onChangeText={handleDescriptionChange}
             style={
