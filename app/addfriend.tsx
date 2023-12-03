@@ -55,8 +55,13 @@ export default function AddFriend() {
   return (
     <View style={tw.style("flex-1")}>
       <View style={tw.style("flex-row justify-between items-center p-4")}>
-        <Pressable onPress={handleBackButtonPress} style={tw.style("p-2")}>
-          <Text style={tw.style("text-lg")}>Back</Text>
+        <Pressable
+          onPress={handleBackButtonPress}
+          style={tw.style(
+            "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+          )}
+        >
+          <Text style={tw.style("text-white")}>Back</Text>
         </Pressable>
       </View>
       <View style={tw.style("flex-1 justify-center items-center")}>

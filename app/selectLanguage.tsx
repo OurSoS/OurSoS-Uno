@@ -61,9 +61,11 @@ export default function SelectLanguages() {
         <View>
           <Link href="/settings">
             <View
-              style={tw.style(`pt-2 flex flex-col items-center justify-center`)}
+              style={tw.style(
+                "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+              )}
             >
-              <Text style={tw.style(`text-[1rem]`)}>Back</Text>
+              <Text style={tw.style("text-white")}>Back</Text>
             </View>
           </Link>
         </View>
