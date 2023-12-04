@@ -25,6 +25,11 @@ import Footer from "./components/molecules/Footer";
 import { getDeviceId } from "./chat";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
+
 type alert = {
       id?: number;
       message?: string;
