@@ -1,29 +1,41 @@
-import * as React from "react";
-import { Button, Share, Pressable, View, Text } from "react-native";
+import React, { useState } from "react";
+import { Button, Share, Pressable, View, Text, TextInput } from "react-native";
 import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import tw from "twrnc";
 import { getDeviceId } from "./chat";
-
+import axios from "axios";
 export default function AddFriend() {
-  const [userId, setUserId] = React.useState<string>();
+  const [userId, setUserId] = useState<string>();
+  const [addFriendUrl, setAddFriendUrl] = useState<string>("");
+
+  const handleAddFriendSubmit = () => {
+    if (!addFriendUrl) {
+      console.log("No url provided");
+      return;
+    }
+    axios.post(addFriendUrl)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  }
+
 
   const handleShareButtonPress = async () => {
-    const url = `exp://10.0.0.17:8081/addfriend/${userId}`;
+    const url = `exp://mlxl3ng.anonymous.8081.exp.direct/addfriend/${userId}`;
     await Share.share({
       message: url,
     });
   };
 
-  const handleIncomingURL = async (event) => {
-    const friendId = event.url.replace("exp://10.0.0.17:8081/addfriend/", "");
+  const handleIncomingURL = async (event: any) => {
+    const friendId = event.url.replace("exp://mlxl3ng.anonymous.8081.exp.direct/addfriend/", "");
 
     // Make a POST request to your API endpoint here to add the current user and friendId as friends
     fetch(
       "https://oursos-backend-production.up.railway.app/addfriend/" +
-        userId +
-        "/" +
-        friendId,
+      userId +
+      "/" +
+      friendId,
       {
         method: "POST",
       }
@@ -44,6 +56,7 @@ export default function AddFriend() {
     Linking.addEventListener("url", handleIncomingURL);
 
     return () => {
+      //@ts-ignore
       Linking.removeEventListener("url", handleIncomingURL);
     };
   }, []);
@@ -54,6 +67,16 @@ export default function AddFriend() {
 
   return (
     <View style={tw.style("flex-1")}>
+
+      <TextInput style={tw.style("border border-primary")}  value={addFriendUrl} onChangeText={setAddFriendUrl}></TextInput>
+      <Pressable 
+      style={tw.style(
+            "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+          )}
+        onPress={handleAddFriendSubmit}>
+        <Text>Add Friend</Text>
+      </Pressable>
+
       <View style={tw.style("flex-row justify-between items-center p-4")}>
         <Pressable
           onPress={handleBackButtonPress}

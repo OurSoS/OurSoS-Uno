@@ -123,7 +123,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("welcome");
+  const [introComponent, setIntroComponent] = useState("dashboard");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -169,47 +169,6 @@ export default function Index() {
     }
     // Here you might want to save the token if you plan to use remote notifications
   }
-  useEffect(() => {
-    const init = async () => {
-      await registerForPushNotificationsAsync();
-    };
-
-    init();
-  }, []);
-
-  Notification.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
-    }),
-  });
-
-  // calculate distance between two points
-  const degreesToRadians = (degrees: number) => {
-    return (degrees * Math.PI) / 180;
-  };
-
-  const distanceBetweenPoints = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ) => {
-    const earthRadiusKm = 6371;
-
-    const dLat = degreesToRadians(lat2 - lat1);
-    const dLon = degreesToRadians(lon2 - lon1);
-
-    lat1 = degreesToRadians(lat1);
-    lat2 = degreesToRadians(lat2);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return earthRadiusKm * c;
-  };
 
   useEffect(() => {
     (async () => {
@@ -261,6 +220,53 @@ export default function Index() {
       }
     })();
   }, []);
+
+
+
+
+  useEffect(() => {
+    const init = async () => {
+      await registerForPushNotificationsAsync();
+    };
+
+    init();
+  }, []);
+
+  Notification.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
+  // calculate distance between two points
+  const degreesToRadians = (degrees: number) => {
+    return (degrees * Math.PI) / 180;
+  };
+
+  const distanceBetweenPoints = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
+    const earthRadiusKm = 6371;
+
+    const dLat = degreesToRadians(lat2 - lat1);
+    const dLon = degreesToRadians(lon2 - lon1);
+
+    lat1 = degreesToRadians(lat1);
+    lat2 = degreesToRadians(lat2);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return earthRadiusKm * c;
+  };
+
+
 
   useEffect(() => {
     (async () => {
