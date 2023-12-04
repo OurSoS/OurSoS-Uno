@@ -184,7 +184,7 @@ export default function Dashboard({
                                     >
                                           <View
                                                 style={tw.style(
-                                                      "bg-[#ffefd4] bg-opacity-80 rounded-sm items-center justify-center w-[9.5] h-[9.5]"
+                                                      "bg-[#ffffff] bg-opacity-80 rounded-sm items-center justify-center w-[9.5] h-[9.5]"
                                                 )}
                                           >
                                                 <Image

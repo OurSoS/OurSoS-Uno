@@ -127,7 +127,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   };
 
   return (
-    <View style={tw.style("")}>
+    <View style={tw.style("p-4")}>
       <View style={tw.style("")}>
         <Pressable
           style={tw.style(
@@ -160,17 +160,17 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
       {markers.map((alert: Alert, index: number) => (
         <View
           key={index}
-          style={tw.style("flex-row p-2 mb-2 bg-white rounded-lg shadow-md", {
+          style={tw.style("flex-col p-2 mb-2 bg-white rounded-lg shadow-md gap-4", {
             backgroundColor: "#fff",
           })}
         >
           {/* Left column for alert details */}
           <View style={tw.style("flex-1")}>
             {/* Top left padding for the icon */}
-            <View style={tw.style("flex-row")}>
+            <View style={tw.style("flex-row items-center")}>
               <Image
                 source={getAlertIcon(alert.type)}
-                style={tw.style("w-4 h-4 mt-1")}
+                style={tw.style("w-8 h-8 mt-1")}
               />
               {/* Title next to the icon */}
               <Text style={tw.style("text-lg font-bold ml-1")}>{alert.type}</Text>
@@ -200,9 +200,9 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                     rotateEnabled={false}
                     loadingBackgroundColor={"#000000"}
                     style={{
-                      height: 100,
-                      width: 200,
-                      borderRadius: 10,
+                      height: 150,
+                     
+                      
                     }}
                     //@ts-ignore
                     initialRegion={
@@ -239,7 +239,9 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                             longitudeDelta: 0.001,
                           }
                     }
-                  ></MapView>
+                  >
+
+                  </MapView>
                 </>
               ) : null}
             </View>
