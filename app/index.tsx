@@ -402,7 +402,7 @@ export default function Index() {
       <View style={styles.container}>
         <ImageBackground
           source={require("../assets/Intro/Map.png")}
-          style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
+          style={[tw.style("flex-1 justify-center w-full"), { resizeMode: "cover" }]}
         >
           {introComponent === "welcome" ? (
             <IntroTextButton

@@ -35,7 +35,8 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow OurSOS to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow OurSOS to use your location.",
+          "asyncRoutes": "development"
         }
       ]
     ],

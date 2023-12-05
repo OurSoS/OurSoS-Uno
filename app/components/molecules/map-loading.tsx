@@ -4,7 +4,7 @@ import tw from "../../../lib/tailwind";
 
 export default function MapLoading () {
       return (
-            <View style={tw.style("animate-pulse bg-muted h-[4rem] w-[4rem] rounded-lg")}>
+            <View style={tw.style("animate-pulse bg-muted h-{300} w-full rounded-lg")}>
                   
             </View>
       )
