@@ -59,7 +59,7 @@ export default function MapComp(props: MapCompProps) {
   );
   const [myAccurateLocation, setMyAccurateLocation] = useState<any>({});
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
-  const [myMapType, setMyMapType] = useState<MapType>("standard");
+  const [myMapType, setMyMapType] = useState<MapType>("default");
   const [updateTick, setUpdateTick] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
 
@@ -369,8 +369,12 @@ export default function MapComp(props: MapCompProps) {
             // setGeneratedMarkers([]);
           } else {
             setGeneratedMarkers(response.data);
-            setGeneratedMarkers(response.data.map((marker:any) => ({ ...marker, confirmed: true })));
-
+            setGeneratedMarkers(
+              response.data.map((marker: any) => ({
+                ...marker,
+                confirmed: true,
+              }))
+            );
           }
         })
         .catch((error) => {
@@ -780,14 +784,14 @@ export default function MapComp(props: MapCompProps) {
       showAlertReportModal === false &&
       showMapFeedModal === false ? (
         <View
-          style={tw`top-15 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}
+          style={tw`w-16 items-center justify-center top-15 right-0 absolute bg-white p-2 rounded-bl-xl rounded-tl-xl`}
         >
           {/* //SATELLITE BUTTON */}
           {showMapFeedModal === false ? (
             <Pressable
               onPress={() => {
-                if (myMapType === "standard") setMyMapType("satellite");
-                else if (myMapType === "satellite") setMyMapType("standard");
+                if (myMapType === "default") setMyMapType("hybrid");
+                else if (myMapType === "hybrid") setMyMapType("default");
               }}
             >
               <Image
@@ -855,7 +859,11 @@ export default function MapComp(props: MapCompProps) {
                   {filter}
                 </Text>
               ) : (
-                <Text style={tw.style("text-center mb-2 text-xs")}>
+                <Text
+                  style={tw.style("text-center mb-2 text-xs")}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
                   {filter}s
                 </Text>
               )}

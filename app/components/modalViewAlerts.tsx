@@ -173,7 +173,9 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                 style={tw.style("w-4 h-4 mt-1")}
               />
               {/* Title next to the icon */}
-              <Text style={tw.style("text-lg font-bold ml-1")}>{alert.type}</Text>
+              <Text style={tw.style("text-lg font-bold ml-1")}>
+                {alert.type}
+              </Text>
             </View>
 
             {/* Message or title in italic text */}
@@ -196,7 +198,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                     liteMode={true}
                     scrollEnabled={false}
                     zoomEnabled={false}
-                    mapType={"satellite"}
+                    mapType={"hybrid"}
                     rotateEnabled={false}
                     loadingBackgroundColor={"#000000"}
                     style={{

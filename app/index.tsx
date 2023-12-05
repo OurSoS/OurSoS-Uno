@@ -221,9 +221,6 @@ export default function Index() {
     })();
   }, []);
 
-
-
-
   useEffect(() => {
     const init = async () => {
       await registerForPushNotificationsAsync();
@@ -265,8 +262,6 @@ export default function Index() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return earthRadiusKm * c;
   };
-
-
 
   useEffect(() => {
     (async () => {
@@ -339,7 +334,11 @@ export default function Index() {
         if (distance <= 0.01) {
           // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
           ++i;
-          console.log("alert", alert.category, alert.id);
+          console.log(
+            "==============alert================",
+            alert.category,
+            alert.id
+          );
           await sendLocalNotification(
             `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
           );
@@ -355,7 +354,7 @@ export default function Index() {
           title: "Alert Notification",
           body: message,
         },
-        trigger: null, // Immediate trigger
+        trigger: null, 
       });
     } catch (error) {
       console.error("Error in sending notification", error);
@@ -437,7 +436,7 @@ export default function Index() {
                   `bg-[#003566]`,
                   `px-7`,
                   `py-3`,
-                  `rounded-lg`                  
+                  `rounded-lg`
                 )}
               >
                 <Text style={tw.style(`text-white`)}>Continue</Text>
