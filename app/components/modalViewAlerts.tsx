@@ -7,6 +7,7 @@ import MapView from "react-native-map-clustering";
 import { mapStyle } from "../../utils/static-types";
 import { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { router } from "expo-router";
+import axios from "axios";
 
 type Alert = {
   type: string;
@@ -83,6 +84,24 @@ function getNextAlertType(currentType: alertFilter): alertFilter {
 const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   const [markers, setMarkers] = useState<any>([]);
   const [filter, setFilter] = useState<alertFilter>("All");
+  const [userLang, setUserLang] = useState("fa");
+  const [translatedData, setTranslatedData] = useState<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          console.log(
+            "===============translateadData=============",
+            translatedData
+          );
+        });
+    })();
+  }, []);
 
   useEffect(() => {
     setMarkers(
@@ -160,9 +179,12 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
       {markers.map((alert: Alert, index: number) => (
         <View
           key={index}
-          style={tw.style("flex-col p-2 mb-2 bg-white rounded-lg shadow-md gap-4", {
-            backgroundColor: "#fff",
-          })}
+          style={tw.style(
+            "flex-col p-2 mb-2 bg-white rounded-lg shadow-md gap-4",
+            {
+              backgroundColor: "#fff",
+            }
+          )}
         >
           {/* Left column for alert details */}
           <View style={tw.style("flex-1")}>
@@ -203,8 +225,6 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                     loadingBackgroundColor={"#000000"}
                     style={{
                       height: 150,
-                     
-                      
                     }}
                     //@ts-ignore
                     initialRegion={
@@ -241,9 +261,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
                             longitudeDelta: 0.001,
                           }
                     }
-                  >
-
-                  </MapView>
+                  ></MapView>
                 </>
               ) : null}
             </View>

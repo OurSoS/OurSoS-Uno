@@ -19,7 +19,24 @@ type LanguageType = {
 
 export default function SelectLanguages() {
   const [languages, setLanguages] = useState<LanguageType[]>([]);
-  const [userLang, setUserLang] = useState("hi");
+  const [userLang, setUserLang] = useState("fa");
+  const [translatedData, setTranslatedData] = useState<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          console.log(
+            "===============translateadData=============",
+            translatedData
+          );
+        });
+    })();
+  }, []);
 
   const setUserLanguage = async () => {
     const updateUserRequest = {
@@ -34,22 +51,20 @@ export default function SelectLanguages() {
 
   useEffect(() => {
     (async () => {
-     
-          setLanguages([
-            {
-              "name": "Polski",
-              "tag": "pl"
-            },
-            {
-              "name": "中國傳統的）",
-              "tag": "zh-TW"
-            },
-            {
-              "name": "فارسی",
-              "tag": "fa"
-            },
-          ]);
-       
+      setLanguages([
+        {
+          name: "Polski",
+          tag: "pl",
+        },
+        {
+          name: "中國傳統的）",
+          tag: "zh-TW",
+        },
+        {
+          name: "فارسی",
+          tag: "fa",
+        },
+      ]);
     })();
   }, []);
 
