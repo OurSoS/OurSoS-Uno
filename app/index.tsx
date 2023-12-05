@@ -32,7 +32,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 type alert = {
   id?: number;
   message?: string;
-  category: string;
+  type: string;
   lat: Float;
   long: Float;
   radius?: Float;
@@ -127,7 +127,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("welcome");
+  const [introComponent, setIntroComponent] = useState("dashboard");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -172,6 +172,8 @@ export default function Index() {
         .then((response) => response.json())
         .then((data) => {
           if (data === null) {
+            //IF the user does not exist, create a new user and display the INTRO rather than Dashboard.
+            setIntroComponent("welcome");
             let userData = {
               deviceId: deviceId,
               username: deviceId,
@@ -197,14 +199,35 @@ export default function Index() {
               .catch((error) => {
                 console.error("Error:", error);
               });
+          } else {
+            setIntroComponent("dashboard");
           }
         });
 
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/languages")
-        .then((res) => {
-          setLanguages(res.data);
-        });
+      
+        setLanguages([
+          {
+            "name": "Polski",
+            "tag": "pl"
+          },
+          {
+            "name": "简体中文）",
+            "tag": "zh"
+          },
+          {
+            "name": "Français",
+            "tag": "fr"
+          },
+          {
+            "name": "Italiano",
+            "tag": "it"
+          },
+          {
+            "name": "नहीं",
+            "tag": "hi"
+          },
+        ]);
+        
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -330,11 +353,11 @@ export default function Index() {
         ++i;
         console.log(
           "==============alert================",
-          alert.category,
+          alert.type,
           alert.id
         );
         await sendLocalNotification(
-          `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
+          `Emergency Alert: Immediate danger in your area due to a ${alert.type}.Seek safety immediately as per local guidelines and stay informed.`
         );
       }
     }
