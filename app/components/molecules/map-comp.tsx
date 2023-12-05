@@ -59,7 +59,7 @@ export default function MapComp(props: MapCompProps) {
   );
   const [myAccurateLocation, setMyAccurateLocation] = useState<any>({});
   const [showAlertReportModal, setShowAlertReportModal] = useState(false);
-  const [myMapType, setMyMapType] = useState<MapType>("default");
+  const [myMapType, setMyMapType] = useState<MapType>("standard");
   const [updateTick, setUpdateTick] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
 
@@ -790,8 +790,8 @@ export default function MapComp(props: MapCompProps) {
           {showMapFeedModal === false ? (
             <Pressable
               onPress={() => {
-                if (myMapType === "default") setMyMapType("hybrid");
-                else if (myMapType === "hybrid") setMyMapType("default");
+                if (myMapType === "standard") setMyMapType("satellite");
+                else if (myMapType === "satellite") setMyMapType("standard");
               }}
             >
               <Image
