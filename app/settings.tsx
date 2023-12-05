@@ -30,16 +30,16 @@ export default function Settings() {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);
 
   useEffect(() => {
-    console.log(getDeviceId());
+    // console.log(getDeviceId());
     (async () => {
       await axios
         .get(

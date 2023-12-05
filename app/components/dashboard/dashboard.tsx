@@ -60,10 +60,10 @@ export default function Dashboard({
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);
@@ -135,7 +135,7 @@ export default function Dashboard({
         });
     })();
   }, []);
-  console.log(translatedData);
+  // console.log(translatedData);
   return (
     <View
       style={tw.style(

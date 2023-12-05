@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -39,6 +39,24 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const progress = useSharedValue(1);
   const min = useSharedValue(1);
   const max = useSharedValue(2);
+  const [userLang, setUserLang] = useState("fa");
+  const [translatedData, setTranslatedData] = useState<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
+        });
+    })();
+  }, []);
 
   const categories = ["Hazard", "Fire", "Police"];
 
@@ -131,9 +149,14 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       </Pressable>
       {view === 1 && (
         <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
-          <Text> Page 1/3</Text>
+          <Text>
+            {" "}
+            {userLang !== "en" ? translatedData?.modal?.page : "Page"} 1/3
+          </Text>
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
-            What did you see?
+            {userLang !== "en"
+              ? translatedData?.modal?.whatdidyousee
+              : "What did you see?"}
           </Text>
           <View
             style={tw.style("flex flex-grow justify-center items-center gap-6")}
@@ -195,7 +218,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                   : null
               }
             >
-              Severity? ({severity === 1 ? "Low" : "High"})
+              {userLang !== "en" ? translatedData?.modal?.severity : "Severity"}{" "}
+              ? ({severity === 1 ? "Low" : "High"})
             </Text>
 
             <Slider
@@ -212,15 +236,24 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
       {view === 2 && (
         <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
-          <Text style={tw.style("")}> Page 2/3</Text>
+          <Text style={tw.style("")}>
+            {" "}
+            {userLang !== "en" ? translatedData?.modal?.page : "Page"} 2/3
+          </Text>
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
-            Tell us more
+            {userLang !== "en"
+              ? translatedData?.modal?.tellusmore
+              : "Tell Us More"}
           </Text>
           <Text style={tw.style("mt-2 text-gray-400")}>
             Characters used {description.length}/50
           </Text>
           <TextInput
-            placeholder="What happened?"
+            placeholder={`${
+              userLang !== "en"
+                ? translatedData?.modal?.whathappened
+                : "What Happened?"
+            }`}
             value={description}
             onChangeText={handleDescriptionChange}
             style={
@@ -243,14 +276,20 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             )}
             onPress={() => setView(3)}
           >
-            <Text style={tw.style("text-xl text-white text-center")}>Next</Text>
+            <Text style={tw.style("text-xl text-white text-center")}>
+              {" "}
+              {userLang !== "en" ? translatedData?.modal?.next : "Next"}{" "}
+            </Text>
           </Pressable>
         </View>
       )}
 
       {view === 3 && (
         <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
-          <Text> Page 3/3</Text>
+          <Text>
+            {" "}
+            {userLang !== "en" ? translatedData?.modal?.page : "Page"} 3/3
+          </Text>
 
           {selectedCategory === "Hazard" && (
             <View style={tw.style("flex flex-col items-center")}>
@@ -293,9 +332,15 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             )}
           >
             <Text style={tw.style("text-xl pb-6")}>
-              Description: {description}
+              {userLang !== "en"
+                ? translatedData?.modal?.description
+                : "Description"}{" "}
+              {description}
             </Text>
-            <Text style={tw.style("text-xl")}>Severity: {severity}</Text>
+            <Text style={tw.style("text-xl")}>
+              {userLang !== "en" ? translatedData?.modal?.severity : "Severity"}{" "}
+              {severity}
+            </Text>
           </View>
           <View style={tw.style("flex flex-row justify-evenly")}>
             <Pressable
@@ -315,7 +360,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
               onPress={handleSubmit}
             >
               <Text style={tw.style("text-xl text-white text-center")}>
-                Report
+                {userLang !== "en" ? translatedData?.map?.report : "Report"}{" "}
               </Text>
             </Pressable>
           </View>

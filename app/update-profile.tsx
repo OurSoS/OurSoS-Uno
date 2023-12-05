@@ -33,10 +33,10 @@ export default function UpdateProfile() {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);
