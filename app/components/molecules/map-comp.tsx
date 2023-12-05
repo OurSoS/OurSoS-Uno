@@ -346,17 +346,27 @@ export default function MapComp(props: MapCompProps) {
                 `https://api-bdc.net/data/reverse-geocode?latitude=${alert.lat}&longitude=${alert.long}&localityLanguage=en&key=bdc_60a73c32772246e09c3f6e8bed5ca65e`
               )
               .then((response) => {
+
                 combineDesc +=
-                  response.data.locality +
-                  ", " +
-                  response.data.principalSubdivision;
-                alert.desc = alert.desc + " - " + combineDesc;
+                response.data.locality +
+                ", " +
+                response.data.principalSubdivision;
+              alert.desc = alert.desc + " - " + combineDesc;
+
+                alert.type === "Hazard" ? (
+                  combineDesc+= " ⚠️"
+                ) : alert.type === "Police" ? (
+                  combineDesc+= " 🚓"
+                ) : alert.type === "Fire"  ? (
+                  combineDesc+= " 🔥"
+                ) : null;
+                
 
                 axios
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
                     {
-                      message: alert.desc + " - " + combineDesc,
+                      message: alert.desc,
                       type: alert.type,
                       severity: alert.severity,
                       lat: alert.lat,
