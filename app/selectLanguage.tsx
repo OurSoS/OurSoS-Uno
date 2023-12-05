@@ -34,23 +34,42 @@ export default function SelectLanguages() {
 
   useEffect(() => {
     (async () => {
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/languages")
-        .then((res) => {
-          setLanguages(res.data);
-        });
+     
+          setLanguages([
+            {
+              "name": "Polski",
+              "tag": "pl"
+            },
+            {
+              "name": "简体中文）",
+              "tag": "zh"
+            },
+            {
+              "name": "Français",
+              "tag": "fr"
+            },
+            {
+              "name": "Italiano",
+              "tag": "it"
+            },
+            {
+              "name": "नहीं",
+              "tag": "hi"
+            },
+          ]);
+       
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/languages")
-        .then((res) => {
-          setLanguages(res.data);
-        });
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await axios
+  //       .get("https://oursos-backend-production.up.railway.app/languages")
+  //       .then((res) => {
+  //         setLanguages(res.data);
+  //       });
+  //   })();
+  // }, []);
 
   return (
     <>
