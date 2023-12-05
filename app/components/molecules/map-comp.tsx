@@ -52,8 +52,8 @@ export default function MapComp(props: MapCompProps) {
   });
   //current region temporary fix set to vancouver area
   const [currentRegion, setCurrentRegion] = useState({
-    latitude: 49.246292,
-    longitude: -123.116226,
+    latitude: location?.coords?.latitude || 0,
+    longitude: location?.coords?.longitude || 0,
     latitudeDelta: 5,
     longitudeDelta: 5,
   });
@@ -729,10 +729,23 @@ export default function MapComp(props: MapCompProps) {
                     longitude: parseFloat(friend.longitude),
                   }}
                 >
+                  <View
+                    style={{
+                      position: "absolute",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 20,
+                      backgroundColor: "lightblue",
+                      borderBlockColor: "black",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}>
                   <Image
                     source={{ uri: friend.profile }}
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: 20, height: 20, borderRadius: 20}}
                   />
+                  </View>
                 </Marker>
               );
             })}

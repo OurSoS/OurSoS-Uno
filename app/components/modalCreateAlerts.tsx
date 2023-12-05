@@ -339,7 +339,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             </Text>
             <Text style={tw.style("text-xl")}>
               {userLang !== "en" ? translatedData?.modal?.severity : "Severity"}{" "}
-              {severity}
+              {severity === 1 ? "Low" : "High"}
             </Text>
           </View>
           <View style={tw.style("flex flex-row justify-evenly")}>
