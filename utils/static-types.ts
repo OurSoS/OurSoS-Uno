@@ -1,3 +1,4 @@
+import MapView from "react-native-map-clustering";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 export const nostalgicMapStyle = [
@@ -127,6 +128,8 @@ export type MapCompProps = {
   pitchEnabled?: boolean;
   toolbarEnabled?: boolean;
   zoomEnabled?: boolean;
+  longTo?: number;
+  latTo?: number;
 };
 
 export type LocationData = {
