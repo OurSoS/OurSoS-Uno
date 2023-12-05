@@ -48,6 +48,9 @@ export default function Dashboard({
   const [snackData, setSnackData] = useState<any>({});
   const [city, setCity] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
+  const [goToFriendLat, setGoToFriendLat] = useState(0)
+  const [goToFriendLong, setGoToFriendLong] = useState(0)
+
 
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
@@ -164,11 +167,6 @@ export default function Dashboard({
         style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
       >
         <ScrollView style={tw.style(`p-4 mb-10`)}>
-          {/* <Searchbar
-          placeholder="Search"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-         /> */}
           <View style={tw.style(`flex-row items-center justify-between`)}>
             <View style={tw.style(`flex-row items-center`)}>
               <Image
@@ -190,7 +188,6 @@ export default function Dashboard({
             data={news}
             translatedData={translatedNews}
           />
-
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>
             <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>MAP</Text>
             <View
@@ -204,6 +201,8 @@ export default function Dashboard({
                 scrollEnabled={false}
                 toolbarEnabled={false}
                 height={300}
+                longTo={goToFriendLong}
+                latTo={goToFriendLat}
               />
             </View>
             <Pressable
@@ -252,8 +251,11 @@ export default function Dashboard({
                           "Latitude: ",
                           displayData.latitude,
                           "longitude: ",
-                          displayData.longitude
-                        );
+                          displayData.longitude,
+                          );
+                        setGoToFriendLat(displayData.latitude)
+                        setGoToFriendLong(displayData.longitude)   
+                        console.log("TEST:",goToFriendLat, goToFriendLong)                       
                       }}
                       style={tw.style(
                         "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md bottom-12 transform -translate-x-1/2"
