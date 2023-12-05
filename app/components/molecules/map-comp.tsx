@@ -356,7 +356,7 @@ export default function MapComp(props: MapCompProps) {
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
                     {
-                      message: alert.desc + " - " + combineDesc,
+                      message: alert.desc,
                       type: alert.type,
                       severity: alert.severity,
                       lat: alert.lat,
