@@ -278,7 +278,7 @@ export default function Dashboard({
                         console.log("TEST:",goToFriendLat, goToFriendLong)                       
                       }}
                       style={tw.style(
-                        "items-center justify-center rounded-full px-2 mt-6 py-2 shadow-md bottom-12"
+                        "items-center justify-center rounded-full px-2 mt-6 py-2  bottom-12"
                       )}
                     >
                       <Image
