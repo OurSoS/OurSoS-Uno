@@ -354,7 +354,7 @@ export default function Index() {
         //   alert.id
         // );
         await sendLocalNotification(
-          `Emergency Alert: Immediate danger in your area due to a ${alert.type}.Seek safety immediately as per local guidelines and stay informed.`
+          `Emergency Alert: There is a ${alert.type} in your area due to ${alert.message}. Seek safety immediately as per local guidelines and stay informed.`
         );
       }
     }
