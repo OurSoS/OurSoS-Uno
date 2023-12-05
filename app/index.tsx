@@ -25,10 +25,9 @@ import Footer from "./components/molecules/Footer";
 import { getDeviceId } from "./chat";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs();//Ignore all log notifications
-
+import { LogBox } from "react-native";
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 type alert = {
   id?: number;
@@ -128,7 +127,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("dashboard");
+  const [introComponent, setIntroComponent] = useState("welcome");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -136,20 +135,20 @@ export default function Index() {
 
   // declare all characters
 
- const tw = create(require("../tailwind.config.ts"));
+  const tw = create(require("../tailwind.config.ts"));
   const setUserLanguage = async () => {
     if (userLang) {
       setUserLang(userLang);
 
-      // await axios
-      //   .post<{ translateObject: staticType; lang: string }>(
-      //     "https://oursos-backend-production.up.railway.app/translateobject",
-      //     { translateObject: staticText, lang: userLang }
-      //   )
-      //   .then((res) => {
-      //     setTranslatedStaticContent(res.data);
-      //     setIntroComponent("newsFeed");
-      //   });
+      await axios
+        .post<{ translateObject: staticType; lang: string }>(
+          "https://oursos-backend-production.up.railway.app/translateobject",
+          { translateObject: staticText, lang: userLang }
+        )
+        .then((res) => {
+          setTranslatedStaticContent(res.data);
+          setIntroComponent("newsFeed");
+        });
     }
   };
 
@@ -308,7 +307,7 @@ export default function Index() {
         );
       }
     })();
-  }, []);
+  }, [alerts]);
 
   const checkAndNotifyForAlerts = async (
     myLatitude: number,
@@ -318,26 +317,26 @@ export default function Index() {
     // console.log(alerts.length);
     let i = 0;
     for (let alert of alerts) {
-      console.log(alerts);  
+      console.log(alerts);
 
       const distance = distanceBetweenPoints(
-          myLatitude,
-          myLongitude,
-          alert.lat,
-          alert.long
+        myLatitude,
+        myLongitude,
+        alert.lat,
+        alert.long
+      );
+      if (distance <= 100) {
+        // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
+        ++i;
+        console.log(
+          "==============alert================",
+          alert.category,
+          alert.id
         );
-        if (distance <= 100) {
-          // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
-          ++i;
-          console.log(
-            "==============alert================",
-            alert.category,
-            alert.id
-          );
-          await sendLocalNotification(
-            `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
-          );
-        }
+        await sendLocalNotification(
+          `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
+        );
+      }
     }
   };
 
@@ -348,7 +347,7 @@ export default function Index() {
           title: "Alert Notification",
           body: message,
         },
-        trigger: null, 
+        trigger: null,
       });
     } catch (error) {
       console.error("Error in sending notification", error);
@@ -358,7 +357,9 @@ export default function Index() {
   useEffect(() => {
     (async () => {
       await axios
-        .get(`https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`)
+        .get(
+          `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
+        )
         .then((res) => {
           setCurrentUser(res.data);
         });
