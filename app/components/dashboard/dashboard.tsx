@@ -83,44 +83,10 @@ export default function Dashboard({
 
   useEffect(() => {
     (async () => {
-      try {
-        const newsResponse = await fetch(
-          `https://oursos-backend-production.up.railway.app/news`
-        );
-        if (!newsResponse.ok) throw new Error("Network response was not ok.");
-        const newsData: newsItemType[] = await newsResponse.json();
-        setNews(newsData);
-        let translationData: {
-          [key: string]: { title: string; snippet: string };
-        } = {};
-        newsData.forEach((item, i) => {
-          translationData[i.toString()] = {
-            title: item.title,
-            snippet: item.snippet,
-          };
-        });
-
-        // const translateResponse = await fetch(
-        //   "https://oursos-backend-production.up.railway.app/translateobject",
-        //   {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //       translateObject: translationData,
-        //       lang: userLang,
-        //     }),
-        //   }
-        // );
-        // if (!translateResponse.ok)
-        //   throw new Error("Network response was not ok.");
-        // const translatedNews = await translateResponse.json();
-        // setTranslatedNews(translatedNews);
-        // console.log("adsfsdafasdfsad", translatedNews);
-      } catch (err) {
-        console.error("Error in fetching or translating news:", err);
-      }
+      await axios.post(`https://oursos-backend-production.up.railway.app/news/${userLang}`)
+        .then((response) => {
+          setNews(response.data);
+        })
     })();
   }, [userLang]);
 
