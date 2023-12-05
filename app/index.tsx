@@ -126,7 +126,7 @@ export default function Index() {
 
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
-  const [userLang, setUserLang] = useState("hi");
+  const [userLang, setUserLang] = useState("fa");
   const [introComponent, setIntroComponent] = useState("dashboard");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
