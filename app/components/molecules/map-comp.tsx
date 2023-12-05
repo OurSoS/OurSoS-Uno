@@ -88,6 +88,25 @@ export default function MapComp(props: MapCompProps) {
 
   const mapRef = React.useRef<MapView>(null);
 
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case "Wildfire":
+        return require("../../../assets/mapIcons/Wildfire.png");
+      case "Earthquake":
+        return require("../../../assets/mapIcons/Earthquake.png");
+      case "Tsunami":
+        return require("../../../assets/mapIcons/Tsunami.png");
+      case "Hazard":
+        return require("../../../assets/alert-categorys/Hazard.png"); // Adjust as needed
+      case "Fire":
+        return require("../../../assets/alert-categorys/Fire.png");
+      case "Police":
+        return require("../../../assets/alert-categorys/Police.png");
+      default:
+        return require("../../../assets/mapIcons/MeIcon.png");
+    }
+  };
+
   const updateVisibleMarkers = (type: alertFilter) => {
     // console.log("Current filter is : ", type);
     switch (type) {
@@ -837,14 +856,10 @@ export default function MapComp(props: MapCompProps) {
                 source={require("../../../assets/footerIcons/mapIcon.png")}
                 style={tw.style(`h-8 w-8 ml-2`)}
               />
-              <Text
-                style={tw.style("text-center mb-2")}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {myMapType}
-              </Text>
-              {/* <Text style={tw.style("text-center mb-2")}>Map</Text> */}
+              <Text style={tw.style("text-center mb-2")}>{
+                myMapType === `standard` ? "Map" : "Earth"
+
+              }</Text>
             </Pressable>
           ) : (
             <View></View>
@@ -907,23 +922,10 @@ export default function MapComp(props: MapCompProps) {
                 }
               }}
             >
-              <Text style={{ textAlign: "center" }}>
-                {" "}
-                {userLang !== "en" ? translatedData?.map?.show : "Show"}
-              </Text>
-              {filter === "Police" || filter === "All" ? (
-                <Text style={tw.style("text-center mb-2 text-xs")}>
-                  {filter}
-                </Text>
-              ) : (
-                <Text
-                  style={tw.style("text-center mb-2 text-xs")}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {filter}s
-                </Text>
-              )}
+              <Image 
+                source={getAlertIcon(filter)}
+                style={tw.style(`h-8 w-8`)}
+              />
             </TouchableOpacity>
           ) : (
             <View></View>
