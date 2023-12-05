@@ -114,7 +114,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
           false
         );
 
-        props.setMapType("hybrid");
+        props.setMapType("satellite");
 
         props.updateMap((prev) => !prev);
       } else {
