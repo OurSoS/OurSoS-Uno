@@ -211,20 +211,12 @@ export default function Index() {
             "tag": "pl"
           },
           {
-            "name": "简体中文）",
-            "tag": "zh"
+            "name": "中國傳統的）",
+            "tag": "zh-TW"
           },
           {
-            "name": "Français",
-            "tag": "fr"
-          },
-          {
-            "name": "Italiano",
-            "tag": "it"
-          },
-          {
-            "name": "नहीं",
-            "tag": "hi"
+            "name": "فارسی",
+            "tag": "fa"
           },
         ]);
         

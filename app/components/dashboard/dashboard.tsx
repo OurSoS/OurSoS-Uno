@@ -48,6 +48,9 @@ export default function Dashboard({
   const [snackData, setSnackData] = useState<any>({});
   const [city, setCity] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
+  const [goToFriendLat, setGoToFriendLat] = useState(0)
+  const [goToFriendLong, setGoToFriendLong] = useState(0)
+
 
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
@@ -205,7 +208,6 @@ export default function Dashboard({
             data={news}
             translatedData={translatedNews}
           />
-
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>
             <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>MAP</Text>
             <View
@@ -219,6 +221,8 @@ export default function Dashboard({
                 scrollEnabled={false}
                 toolbarEnabled={false}
                 height={300}
+                longTo={goToFriendLong}
+                latTo={goToFriendLat}
               />
             </View>
             <Pressable
@@ -267,11 +271,14 @@ export default function Dashboard({
                           "Latitude: ",
                           displayData.latitude,
                           "longitude: ",
-                          displayData.longitude
-                        );
+                          displayData.longitude,
+                          );
+                        setGoToFriendLat(displayData.latitude)
+                        setGoToFriendLong(displayData.longitude)   
+                        console.log("TEST:",goToFriendLat, goToFriendLong)                       
                       }}
                       style={tw.style(
-                        "items-center justify-center rounded-full px-2 mt-6 py-2 shadow-md bottom-12"
+                        "items-center justify-center rounded-full px-2 mt-6 py-2  bottom-12"
                       )}
                     >
                       <Image
