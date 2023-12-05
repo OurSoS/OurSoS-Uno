@@ -127,7 +127,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("fa");
-  const [introComponent, setIntroComponent] = useState("dashboard");
+  const [introComponent, setIntroComponent] = useState("welcome");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -402,7 +402,10 @@ export default function Index() {
       <View style={styles.container}>
         <ImageBackground
           source={require("../assets/Intro/Map.png")}
-          style={[tw.style("flex-1 justify-center w-full"), { resizeMode: "cover" }]}
+          style={[
+            tw.style("flex-1 justify-center w-full"),
+            { resizeMode: "cover" },
+          ]}
         >
           {introComponent === "welcome" ? (
             <IntroTextButton
@@ -430,11 +433,14 @@ export default function Index() {
                       setUserLang(languages[index]?.tag);
                     }}
                     style={tw.style(
-                      `text-white`,
-                      `bg-white`,
                       `px-7`,
                       `py-3`,
-                      `rounded-lg border mb-3`
+                      `rounded-lg`,
+                      `border`,
+                      `mb-3`,
+                      userLang === languages[index]?.tag
+                        ? `bg-gray-400`
+                        : `bg-white`
                     )}
                   >
                     <Text style={styles.text}>{item.name}</Text>

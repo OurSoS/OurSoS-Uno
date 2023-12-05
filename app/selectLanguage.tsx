@@ -117,13 +117,14 @@ export default function SelectLanguages() {
                   setUserLang(languages[index]?.tag);
                 }}
                 style={tw.style(
-                  `text-white`,
-                  `bg-white`,
                   `px-7`,
                   `py-3`,
                   `rounded-lg`,
                   `border`,
-                  `mb-3`
+                  `mb-3`,
+                  userLang === languages[index]?.tag
+                    ? `bg-gray-400`
+                    : `bg-white`
                 )}
               >
                 <Text style={styles.text}>{item.name}</Text>
