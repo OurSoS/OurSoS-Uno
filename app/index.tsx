@@ -32,7 +32,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 type alert = {
   id?: number;
   message?: string;
-  category: string;
+  type: string;
   lat: Float;
   long: Float;
   radius?: Float;
@@ -200,11 +200,30 @@ export default function Index() {
           }
         });
 
-      await axios
-        .get("https://oursos-backend-production.up.railway.app/languages")
-        .then((res) => {
-          setLanguages(res.data);
-        });
+      
+        setLanguages([
+          {
+            "name": "Polski",
+            "tag": "pl"
+          },
+          {
+            "name": "简体中文）",
+            "tag": "zh"
+          },
+          {
+            "name": "Français",
+            "tag": "fr"
+          },
+          {
+            "name": "Italiano",
+            "tag": "it"
+          },
+          {
+            "name": "नहीं",
+            "tag": "hi"
+          },
+        ]);
+        
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -330,11 +349,11 @@ export default function Index() {
         ++i;
         console.log(
           "==============alert================",
-          alert.category,
+          alert.type,
           alert.id
         );
         await sendLocalNotification(
-          `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
+          `Emergency Alert: Immediate danger in your area due to a ${alert.type}.Seek safety immediately as per local guidelines and stay informed.`
         );
       }
     }
