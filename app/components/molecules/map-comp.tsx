@@ -623,6 +623,8 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
+                
+                  title={a.acq_date + ", Size: " + a.scan}
                 >
                   <View
                     style={{
@@ -656,6 +658,7 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
+                  title={a.properties.title}
                 >
                   <View
                     style={{
