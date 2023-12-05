@@ -95,10 +95,10 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);

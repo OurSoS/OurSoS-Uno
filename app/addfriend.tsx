@@ -19,10 +19,10 @@ export default function AddFriend() {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);
@@ -118,7 +118,14 @@ export default function AddFriend() {
         </Pressable>
       </View>
       <View style={tw.style("flex-1 justify-center items-center")}>
-        <Button title="Add Friend" onPress={handleShareButtonPress} />
+        <Button
+          title={`${
+            userLang !== "en"
+              ? translatedData?.settings?.addfriend
+              : "Add Friend"
+          }`}
+          onPress={handleShareButtonPress}
+        />
       </View>
     </View>
   );

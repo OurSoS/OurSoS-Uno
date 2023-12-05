@@ -30,16 +30,16 @@ export default function Settings() {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);
 
   useEffect(() => {
-    console.log(getDeviceId());
+    // console.log(getDeviceId());
     (async () => {
       await axios
         .get(
@@ -105,8 +105,8 @@ export default function Settings() {
                   <Link href="/selectLanguage">
                     <Text style={tw.style(`text-[1rem] text-center`)}>
                       {userLang !== "en"
-                        ? translatedData?.settings?.changelanguage
-                        : "Change Language"}
+                        ? translatedData?.settings?.selectlanguage
+                        : "Select Your Language"}
                     </Text>
                   </Link>
                 </View>
