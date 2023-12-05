@@ -130,7 +130,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
         <Text style={tw.style("text-white")}>Back</Text>
       </Pressable>
       {view === 1 && (
-        <View style={tw.style("flex h-full flex-grow justify-center")}>
+        <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
           <Text> Page 1/3</Text>
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
             What did you see?
@@ -211,7 +211,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       )}
 
       {view === 2 && (
-        <View style={tw.style("flex h-full flex-grow justify-center")}>
+        <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
           <Text style={tw.style("")}> Page 2/3</Text>
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
             Tell us more
@@ -249,7 +249,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       )}
 
       {view === 3 && (
-        <View style={tw.style("flex h-full flex-grow justify-center")}>
+        <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
           <Text> Page 3/3</Text>
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
             {selectedCategory}
