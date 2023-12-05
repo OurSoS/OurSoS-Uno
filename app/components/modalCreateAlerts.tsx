@@ -96,7 +96,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
           false
         );
 
-        props.setMapType("satellite");
+        props.setMapType("hybrid");
 
         props.updateMap((prev) => !prev);
       } else {
@@ -107,6 +107,18 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
 
   return (
     <ScrollView style={tw.style("p-4")}>
+      {/* 
+      <Pressable
+                style={tw.style(
+                  "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+                )}
+                onPress={() => {
+                  setShowMapFeedModal(false);
+                }}
+              >
+                <Text style={tw.style("text-white")}>Back To Map</Text>
+              </Pressable>
+      */}
       <Pressable
         style={tw.style(
           "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
