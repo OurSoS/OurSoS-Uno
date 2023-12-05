@@ -216,7 +216,9 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
           <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
             Tell us more
           </Text>
-
+          <Text style={tw.style("mt-2 text-gray-400")}>
+            Characters used {description.length}/50
+          </Text>
           <TextInput
             placeholder="What happened?"
             value={description}
@@ -234,9 +236,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             textBreakStrategy="highQuality"
             multiline={true}
           />
-          <Text style={tw.style("mt-2 text-gray-400")}>
-            Characters used {description.length}/50
-          </Text>
+
           <Pressable
             style={tw.style(
               "bg-[#001D3D] mr-25 ml-25 p-1 mt-4 rounded-lg text-white"
@@ -251,9 +251,42 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
       {view === 3 && (
         <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
           <Text> Page 3/3</Text>
-          <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
-            {selectedCategory}
-          </Text>
+
+          {selectedCategory === "Hazard" && (
+            <View style={tw.style("flex flex-col items-center")}>
+              <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+                {selectedCategory}
+              </Text>
+
+              <Image
+                source={require("../../assets/alert-categorys/Hazard.png")}
+                style={tw.style("h-20 w-20")}
+              />
+            </View>
+          )}
+          {selectedCategory === "Fire" && (
+            <View style={tw.style("flex flex-col items-center")}>
+              <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+                {selectedCategory}
+              </Text>
+              <Image
+                source={require("../../assets/alert-categorys/Fire.png")}
+                style={tw.style("h-20 w-20")}
+              />
+            </View>
+          )}
+          {selectedCategory === "Police" && (
+            <View style={tw.style("flex flex-col items-center")}>
+              <Text style={tw.style("text-3xl text-center mt-10 mb-10")}>
+                {selectedCategory}
+              </Text>
+              <Image
+                source={require("../../assets/alert-categorys/Police.png")}
+                style={tw.style("h-20 w-20")}
+              />
+            </View>
+          )}
+
           <View
             style={tw.style(
               "flex flex-col justify-center border-2 rounded-lg border-[#001D3D] p-4 my-4"
