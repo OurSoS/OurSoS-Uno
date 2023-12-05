@@ -497,7 +497,7 @@ export default function MapComp(props: MapCompProps) {
       longitude: props.longTo,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
-    });
+    }, 1500);
   }, [props.longTo, props.latTo]);
 
   return (
@@ -571,7 +571,7 @@ export default function MapComp(props: MapCompProps) {
           ref={mapRef}
           spiralEnabled={false}
           mapType={myMapType}
-          minPoints={2}
+          minPoints={5}
           mapPadding={{ top: 0, right: 0, bottom: 20, left: 0 }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
@@ -642,6 +642,8 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
+                
+                  title={a.acq_date + ", Size: " + a.scan}
                 >
                   <View
                     style={{
@@ -675,6 +677,7 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
+                  title={a.properties.title}
                 >
                   <View
                     style={{
