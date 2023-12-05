@@ -127,7 +127,7 @@ export default function Index() {
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
   const [userLang, setUserLang] = useState("hi");
-  const [introComponent, setIntroComponent] = useState("welcome");
+  const [introComponent, setIntroComponent] = useState("dashboard");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -172,6 +172,8 @@ export default function Index() {
         .then((response) => response.json())
         .then((data) => {
           if (data === null) {
+            //IF the user does not exist, create a new user and display the INTRO rather than Dashboard.
+            setIntroComponent("welcome");
             let userData = {
               deviceId: deviceId,
               username: deviceId,
@@ -197,6 +199,8 @@ export default function Index() {
               .catch((error) => {
                 console.error("Error:", error);
               });
+          } else {
+            setIntroComponent("dashboard");
           }
         });
 
