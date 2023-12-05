@@ -48,9 +48,25 @@ export default function Dashboard({
   const [snackData, setSnackData] = useState<any>({});
   const [city, setCity] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
-  const [goToFriendLat, setGoToFriendLat] = useState(0)
-  const [goToFriendLong, setGoToFriendLong] = useState(0)
+  const [goToFriendLat, setGoToFriendLat] = useState(0);
+  const [goToFriendLong, setGoToFriendLong] = useState(0);
+  const [translatedData, setTranslatedData] = useState<any>([]);
 
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          console.log(
+            "===============translateadData=============",
+            translatedData
+          );
+        });
+    })();
+  }, []);
 
   const onToggleSnackBar = (data: any) => {
     setSnackData(data);
@@ -83,10 +99,13 @@ export default function Dashboard({
 
   useEffect(() => {
     (async () => {
-      await axios.post(`https://oursos-backend-production.up.railway.app/news/${userLang}`)
+      await axios
+        .post(
+          `https://oursos-backend-production.up.railway.app/news/${userLang}`
+        )
         .then((response) => {
           setNews(response.data);
-        })
+        });
     })();
   }, [userLang]);
 
@@ -116,7 +135,7 @@ export default function Dashboard({
         });
     })();
   }, []);
-
+  console.log(translatedData);
   return (
     <View
       style={tw.style(
@@ -164,18 +183,26 @@ export default function Dashboard({
               <Text
                 style={tw.style("flex-1 text-xl font-semibold text-center")}
               >
-                Get AI Help
+                {userLang !== "en"
+                  ? translatedData?.dashboard?.getAIHelp
+                  : "Get AI Help"}
               </Text>
             </Pressable>
           </View>
-          <Text style={tw.style(`text-2xl font-bold mt-2`)}>NEWS</Text>
+          <Text style={tw.style(`text-2xl font-bold mt-2`)}>
+            {" "}
+            {userLang !== "en" ? translatedData?.dashboard?.news : "News"}
+          </Text>
           <Slider
             onToggleSnackBar={onToggleSnackBar}
             data={news}
             translatedData={translatedNews}
           />
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>
-            <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>MAP</Text>
+            <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>
+              {" "}
+              {userLang !== "en" ? translatedData?.dashboard?.map : "Map"}
+            </Text>
             <View
               style={tw.style(
                 "border-solid border-[3] rounded-md border-[#001D3D]"
@@ -237,11 +264,11 @@ export default function Dashboard({
                           "Latitude: ",
                           displayData.latitude,
                           "longitude: ",
-                          displayData.longitude,
-                          );
-                        setGoToFriendLat(displayData.latitude)
-                        setGoToFriendLong(displayData.longitude)   
-                        console.log("TEST:",goToFriendLat, goToFriendLong)                       
+                          displayData.longitude
+                        );
+                        setGoToFriendLat(displayData.latitude);
+                        setGoToFriendLong(displayData.longitude);
+                        console.log("TEST:", goToFriendLat, goToFriendLong);
                       }}
                       style={tw.style(
                         "items-center justify-center rounded-full px-2 mt-6 py-2  bottom-12"

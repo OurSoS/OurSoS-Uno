@@ -132,6 +132,7 @@ export default function Index() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [translatedData, setTranslatedData] = useState<any>([]);
 
   // declare all characters
 
@@ -140,15 +141,21 @@ export default function Index() {
     if (userLang) {
       setUserLang(userLang);
 
-      await axios
-        .post<{ translateObject: staticType; lang: string }>(
-          "https://oursos-backend-production.up.railway.app/translateobject",
-          { translateObject: staticText, lang: userLang }
-        )
-        .then((res) => {
-          setTranslatedStaticContent(res.data);
-          setIntroComponent("newsFeed");
-        });
+      useEffect(() => {
+        (async () => {
+          await axios
+            .post<{ userLang: string }>(
+              `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+            )
+            .then((res) => {
+              setTranslatedData(res.data);
+              console.log(
+                "===============translateadData=============",
+                translatedData
+              );
+            });
+        })();
+      }, []);
     }
   };
 
@@ -204,22 +211,20 @@ export default function Index() {
           }
         });
 
-      
-        setLanguages([
-          {
-            "name": "Polski",
-            "tag": "pl"
-          },
-          {
-            "name": "中國傳統的）",
-            "tag": "zh-TW"
-          },
-          {
-            "name": "فارسی",
-            "tag": "fa"
-          },
-        ]);
-        
+      setLanguages([
+        {
+          name: "Polski",
+          tag: "pl",
+        },
+        {
+          name: "中國傳統的）",
+          tag: "zh-TW",
+        },
+        {
+          name: "فارسی",
+          tag: "fa",
+        },
+      ]);
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {

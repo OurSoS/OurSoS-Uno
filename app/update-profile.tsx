@@ -22,6 +22,25 @@ export default function UpdateProfile() {
   const [profilePic, setProfilePic] = useState<string>("");
   const [image, setImage] = useState<string>("");
   const [userName, setUserName] = React.useState<string>("");
+  const [userLang, setUserLang] = useState("fa");
+  const [translatedData, setTranslatedData] = useState<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          console.log(
+            "===============translateadData=============",
+            translatedData
+          );
+        });
+    })();
+  }, []);
+
   const pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
     //@ts-ignore
@@ -173,7 +192,9 @@ export default function UpdateProfile() {
             )}
           >
             <Text style={tw.style(`text-black mx-auto text-md`)}>
-              Update Image
+              {userLang !== "en"
+                ? translatedData?.settings?.updateimage
+                : "Update Image"}
             </Text>
           </Pressable>
         </View>
@@ -195,7 +216,9 @@ export default function UpdateProfile() {
             setUserName(val);
           }}
           value={userName}
-          placeholder="User Name"
+          placeholder={`${
+            userLang !== "en" ? translatedData?.settings?.username : "User Name"
+          }`}
           placeholderTextColor="#4B5563"
         />
         <Pressable
@@ -212,7 +235,9 @@ export default function UpdateProfile() {
             `mt-4`
           )}
         >
-          <Text style={tw.style(`text-white mx-auto text-xl`)}>Done</Text>
+          <Text style={tw.style(`text-white mx-auto text-xl`)}>
+            {userLang !== "en" ? translatedData?.settings?.done : "Done"}
+          </Text>
         </Pressable>
       </ScrollView>
     </ImageBackground>

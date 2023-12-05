@@ -96,7 +96,12 @@ export default function SelectLanguages() {
           </Link>
         </View>
         <IntroLayout>
-          <Text style={styles.header}>Select your language</Text>
+          <Text style={styles.header}>
+            {" "}
+            {userLang !== "en"
+              ? translatedData?.settings?.selectlanguage
+              : "Select Your Language"}
+          </Text>
           <FlatList
             style={tw.style(`w-full`, `flex`, `flex-col`)}
             data={languages}
@@ -131,7 +136,12 @@ export default function SelectLanguages() {
             }}
             style={tw.style(`text-white bg-[#003566] px-7 py-3 rounded-lg`)}
           >
-            <Text style={tw.style(`text-white`)}>Continue</Text>
+            <Text style={tw.style(`text-white`)}>
+              {" "}
+              {userLang !== "en"
+                ? translatedData?.settings?.continue
+                : "Continue"}
+            </Text>
           </Pressable>
         </IntroLayout>
       </ImageBackground>
