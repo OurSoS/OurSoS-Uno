@@ -182,6 +182,26 @@ export default function Dashboard({
               resizeMode="contain"
             />
           </View>
+          <View style={tw.style("mt-2")}>
+            <Pressable
+              onPress={() => {
+                router.push("/chat");
+              }}
+              style={tw.style(
+                "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md transform -translate-x-1/2"
+              )}
+            >
+              <Image
+                source={require("../../../assets/footerIcons/dark/Brain-Icon.png")}
+                style={tw.style("ml-4 h-10 w-10")}
+              />
+              <Text
+                style={tw.style("flex-1 text-xl font-semibold text-center")}
+              >
+                Get AI Help
+              </Text>
+            </Pressable>
+          </View>
           <Text style={tw.style(`text-2xl font-bold mt-2`)}>NEWS</Text>
           <Slider
             onToggleSnackBar={onToggleSnackBar}
@@ -258,43 +278,26 @@ export default function Dashboard({
                         console.log("TEST:",goToFriendLat, goToFriendLong)                       
                       }}
                       style={tw.style(
-                        "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md bottom-12 transform -translate-x-1/2"
+                        "items-center justify-center rounded-full px-2 mt-6 py-2 shadow-md bottom-12"
                       )}
                     >
                       <Image
                         source={{ uri: displayData.profile }}
-                        style={tw.style(`w-30 h-30 rounded-full`)}
+                        style={tw.style(
+                          `w-25 h-25 rounded-full border-2 border-[#001D3D]`
+                        )}
                       />
+                      <Text
+                        style={tw.style(`text-lg text-center text-black mt-2`)}
+                      >
+                        {displayData.username}
+                      </Text>
                     </Pressable>
-                    <Text style={tw.style(`text-center text-black`)}>
-                      {displayData.username}
-                    </Text>
                   </>
                 );
               })}
             </ScrollView>
           </View>
-          <View>
-            <Pressable
-              onPress={() => {
-                router.push("/chat");
-              }}
-              style={tw.style(
-                "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md bottom-20 transform -translate-x-1/2"
-              )}
-            >
-              <Image
-                source={require("../../../assets/footerIcons/dark/Brain-Icon.png")}
-                style={tw.style("ml-4 h-10 w-10")}
-              />
-              <Text
-                style={tw.style("flex-1 text-xl font-semibold text-center")}
-              >
-                Get AI Help
-              </Text>
-            </Pressable>
-          </View>
-          {/* <FriendsList /> */}
         </ScrollView>
         <Snackbar
           style={[
