@@ -27,7 +27,11 @@ import {
   getSeverityString,
 } from "../../../utils/static-types";
 import { getDeviceId } from "../../chat";
+
 export default function MapComp(props: MapCompProps) {
+  const [longTo, setLongTo] = useState(props.longTo);
+  const [latTo, setLatTo] = useState(props.latTo);
+
   const [showMapFeedModal, setShowMapFeedModal] = useState(false);
   const [earthquakes, setEarthquakes] = useState<earthquake[]>([]);
   const [fires, setFires] = useState<any>([]);
@@ -463,6 +467,19 @@ export default function MapComp(props: MapCompProps) {
         return "gray";
     }
   };
+
+  useEffect(() => {
+    setLatTo(props.latTo);
+    setLongTo(props.longTo);
+    console.log("Changed location to: ", props.longTo, ", ", props.latTo)
+    //@ts-ignore
+    mapRef.current?.animateToRegion({
+      latitude: props.latTo,
+      longitude: props.longTo,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    })
+  },[props.longTo, props.latTo])
 
   return (
     <View>
