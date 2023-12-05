@@ -14,21 +14,21 @@ export default function AddFriend() {
       console.log("No url provided");
       return;
     }
-    axios.post(addFriendUrl)
+    axios.post(`${addFriendUrl}/${userId}`)
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
   }
 
 
   const handleShareButtonPress = async () => {
-    const url = `exp://mlxl3ng.anonymous.8081.exp.direct/addfriend/${userId}`;
+    const url = `https://oursos-backend-production.up.railway.app/addfriend/${userId}`;
     await Share.share({
       message: url,
     });
   };
 
   const handleIncomingURL = async (event: any) => {
-    const friendId = event.url.replace("exp://mlxl3ng.anonymous.8081.exp.direct/addfriend/", "");
+    const friendId = event.url.replace("https://oursos-backend-production.up.railway.app/addfriend/", "");
 
     // Make a POST request to your API endpoint here to add the current user and friendId as friends
     fetch(

@@ -25,12 +25,17 @@ import Footer from "./components/molecules/Footer";
 import { getDeviceId } from "./chat";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
+
 type alert = {
   id?: number;
   message?: string;
   category: string;
-  latitude: Float;
-  longitude: Float;
+  lat: Float;
+  long: Float;
   radius?: Float;
   time?: string;
   severity?: string;
@@ -130,19 +135,8 @@ export default function Index() {
   const [currentUser, setCurrentUser] = useState<any>(null);
 
   // declare all characters
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  function generateString(length: number) {
-    let result = " ";
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-
-    return result;
-  }
-  const tw = create(require("../tailwind.config.ts"));
+ const tw = create(require("../tailwind.config.ts"));
   const setUserLanguage = async () => {
     if (userLang) {
       setUserLang(userLang);
@@ -314,7 +308,7 @@ export default function Index() {
         );
       }
     })();
-  }, [alerts]);
+  }, []);
 
   const checkAndNotifyForAlerts = async (
     myLatitude: number,
@@ -324,14 +318,15 @@ export default function Index() {
     // console.log(alerts.length);
     let i = 0;
     for (let alert of alerts) {
-      if (alert.radius !== undefined) {
-        const distance = distanceBetweenPoints(
+      console.log(alerts);  
+
+      const distance = distanceBetweenPoints(
           myLatitude,
           myLongitude,
-          alert.latitude,
-          alert.longitude
+          alert.lat,
+          alert.long
         );
-        if (distance <= 0.01) {
+        if (distance <= 100) {
           // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
           ++i;
           console.log(
@@ -343,7 +338,6 @@ export default function Index() {
             `Emergency Alert: Immediate danger in your area due to a ${alert.category}.Seek safety immediately as per local guidelines and stay informed.`
           );
         }
-      }
     }
   };
 
@@ -364,7 +358,7 @@ export default function Index() {
   useEffect(() => {
     (async () => {
       await axios
-        .get("https://oursos-backend-production.up.railway.app/users/1")
+        .get(`https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`)
         .then((res) => {
           setCurrentUser(res.data);
         });
