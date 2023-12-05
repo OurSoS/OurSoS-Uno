@@ -67,6 +67,25 @@ export default function MapComp(props: MapCompProps) {
   const [updateTick, setUpdateTick] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
 
+  const [userLang, setUserLang] = useState("fa");
+  const [translatedData, setTranslatedData] = useState<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios
+        .post<{ userLang: string }>(
+          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+        )
+        .then((res) => {
+          setTranslatedData(res.data);
+          console.log(
+            "===============translateadData=============",
+            translatedData
+          );
+        });
+    })();
+  }, []);
+
   const mapRef = React.useRef<MapView>(null);
 
   const updateVisibleMarkers = (type: alertFilter) => {
@@ -471,15 +490,15 @@ export default function MapComp(props: MapCompProps) {
   useEffect(() => {
     setLatTo(props.latTo);
     setLongTo(props.longTo);
-    console.log("Changed location to: ", props.longTo, ", ", props.latTo)
+    console.log("Changed location to: ", props.longTo, ", ", props.latTo);
     //@ts-ignore
     mapRef.current?.animateToRegion({
       latitude: props.latTo,
       longitude: props.longTo,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
-    })
-  },[props.longTo, props.latTo])
+    });
+  }, [props.longTo, props.latTo]);
 
   return (
     <View>
@@ -810,15 +829,21 @@ export default function MapComp(props: MapCompProps) {
           {showMapFeedModal === false ? (
             <Pressable
               onPress={() => {
-                if (myMapType === "standard") setMyMapType("satellite");
-                else if (myMapType === "satellite") setMyMapType("standard");
+                if (myMapType === `standard`) setMyMapType(`satellite`);
+                else if (myMapType === `satellite`) setMyMapType(`standard`);
               }}
             >
               <Image
                 source={require("../../../assets/footerIcons/mapIcon.png")}
                 style={tw.style(`h-8 w-8 ml-2`)}
               />
-              <Text style={tw.style("text-center mb-2")}>{myMapType}</Text>
+              <Text
+                style={tw.style("text-center mb-2")}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {myMapType}
+              </Text>
               {/* <Text style={tw.style("text-center mb-2")}>Map</Text> */}
             </Pressable>
           ) : (
@@ -836,7 +861,10 @@ export default function MapComp(props: MapCompProps) {
                 source={require("../../../assets/mapui/MapUI-NewPin.png")}
                 style={tw.style(`h-8 w-8 ml-2`)}
               />
-              <Text style={tw.style("text-center mb-2")}>Report</Text>
+              <Text style={tw.style("text-center mb-2")}>
+                {" "}
+                {userLang !== "en" ? translatedData?.map?.report : "Report"}
+              </Text>
             </Pressable>
           ) : (
             <View></View>
@@ -847,7 +875,10 @@ export default function MapComp(props: MapCompProps) {
               source={require("../../../assets/mapui/Shrink-Map.png")}
               style={tw.style(`h-8 w-8 ml-2`)}
             />
-            <Text style={tw.style("text-center mb-2")}>Shrink</Text>
+            <Text style={tw.style("text-center mb-2")}>
+              {" "}
+              {userLang !== "en" ? translatedData?.map?.shrink : "Shrink"}
+            </Text>
 
             {/* <Text style={tw.style("text-center mb-2")}>Resize</Text> */}
           </TouchableOpacity>
@@ -860,7 +891,10 @@ export default function MapComp(props: MapCompProps) {
               source={require("../../../assets/mapui/apps-sort.png")}
               style={tw.style(`h-8 w-8 ml-2`)}
             />
-            <Text style={tw.style("text-center mb-2")}>List</Text>
+            <Text style={tw.style("text-center mb-2")}>
+              {" "}
+              {userLang !== "en" ? translatedData?.map?.list : "List"}
+            </Text>
           </TouchableOpacity>
           {/* //FILTER BUTTON */}
           {showMapFeedModal === false ? (
@@ -873,7 +907,10 @@ export default function MapComp(props: MapCompProps) {
                 }
               }}
             >
-              <Text style={{ textAlign: "center" }}>Show</Text>
+              <Text style={{ textAlign: "center" }}>
+                {" "}
+                {userLang !== "en" ? translatedData?.map?.show : "Show"}
+              </Text>
               {filter === "Police" || filter === "All" ? (
                 <Text style={tw.style("text-center mb-2 text-xs")}>
                   {filter}
