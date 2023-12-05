@@ -24,10 +24,10 @@ export default function Footer() {
         )
         .then((res) => {
           setTranslatedData(res.data);
-          console.log(
-            "===============translateadData=============",
-            translatedData
-          );
+          // console.log(
+          //   "===============translateadData=============",
+          //   translatedData
+          // );
         });
     })();
   }, []);

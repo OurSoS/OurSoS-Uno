@@ -132,6 +132,7 @@ export default function Index() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [translatedData, setTranslatedData] = useState<any>([]);
 
   // declare all characters
 
@@ -140,15 +141,21 @@ export default function Index() {
     if (userLang) {
       setUserLang(userLang);
 
-      await axios
-        .post<{ translateObject: staticType; lang: string }>(
-          "https://oursos-backend-production.up.railway.app/translateobject",
-          { translateObject: staticText, lang: userLang }
-        )
-        .then((res) => {
-          setTranslatedStaticContent(res.data);
-          setIntroComponent("newsFeed");
-        });
+      useEffect(() => {
+        (async () => {
+          await axios
+            .post<{ userLang: string }>(
+              `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+            )
+            .then((res) => {
+              setTranslatedData(res.data);
+              // console.log(
+              //   "===============translateadData=============",
+              //   translatedData
+              // );
+            });
+        })();
+      }, []);
     }
   };
 
@@ -204,22 +211,20 @@ export default function Index() {
           }
         });
 
-      
-        setLanguages([
-          {
-            "name": "Polski",
-            "tag": "pl"
-          },
-          {
-            "name": "中國傳統的）",
-            "tag": "zh-TW"
-          },
-          {
-            "name": "فارسی",
-            "tag": "fa"
-          },
-        ]);
-        
+      setLanguages([
+        {
+          name: "Polski",
+          tag: "pl",
+        },
+        {
+          name: "中國傳統的）",
+          tag: "zh-TW",
+        },
+        {
+          name: "فارسی",
+          tag: "fa",
+        },
+      ]);
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -291,7 +296,7 @@ export default function Index() {
                 return e.properties.tsunami !== 0;
               })
             );
-            // console.log(tsunamis);
+            console.log(tsunamis);
           })
           .catch((error) => console.error(error));
 
@@ -304,7 +309,7 @@ export default function Index() {
       };
 
       retrieveAlerts();
-      // console.log("alerts");
+      console.log("alerts");
       // alerts ["latitude": 49.2827, "longitude": -123.1207,"radius": 5]
     })();
   }, []);
@@ -343,11 +348,11 @@ export default function Index() {
       if (distance <= 100) {
         // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
         ++i;
-        console.log(
-          "==============alert================",
-          alert.type,
-          alert.id
-        );
+        // console.log(
+        //   "==============alert================",
+        //   alert.type,
+        //   alert.id
+        // );
         await sendLocalNotification(
           `Emergency Alert: Immediate danger in your area due to a ${alert.type}.Seek safety immediately as per local guidelines and stay informed.`
         );
