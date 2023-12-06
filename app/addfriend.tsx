@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Share, Pressable, View, Button, Text, TextInput, ImageBackground } from "react-native";
-import * as Linking from "expo-linking";
-// import { Button } from "react-native-paper";
+import { StyleSheet, Share, Pressable, View, Text, TextInput, ImageBackground } from "react-native";
 import { router } from "expo-router";
 import tw from "twrnc";
-import { getDeviceId } from "./chat";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function AddFriend() {
@@ -27,10 +24,13 @@ export default function AddFriend() {
       console.log("No url provided");
       return;
     }
-    axios
-      .post(`${addFriendUrl}/${userId}`)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
+
+    (async()=>{
+        await axios
+        .post(`${addFriendUrl}/${userId}`)
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log(err));
+    })()
   };
 
   const handleShareButtonPress = async () => {
@@ -40,34 +40,13 @@ export default function AddFriend() {
     });
   };
 
-  const handleIncomingURL = async (event: any) => {
-    const friendId = event.url.replace(
-      "https://oursos-backend-production.up.railway.app/addfriend/",
-      ""
-    );
-
-    // Make a POST request to your API endpoint here to add the current user and friendId as friends
-    fetch(
-      "https://oursos-backend-production.up.railway.app/addfriend/" +
-      userId +
-      "/" +
-      friendId,
-      {
-        method: "POST",
-      }
-    )
-      .then((response) => response.json())
-      .then((json) => console.log(json))
-      .catch((error) => console.error(error));
-  };
-
   React.useEffect(() => {
-    const deviceId = getDeviceId();
     (async () => {
       let currentUser = JSON.parse(
         await AsyncStorage.getItem('currentUser')||""
       );  
-      setUserLang(currentUser.id);
+      setUserId(currentUser.id);
+      setUserLang(currentUser.languagepreference);  
     })();
   }, []);
 
@@ -89,15 +68,24 @@ export default function AddFriend() {
               "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
             )}
           >
-            <Text style={tw.style("text-white")}>Back</Text>
+            <Text style={tw.style("text-white")}>
+              {userLang !=="en"
+              ?translatedData?.settings?.back:
+              "Back"
+              }
+            </Text>
           </Pressable>
         </View>
         <View style={tw.style("p-4 flex flex-col gap-3")}>
           <Text style={tw.style("text-2xl")}>
-            Friend Request Url
+            {
+              userLang !== "en"
+              ? translatedData.settings.friendurl
+              :"Friend Request Url"
+            }
           </Text>
           <TextInput
-            placeholder="Enter friend's URL"
+            placeholder={`${userLang !== 'en' ? translatedData?.settings?.friendurl :'Enter Friend Url'}`}
             style={tw.style("border border-primary")}
             value={addFriendUrl}
             onChangeText={setAddFriendUrl}
@@ -132,7 +120,6 @@ export default function AddFriend() {
     </ImageBackground>
   );
 }
-
 
 const styles = StyleSheet.create({
   background: {

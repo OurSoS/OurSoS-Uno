@@ -202,7 +202,6 @@ export default function Dashboard({user}: {user: any}) {
             <Slider
                   onToggleSnackBar={onToggleSnackBar}
                   data={news}
-                  translatedData={translatedNews}
             />
           </Suspense>
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>

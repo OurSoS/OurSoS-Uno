@@ -132,9 +132,6 @@ export default function Index() {
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [translatedData, setTranslatedData] = useState<any>([]);
-
-  // declare all characters
 
   const tw = create(require("../tailwind.config.ts"));
   const setUserLanguage = async () => {
@@ -146,9 +143,7 @@ export default function Index() {
             `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
           )
           .then((res) => {
-            setTranslatedData(res.data);
             AsyncStorage.setItem('translatedData', JSON.stringify(res.data));
-            
           });
       })();
     }
@@ -305,7 +300,6 @@ export default function Index() {
 
       retrieveAlerts();
       console.log("alerts");
-      // alerts ["latitude": 49.2827, "longitude": -123.1207,"radius": 5]
     })();
   }, []);
 
