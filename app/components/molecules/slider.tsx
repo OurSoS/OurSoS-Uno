@@ -21,7 +21,7 @@ export default function Slider({
       showsHorizontalScrollIndicator={false}
       scrollEventThrottle={10}
       style={{ paddingVertical: 10 }}
-      contentContainerStyle={{ justifyContent: "center" }}
+      contentContainerStyle={{ justifyContent: "center", height: 200 }}
     >
       <Suspense fallback={<CardLoading />}>
         {data.map((item, i) => {

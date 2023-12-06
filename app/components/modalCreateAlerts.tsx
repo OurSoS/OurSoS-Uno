@@ -12,7 +12,7 @@ import { Slider } from "react-native-awesome-slider";
 import { MapType } from "react-native-maps";
 import { useSharedValue } from "react-native-reanimated";
 import tw from "twrnc";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type modalCreateAlertsProps = {
   setter: React.Dispatch<React.SetStateAction<boolean>>;
   setGenMarkers: (
@@ -42,30 +42,21 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const [userLang, setUserLang] = useState("en");
   const [translatedData, setTranslatedData] = useState<any>([]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await axios
-  //       .post<{ userLang: string }>(
-  //         `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-  //       )
-  //       .then((res) => {
-  //         setTranslatedData(res.data);
-  //       });
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem("currentUser") || ""
+      );
+      setUserLang(currentUser.languagepreference);
+
+      let data = JSON.parse(
+        await AsyncStorage.getItem("translatedData") || ""
+      );
+      setTranslatedData(data);
+    })();
+  }, []);
 
   const categories = ["Hazard", "Fire", "Police"];
-
-  // const getCircleColor = (severity: number) => {
-  //   switch (severity) {
-  //     case 1:
-  //       return "yellow"; // Adjust this color based on your design
-  //     case 2:
-  //       return "red"; // Adjust this color based on your design
-  //     default:
-  //       return "gray";
-  //   }
-  // };
 
   const handleSelectCategory = (category: string) => {
     setSelectedCategory(category);
@@ -91,15 +82,20 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const handleSubmit = () => {
     if (description.length < minimum) {
       alert(
-        `Please enter a description with a minimum of ${minimum} characters.`
+        `${userLang !== "en"
+          ? translatedData?.map?.alerterror
+          : "Enter a description of at least 10 characters"}`
       );
       setRedText(true);
       setView(2);
       return;
     } else {
       if (props.myLocation) {
-        alert("Drag the marker to the alert location.\nPress OK to proceed.");
-
+        alert(
+          `${userLang !== "en"
+            ? translatedData?.map?.drag
+            : "Drag the marker to the alert location"}`
+        );
         props.setter(false);
 
         props.setGenMarkers(
@@ -141,7 +137,11 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
           props.setShowModal(false);
         }}
       >
-        <Text style={tw.style("text-white")}>Back</Text>
+        <Text style={tw.style("text-white")}>
+          {userLang !== "en"
+            ? translatedData?.settings?.back
+            : "Back"}
+        </Text>
       </Pressable>
       {view === 1 && (
         <View style={tw.style("flex h-full flex-grow justify-center pb-10")}>
@@ -165,7 +165,10 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 {category === "Hazard" && (
                   <>
                     <Text style={tw.style("text-center text-xl mb-2")}>
-                      {category}
+                      {" "}
+                      {userLang !== "en"
+                        ? translatedData?.map?.hazards
+                        : "Hazard"}
                     </Text>
 
                     <Image
@@ -177,7 +180,10 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 {category === "Fire" && (
                   <>
                     <Text style={tw.style("text-center text-xl mb-2")}>
-                      {category}
+                      {" "}
+                      {userLang !== "en"
+                        ? translatedData?.map?.fires
+                        : "Fires"}
                     </Text>
                     <Image
                       source={require("../../assets/alert-categorys/Fire.png")}
@@ -188,7 +194,9 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 {category === "Police" && (
                   <>
                     <Text style={tw.style("text-center text-xl")}>
-                      {category}
+                      {userLang !== "en"
+                        ? translatedData?.map?.police
+                        : "Police"}
                     </Text>
                     <Image
                       source={require("../../assets/alert-categorys/Police.png")}
@@ -210,8 +218,8 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
                 severity === 1
                   ? tw.style("text-2xl text-center text-yellow-500")
                   : severity === 2
-                  ? tw.style("text-2xl text-center text-red-500")
-                  : null
+                    ? tw.style("text-2xl text-center text-red-500")
+                    : null
               }
             >
               {userLang !== "en" ? translatedData?.modal?.severity : "Severity"}{" "}
@@ -245,18 +253,17 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             Characters used {description.length}/50
           </Text>
           <TextInput
-            placeholder={`${
-              userLang !== "en"
-                ? translatedData?.modal?.whathappened
-                : "What Happened?"
-            }`}
+            placeholder={`${userLang !== "en"
+              ? translatedData?.modal?.whathappened
+              : "What Happened?"
+              }`}
             value={description}
             onChangeText={handleDescriptionChange}
             style={
               redText
                 ? tw.style(
-                    "border-2 border-black text-red-500 h-50 rounded-md p-2"
-                  )
+                  "border-2 border-black text-red-500 h-50 rounded-md p-2"
+                )
                 : tw.style("border-2 border-black h-50 rounded-md p-2")
             }
             maxLength={maximum}
@@ -335,7 +342,7 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
             </Text>
             <Text style={tw.style("text-xl")}>
               {userLang !== "en" ? translatedData?.modal?.severity : "Severity"}{" "}
-              {severity}
+              {severity === 1 ? "Low" : "High"}
             </Text>
           </View>
           <View style={tw.style("flex flex-row justify-evenly")}>
@@ -346,7 +353,9 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
               onPress={handleEdit}
             >
               <Text style={tw.style("text-xl text-white text-center")}>
-                Edit
+                {userLang !== "en"
+                  ? translatedData?.map?.edit
+                  : "Edit"}
               </Text>
             </Pressable>
             <Pressable

@@ -11,9 +11,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.npaik.oursos"
     },
     "android": {
       "adaptiveIcon": {
@@ -35,7 +38,8 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow OurSOS to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow OurSOS to use your location.",
+          "asyncRoutes": "development"
         }
       ]
     ],
@@ -45,6 +49,5 @@
         "origin": false
       }
     }
-    
   }
 }

@@ -28,7 +28,7 @@
     "expo-network": "~5.4.0",
     "expo-notifications": "~0.20.1",
     "expo-router": "^2.0.4",
-    "expo-sharing": "^11.7.0",
+    "expo-sharing": "~11.5.0",
     "expo-status-bar": "~1.6.0",
     "lodash.debounce": "^4.0.8",
     "pubnub": "^7.4.4",

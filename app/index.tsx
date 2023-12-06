@@ -349,7 +349,7 @@ export default function Index() {
         //   alert.id
         // );
         await sendLocalNotification(
-          `Emergency Alert: Immediate danger in your area due to a ${alert.type}.Seek safety immediately as per local guidelines and stay informed.`
+          `Emergency Alert: There is a ${alert.type} in your area due to ${alert.message}. Seek safety immediately as per local guidelines and stay informed.`
         );
       }
     }
@@ -399,7 +399,10 @@ export default function Index() {
       <View style={styles.container}>
         <ImageBackground
           source={require("../assets/Intro/Map.png")}
-          style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
+          style={[
+            tw.style("flex-1 justify-center w-full"),
+            { resizeMode: "cover" },
+          ]}
         >
           {introComponent === "welcome" ? (
             <IntroTextButton
@@ -427,11 +430,14 @@ export default function Index() {
                       setUserLang(languages[index]?.tag);
                     }}
                     style={tw.style(
-                      `text-white`,
-                      `bg-white`,
                       `px-7`,
                       `py-3`,
-                      `rounded-lg border mb-3`
+                      `rounded-lg`,
+                      `border`,
+                      `mb-3`,
+                      userLang === languages[index]?.tag
+                        ? `bg-gray-400`
+                        : `bg-white`
                     )}
                   >
                     <Text style={styles.text}>{item.name}</Text>

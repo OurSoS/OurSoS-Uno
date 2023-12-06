@@ -52,8 +52,8 @@ export default function MapComp(props: MapCompProps) {
   });
   //current region temporary fix set to vancouver area
   const [currentRegion, setCurrentRegion] = useState({
-    latitude: 49.246292,
-    longitude: -123.116226,
+    latitude: location?.coords?.latitude || 0,
+    longitude: location?.coords?.longitude || 0,
     latitudeDelta: 5,
     longitudeDelta: 5,
   });
@@ -84,6 +84,25 @@ export default function MapComp(props: MapCompProps) {
   }, []);
 
   const mapRef = React.useRef<MapView>(null);
+
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case "Wildfire":
+        return require("../../../assets/mapIcons/Wildfire.png");
+      case "Earthquake":
+        return require("../../../assets/mapIcons/Earthquake.png");
+      case "Tsunami":
+        return require("../../../assets/mapIcons/Tsunami.png");
+      case "Hazard":
+        return require("../../../assets/alert-categorys/Hazard.png"); // Adjust as needed
+      case "Fire":
+        return require("../../../assets/alert-categorys/Fire.png");
+      case "Police":
+        return require("../../../assets/alert-categorys/Police.png");
+      default:
+        return require("../../../assets/mapIcons/MeIcon.png");
+    }
+  };
 
   const updateVisibleMarkers = (type: alertFilter) => {
     // console.log("Current filter is : ", type);
@@ -314,7 +333,12 @@ export default function MapComp(props: MapCompProps) {
         {
           text: "Report Alert",
           onPress: async () => {
-            Alert.alert("Your Report has been submitted. ✅");
+            Alert.alert(`${
+              userLang !== "en"
+                ? translatedData?.map?.reportsubmit
+                : "Report submitted"
+
+            } ✅`);
             alert.confirmed = true;
             setFilter("All");
             //TODO: fetch .principalSubdivision && .locality
@@ -329,11 +353,19 @@ export default function MapComp(props: MapCompProps) {
                   response.data.principalSubdivision;
                 alert.desc = alert.desc + " - " + combineDesc;
 
-                await axios
+                alert.type === "Hazard"
+                  ? (combineDesc += " ⚠️")
+                  : alert.type === "Police"
+                  ? (combineDesc += " 🚓")
+                  : alert.type === "Fire"
+                  ? (combineDesc += " 🔥")
+                  : null;
+
+                axios
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
                     {
-                      message: alert.desc + " - " + combineDesc,
+                      message: alert.desc,
                       type: alert.type,
                       severity: alert.severity,
                       lat: alert.lat,
@@ -488,12 +520,15 @@ export default function MapComp(props: MapCompProps) {
     setLongTo(props.longTo);
     console.log("Changed location to: ", props.longTo, ", ", props.latTo);
     //@ts-ignore
-    mapRef.current?.animateToRegion({
-      latitude: props.latTo,
-      longitude: props.longTo,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    }, 1500);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: props.latTo,
+        longitude: props.longTo,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      },
+      1500
+    );
   }, [props.longTo, props.latTo]);
 
   return (
@@ -524,7 +559,13 @@ export default function MapComp(props: MapCompProps) {
                   setShowMapFeedModal(false);
                 }}
               >
-                <Text style={tw.style("text-white")}>Back To Map</Text>
+                <Text style={tw.style("text-white")}>
+                  {
+                    userLang !== "en"
+                      ? translatedData?.settings?.back
+                      : "Back"
+                  }
+                </Text>
               </Pressable>
             </View>
           ) : (
@@ -638,7 +679,6 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
-                
                   title={a.acq_date + ", Size: " + a.scan}
                 >
                   <View
@@ -706,10 +746,24 @@ export default function MapComp(props: MapCompProps) {
                     longitude: parseFloat(friend.longitude),
                   }}
                 >
-                  <Image
-                    source={{ uri: friend.profile }}
-                    style={{ width: 20, height: 20 }}
-                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 20,
+                      backgroundColor: "lightblue",
+                      borderBlockColor: "black",
+                      borderWidth: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: friend.profile }}
+                      style={{ width: 20, height: 20, borderRadius: 20 }}
+                    />
+                  </View>
                 </Marker>
               );
             })}
@@ -830,17 +884,28 @@ export default function MapComp(props: MapCompProps) {
               }}
             >
               <Image
-                source={require("../../../assets/footerIcons/mapIcon.png")}
-                style={tw.style(`h-8 w-8 ml-2`)}
+                source={
+                  myMapType === "standard"
+                    ? require("../../../assets/footerIcons/mapIcon.png")
+                    : require("../../../assets/mapui/satellite.png") // Change the source for satellite
+                }
+                style={tw.style("h-8 w-8 ml-2")}
               />
               <Text
                 style={tw.style("text-center mb-2")}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {myMapType}
+                {myMapType === `standard`
+                  ? `{${
+                      userLang !== "en"
+                        ? translatedData?.map?.standard
+                        : "standard"
+                    }`
+                  : `{${
+                      userLang !== "en" ? translatedData?.map?.hybrid : "hybrid"
+                    }`}
               </Text>
-              {/* <Text style={tw.style("text-center mb-2")}>Map</Text> */}
             </Pressable>
           ) : (
             <View></View>
@@ -903,23 +968,10 @@ export default function MapComp(props: MapCompProps) {
                 }
               }}
             >
-              <Text style={{ textAlign: "center" }}>
-                {" "}
-                {userLang !== "en" ? translatedData?.map?.show : "Show"}
-              </Text>
-              {filter === "Police" || filter === "All" ? (
-                <Text style={tw.style("text-center mb-2 text-xs")}>
-                  {filter}
-                </Text>
-              ) : (
-                <Text
-                  style={tw.style("text-center mb-2 text-xs")}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {filter}s
-                </Text>
-              )}
+              <Image
+                source={getAlertIcon(filter)}
+                style={tw.style(`h-8 w-8`)}
+              />
             </TouchableOpacity>
           ) : (
             <View></View>

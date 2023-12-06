@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import {
   View,
   Image,
@@ -18,6 +18,10 @@ import { router } from "expo-router";
 import tw from "../../../lib/tailwind";
 import publicIP from "react-native-public-ip";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDeviceId } from "../../chat";
+import MapLoading from "../molecules/map-loading";
+import CardLoading from "../molecules/card-loading";
+
 type newsItemType = {
   date: string;
   link: string;
@@ -150,7 +154,7 @@ export default function Dashboard({user}: {user: any}) {
     >
       <ImageBackground
         source={require("../../../assets/Intro/Map.png")}
-        style={[tw.style("flex-1 justify-center"), { resizeMode: "cover" }]}
+        style={[tw.style("flex-1 justify-center, w-full"), { resizeMode: "cover" }]}
       >
         <ScrollView style={tw.style(`p-4 mb-10`)}>
           <View style={tw.style(`flex-row items-center justify-between`)}>
@@ -174,7 +178,7 @@ export default function Dashboard({user}: {user: any}) {
                 router.push("/chat");
               }}
               style={tw.style(
-                "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md transform -translate-x-1/2"
+                "flex-row items-center justify-start bg-white rounded-md px-4 py-2 shadow-md transform-translate-x-1/2"
               )}
             >
               <Image
@@ -194,31 +198,35 @@ export default function Dashboard({user}: {user: any}) {
             {" "}
             {userLang !== "en" ? translatedData?.dashboard?.news : "News"}
           </Text>
-          <Slider
-            onToggleSnackBar={onToggleSnackBar}
-            data={news}
-            translatedData={translatedNews}
-          />
+          <Suspense fallback={<CardLoading/>}>
+            <Slider
+                  onToggleSnackBar={onToggleSnackBar}
+                  data={news}
+                  translatedData={translatedNews}
+            />
+          </Suspense>
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>
             <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>
               {" "}
               {userLang !== "en" ? translatedData?.dashboard?.map : "Map"}
             </Text>
-            <View
-              style={tw.style(
-                "border-solid border-[3] rounded-md border-[#001D3D]"
-              )}
-            >
-              <MapComp
-                zoomEnabled={false}
-                pitchEnabled={false}
-                scrollEnabled={false}
-                toolbarEnabled={false}
-                height={300}
-                longTo={goToFriendLong}
-                latTo={goToFriendLat}
-              />
-            </View>
+            <Suspense fallback={<MapLoading/>}>
+                  <View
+                  style={tw.style(
+                  "border-solid border-[3] rounded-md border-[#001D3D] h-{300} w-full"
+                  )}
+                  >
+                        <MapComp
+                        zoomEnabled={false}
+                        pitchEnabled={false}
+                        scrollEnabled={false}
+                        toolbarEnabled={false}
+                        height={300}
+                        longTo={goToFriendLong}
+                        latTo={goToFriendLat}
+                        />
+                  </View>
+            </Suspense>
             <Pressable
               onPress={() => {
                 router.push("/map");

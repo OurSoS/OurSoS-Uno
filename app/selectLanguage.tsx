@@ -105,6 +105,10 @@ export default function SelectLanguages() {
     (async () => {
       setLanguages([
         {
+          name: "English",
+          tag: "en",
+        },
+        {
           name: "Polski",
           tag: "pl",
         },
@@ -127,13 +131,16 @@ export default function SelectLanguages() {
     >
       <View style={tw.style('px-2')}>
         <View>
-          <Link href="/settings">
-            <View
-              style={tw.style(
-                "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-              )}
-            >
-              <Text style={tw.style("text-white")}>Back</Text>
+          <Link
+            style={tw.style(
+              "flex px-4 py-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
+            href="/settings">
+            <View>
+              <Text style={tw.style("text-white")}>
+                {userLang !== "en"
+                  ? translatedData?.settings?.back
+                  : "Back"}</Text>
             </View>
           </Link>
         </View>
@@ -160,13 +167,14 @@ export default function SelectLanguages() {
                   console.log(languages[index]?.tag);
                 }}
                 style={tw.style(
-                  `text-white`,
-                  `bg-white`,
                   `px-7`,
                   `py-3`,
                   `rounded-lg`,
                   `border`,
-                  `mb-3`
+                  `mb-3`,
+                  userLang === languages[index]?.tag
+                    ? `bg-gray-400`
+                    : `bg-white`
                 )}
               >
                 <Text style={styles.text}>{item.name}</Text>
@@ -181,7 +189,9 @@ export default function SelectLanguages() {
           >
             <Text style={tw.style(`text-white`)}>
               {" "}
-             continue
+              {userLang !== "en"
+                ? translatedData?.settings?.continue
+                : "Select Your Language"}
             </Text>
           </Pressable>
         </IntroLayout>

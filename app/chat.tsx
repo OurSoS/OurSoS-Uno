@@ -34,6 +34,7 @@ export default function App() {
   const [messages, setMessages] = useState<string[]>([]);
   const [text, onChangeText] = useState("");
   const [translatedData, setTranslatedData] = useState<any>([]);
+  const [userLang, setUserLang] = useState("en");
   useEffect(() => {
     (async () => {
       let data = JSON.parse(
@@ -43,6 +44,7 @@ export default function App() {
         await AsyncStorage.getItem('translatedData') || ""
       );
       setTranslatedData(translatedData);
+      setUserLang(data.languagepreference);
     })();
   }, []);
 
@@ -117,7 +119,11 @@ export default function App() {
                   `mb-2.5`
                 )}
               >
-                {translatedData?.dashboard?.getAIHelp}
+                {
+                  userLang !== "en"
+                    ? translatedData?.dashboard?.getAIHelp
+                    : "Get AI Help"
+                }
               </Text>
               <ScrollView style={tw.style("pt-8 pl-4 pr-4")}>
                 {messages.map((message, idx) => (
@@ -160,7 +166,11 @@ export default function App() {
                   )}
                 >
                   <Text style={tw.style("text-xl text-white text-center")}>
-                   continue
+                    {
+                      userLang !== "en"
+                        ? translatedData?.settings?.send
+                        : "Send"
+                    }
                   </Text>
                 </Pressable>
               </View>
