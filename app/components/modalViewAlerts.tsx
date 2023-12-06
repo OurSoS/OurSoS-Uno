@@ -87,21 +87,21 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
   const [userLang, setUserLang] = useState("fa");
   const [translatedData, setTranslatedData] = useState<any>([]);
 
-  useEffect(() => {
-    (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await axios
+  //       .post<{ userLang: string }>(
+  //         `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+  //       )
+  //       .then((res) => {
+  //         setTranslatedData(res.data);
+  //         // console.log(
+  //         //   "===============translateadData=============",
+  //         //   translatedData
+  //         // );
+  //       });
+  //   })();
+  // }, []);
 
   useEffect(() => {
     setMarkers(

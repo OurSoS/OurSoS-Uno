@@ -39,24 +39,20 @@ const ModalCreateAlerts = React.memo((props: modalCreateAlertsProps) => {
   const progress = useSharedValue(1);
   const min = useSharedValue(1);
   const max = useSharedValue(2);
-  const [userLang, setUserLang] = useState("fa");
+  const [userLang, setUserLang] = useState("en");
   const [translatedData, setTranslatedData] = useState<any>([]);
 
-  useEffect(() => {
-    (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await axios
+  //       .post<{ userLang: string }>(
+  //         `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+  //       )
+  //       .then((res) => {
+  //         setTranslatedData(res.data);
+  //       });
+  //   })();
+  // }, []);
 
   const categories = ["Hazard", "Fire", "Police"];
 

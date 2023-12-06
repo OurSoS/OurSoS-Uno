@@ -15,11 +15,9 @@ import Slider from "../molecules/slider";
 import MapComp from "../molecules/map-comp";
 import { Snackbar } from "react-native-paper";
 import { router } from "expo-router";
-import FriendsList from "../molecules/friends";
 import tw from "../../../lib/tailwind";
 import publicIP from "react-native-public-ip";
-import { getDeviceId } from "../../chat";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type newsItemType = {
   date: string;
   link: string;
@@ -30,41 +28,22 @@ type newsItemType = {
   title: string;
 };
 
-export default function Dashboard({
-  userLang,
-  user,
-}: {
-  userLang: string;
-  user: any;
-}) {
-  const [userName, setUserName] = useState("");
+export default function Dashboard({user}: {user: any}) {
   const [news, setNews] = useState<newsItemType[]>([]);
   const [translatedNews, setTranslatedNews] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [visible, setVisible] = useState(false);
-  const [currentUser, setCurrentUser] = useState(user);
-  const [pins, setPins] = useState(user?.locations);
-  const [friends, setFriends] = useState(user?.friends);
   const [snackData, setSnackData] = useState<any>({});
   const [city, setCity] = useState("");
   const [friendsLocation, setFriendsLocation] = useState<any>([]);
   const [goToFriendLat, setGoToFriendLat] = useState(0);
   const [goToFriendLong, setGoToFriendLong] = useState(0);
   const [translatedData, setTranslatedData] = useState<any>([]);
-
+  const [userLang, setUserLang] = useState("en");
+  const [currentUser, setCurrentUser] = useState<any>(user);
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
+     
+
     })();
   }, []);
 
@@ -74,8 +53,6 @@ export default function Dashboard({
   };
 
   const onDismissSnackBar = () => setVisible(false);
-  const onChangeSearch = (query: string) => setSearchQuery(query);
-
   // get user loacation based on the device public ip address
   useEffect(() => {
     publicIP()
@@ -99,43 +76,67 @@ export default function Dashboard({
 
   useEffect(() => {
     (async () => {
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
       await axios
         .post(
-          `https://oursos-backend-production.up.railway.app/news/${userLang}`
+          `https://oursos-backend-production.up.railway.app/news/${currentUser.languagepreference}`
         )
         .then((response) => {
           setNews(response.data);
         });
+
+        let data = JSON.parse(
+          await AsyncStorage.getItem('translatedData') || ""
+        );
+        setTranslatedData(data);
+     
+        setCurrentUser(currentUser);
+        setUserLang(currentUser.languagepreference);
     })();
   }, [userLang]);
 
   useEffect(() => {
     (async () => {
-      await fetch(
-        `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
-      )
-        .then((response) => response.json())
-        .then(async (response) => {
-          const res = await fetch(
-            `https://oursos-backend-production.up.railway.app/getfriendsforuser/${response.id}`
-          );
-          const data = await res.json();
-          data.map((friend: any) => {
-            setFriendsLocation((prev: any) => [
-              ...prev,
-              {
-                id: friend.id,
-                longitude: friend.long,
-                latitude: friend.lat,
-                username: friend.username,
-                profile: friend.profile,
-              },
-            ]);
-          });
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      const res = await fetch(
+        `https://oursos-backend-production.up.railway.app/getfriendsforuser/${currentUser.id}`
+      );
+      const data = await res.json();
+      data.map((friend: any) => {
+        setFriendsLocation((prev: any) => [
+          ...prev,
+          {
+            id: friend.id,
+            longitude: friend.long,
+            latitude: friend.lat,
+            username: friend.username,
+            profile: friend.profile,
+          },
+        ]);
+      });
+
+      
+      await axios
+        .post(
+          `https://oursos-backend-production.up.railway.app/news/${currentUser.languagepreference}`
+        )
+        .then((response) => {
+          setNews(response.data);
         });
+
+        let translatedData = JSON.parse(
+          await AsyncStorage.getItem('translatedData') || ""
+        );
+        setTranslatedData(translatedData);
+     
+        setCurrentUser(currentUser);
+        setUserLang(currentUser.languagepreference);
     })();
   }, []);
-  // console.log(translatedData);
   return (
     <View
       style={tw.style(
@@ -239,7 +240,7 @@ export default function Dashboard({
           </View>
           <View style={tw.style("bg-primary h-[17rem] mt-2")}>
             <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>
-              Friends
+            {userLang !== "en" ? translatedData?.dashboard?.map : "Friends"}
             </Text>
 
             <ScrollView

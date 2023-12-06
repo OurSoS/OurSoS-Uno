@@ -27,7 +27,7 @@ import {
   getSeverityString,
 } from "../../../utils/static-types";
 import { getDeviceId } from "../../chat";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function MapComp(props: MapCompProps) {
   const [longTo, setLongTo] = useState(props.longTo);
   const [latTo, setLatTo] = useState(props.latTo);
@@ -67,22 +67,19 @@ export default function MapComp(props: MapCompProps) {
   const [updateTick, setUpdateTick] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  const [userLang, setUserLang] = useState("fa");
+  const [userLang, setUserLang] = useState("en");
   const [translatedData, setTranslatedData] = useState<any>([]);
 
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      setUserLang(currentUser.languagepreference);
     })();
   }, []);
 
@@ -158,7 +155,6 @@ export default function MapComp(props: MapCompProps) {
   function getNextAlertType(currentType: alertFilter): alertFilter {
     const currentIndex = alertTypes.indexOf(currentType);
     const nextIndex = (currentIndex + 1) % alertTypes.length;
-    // console.log(alertTypes[nextIndex]);
     return alertTypes[nextIndex];
   }
 
@@ -317,23 +313,23 @@ export default function MapComp(props: MapCompProps) {
         },
         {
           text: "Report Alert",
-          onPress: () => {
+          onPress: async () => {
             Alert.alert("Your Report has been submitted. ✅");
             alert.confirmed = true;
             setFilter("All");
             //TODO: fetch .principalSubdivision && .locality
-            axios
+            await axios
               .get(
                 `https://api-bdc.net/data/reverse-geocode?latitude=${alert.lat}&longitude=${alert.long}&localityLanguage=en&key=bdc_60a73c32772246e09c3f6e8bed5ca65e`
               )
-              .then((response) => {
+              .then(async (response) => {
                 combineDesc +=
                   response.data.locality +
                   ", " +
                   response.data.principalSubdivision;
                 alert.desc = alert.desc + " - " + combineDesc;
 
-                axios
+                await axios
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
                     {

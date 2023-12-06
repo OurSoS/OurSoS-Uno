@@ -7,28 +7,25 @@ import { Dimensions } from "react-native";
 import { Platform } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const screenHeight = Dimensions.get("window").height;
 const footerHeight =
   Platform.OS === "ios" ? screenHeight * 0.09 : screenHeight * 0.09;
 
 export default function Footer() {
-  const [userLang, setUserLang] = useState("fa");
   const [translatedData, setTranslatedData] = useState<any>([]);
-
+  const [lang, setLang] = useState("en");
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') ||""
+      );
+      setTranslatedData(data);
+
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser')||""
+      );
+      setLang(currentUser.languagepreference);
     })();
   }, []);
 
@@ -49,7 +46,7 @@ export default function Footer() {
               style={styles.footerImage}
             />
             <Text style={tw.style(`text-[1rem]`)}>
-              {userLang !== "en" ? translatedData?.menu?.home : "Home"}
+              {lang !== "en" ? translatedData?.menu?.home : "Home"}
             </Text>
           </View>
         </Link>
@@ -64,7 +61,7 @@ export default function Footer() {
               style={styles.footerImage}
             />
             <Text style={tw.style(`text-[1rem]`)}>
-              {userLang !== "en" ? translatedData?.dashboard?.map : "Map"}
+              {lang !== "en" ? translatedData?.dashboard?.map : "Map"}
             </Text>
           </View>
         </Link>
@@ -79,7 +76,7 @@ export default function Footer() {
               style={styles.footerImage}
             />
             <Text style={tw.style(`text-[1rem]`)}>
-              {userLang !== "en" ? translatedData?.menu?.settings : "Settings"}
+              {lang !== "en" ? translatedData?.menu?.settings : "Settings"}
             </Text>
           </View>
         </Link>
