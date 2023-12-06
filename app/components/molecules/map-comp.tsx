@@ -897,12 +897,12 @@ export default function MapComp(props: MapCompProps) {
                 ellipsizeMode="tail"
               >
                 {myMapType === `standard`
-                  ? `{${
+                  ? `${
                       userLang !== "en"
                         ? translatedData?.map?.standard
                         : "standard"
                     }`
-                  : `{${
+                  : `${
                       userLang !== "en" ? translatedData?.map?.hybrid : "hybrid"
                     }`}
               </Text>
