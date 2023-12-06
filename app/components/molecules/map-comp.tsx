@@ -352,6 +352,14 @@ export default function MapComp(props: MapCompProps) {
                   response.data.principalSubdivision;
                 alert.desc = alert.desc + " - " + combineDesc;
 
+                alert.type === "Hazard"
+                  ? (combineDesc += " ⚠️")
+                  : alert.type === "Police"
+                  ? (combineDesc += " 🚓")
+                  : alert.type === "Fire"
+                  ? (combineDesc += " 🔥")
+                  : null;
+
                 axios
                   .post(
                     "https://oursos-backend-production.up.railway.app/reportalert",
@@ -511,12 +519,15 @@ export default function MapComp(props: MapCompProps) {
     setLongTo(props.longTo);
     console.log("Changed location to: ", props.longTo, ", ", props.latTo);
     //@ts-ignore
-    mapRef.current?.animateToRegion({
-      latitude: props.latTo,
-      longitude: props.longTo,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    }, 1500);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: props.latTo,
+        longitude: props.longTo,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      },
+      1500
+    );
   }, [props.longTo, props.latTo]);
 
   return (
@@ -661,7 +672,6 @@ export default function MapComp(props: MapCompProps) {
                     latitude: parseFloat(a.latitude),
                     longitude: parseFloat(a.longitude),
                   }}
-                
                   title={a.acq_date + ", Size: " + a.scan}
                 >
                   <View
@@ -740,11 +750,12 @@ export default function MapComp(props: MapCompProps) {
                       borderWidth: 1,
                       justifyContent: "center",
                       alignItems: "center",
-                    }}>
-                  <Image
-                    source={{ uri: friend.profile }}
-                    style={{ width: 20, height: 20, borderRadius: 20}}
-                  />
+                    }}
+                  >
+                    <Image
+                      source={{ uri: friend.profile }}
+                      style={{ width: 20, height: 20, borderRadius: 20 }}
+                    />
                   </View>
                 </Marker>
               );
@@ -866,13 +877,16 @@ export default function MapComp(props: MapCompProps) {
               }}
             >
               <Image
-                source={require("../../../assets/footerIcons/mapIcon.png")}
-                style={tw.style(`h-8 w-8 ml-2`)}
+                source={
+                  myMapType === "standard"
+                    ? require("../../../assets/footerIcons/mapIcon.png")
+                    : require("../../../assets/mapui/satellite.png") // Change the source for satellite
+                }
+                style={tw.style("h-8 w-8 ml-2")}
               />
-              <Text style={tw.style("text-center mb-2")}>{
-                myMapType === `standard` ? "Map" : "Earth"
-
-              }</Text>
+              <Text style={tw.style("text-center mb-2")}>
+                {myMapType === `standard` ? "Map" : "Earth"}
+              </Text>
             </Pressable>
           ) : (
             <View></View>
@@ -935,7 +949,7 @@ export default function MapComp(props: MapCompProps) {
                 }
               }}
             >
-              <Image 
+              <Image
                 source={getAlertIcon(filter)}
                 style={tw.style(`h-8 w-8`)}
               />
