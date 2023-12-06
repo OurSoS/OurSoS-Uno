@@ -884,7 +884,11 @@ export default function MapComp(props: MapCompProps) {
                 }
                 style={tw.style("h-8 w-8 ml-2")}
               />
-              <Text style={tw.style("text-center mb-2")}>
+              <Text
+                style={tw.style("text-center mb-2")}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {myMapType === `standard`
                   ? `{${
                       userLang !== "en"
