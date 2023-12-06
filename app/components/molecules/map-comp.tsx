@@ -885,7 +885,15 @@ export default function MapComp(props: MapCompProps) {
                 style={tw.style("h-8 w-8 ml-2")}
               />
               <Text style={tw.style("text-center mb-2")}>
-                {myMapType === `standard` ? "Map" : "Earth"}
+                {myMapType === `standard`
+                  ? `{${
+                      userLang !== "en"
+                        ? translatedData?.map?.standard
+                        : "standard"
+                    }`
+                  : `{${
+                      userLang !== "en" ? translatedData?.map?.hybrid : "hybrid"
+                    }`}
               </Text>
             </Pressable>
           ) : (
