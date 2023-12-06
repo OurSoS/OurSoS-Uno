@@ -1,8 +1,5 @@
-import Pubnub from "pubnub";
 import { useState, useEffect } from "react";
 import {
-  TextInput,
-  Pressable,
   Text,
   View,
   Image,
@@ -13,42 +10,25 @@ import { ScrollView } from "react-native-gesture-handler";
 import tw from "twrnc";
 import React from "react";
 import Footer from "./components/molecules/Footer";
-import axios from "axios";
-import { getDeviceId } from "./chat";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Settings() {
   const [profileImage, setProfileImage] = useState();
   const [currentUserName, setCurrentUserName] = useState();
-  const [userLang, setUserLang] = useState("fa");
+  const [userLang, setUserLang] = useState("en");
   const [translatedData, setTranslatedData] = useState<any>([]);
-
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
-    })();
-  }, []);
-
-  useEffect(() => {
-    // console.log(getDeviceId());
-    (async () => {
-      await axios
-        .get(
-          `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
-        )
-        .then((response) => {
-          setProfileImage(response.data.profile);
-          setCurrentUserName(response.data.username);
-        });
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      setUserLang(currentUser.languagepreference);
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
+      setProfileImage(currentUser.profile);
+      setCurrentUserName(currentUser.username);
+      setUserLang(currentUser.languagepreference);
     })();
   }, []);
 

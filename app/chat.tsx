@@ -1,5 +1,6 @@
 import Pubnub from "pubnub";
 import { useState, useEffect } from "react";
+
 import {
   TextInput,
   Pressable,
@@ -27,17 +28,24 @@ const pubnub = new Pubnub({
   userId: "myUniqueUserId",
 });
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function App() {
   const [messages, setMessages] = useState<string[]>([]);
   const [text, onChangeText] = useState("");
-
+  const [translatedData, setTranslatedData] = useState<any>([]);
+  const [userLang, setUserLang] = useState("en");
   useEffect(() => {
-    const deviceId = getDeviceId();
-    console.log(
-      "=====================installation ID:",
-      deviceId,
-      "====================="
-    );
+    (async () => {
+      let data = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      let translatedData = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(translatedData);
+      setUserLang(data.languagepreference);
+    })();
   }, []);
 
   useEffect(() => {
@@ -62,7 +70,7 @@ export default function App() {
           showMessage(messageEvent.message.description);
         }
       },
-      presence: () => {},
+      presence: () => { },
     };
 
     pubnub.addListener(listener);
@@ -111,7 +119,11 @@ export default function App() {
                   `mb-2.5`
                 )}
               >
-                AI Help
+                {
+                  userLang !== "en"
+                    ? translatedData?.dashboard?.getAIHelp
+                    : "Get AI Help"
+                }
               </Text>
               <ScrollView style={tw.style("pt-8 pl-4 pr-4")}>
                 {messages.map((message, idx) => (
@@ -121,7 +133,9 @@ export default function App() {
                       "bg-white mb-2 py-2 px-4 rounded-md border border-gray-300"
                     )}
                   >
-                    <Text>{message}</Text>
+                    <Text>
+                      {message}
+                    </Text>
                   </View>
                 ))}
               </ScrollView>
@@ -152,7 +166,11 @@ export default function App() {
                   )}
                 >
                   <Text style={tw.style("text-xl text-white text-center")}>
-                    Send
+                    {
+                      userLang !== "en"
+                        ? translatedData?.settings?.send
+                        : "Send"
+                    }
                   </Text>
                 </Pressable>
               </View>

@@ -6,7 +6,7 @@ import {
   FlatList,
   ImageBackground,
 } from "react-native";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from "expo-router";
 import React, { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
@@ -126,7 +126,7 @@ export default function Index() {
 
   const [translatedStaticContent, setTranslatedStaticContent] =
     useState<any>(staticText);
-  const [userLang, setUserLang] = useState("fa");
+  const [userLang, setUserLang] = useState("en");
   const [introComponent, setIntroComponent] = useState("dashboard");
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
@@ -140,22 +140,17 @@ export default function Index() {
   const setUserLanguage = async () => {
     if (userLang) {
       setUserLang(userLang);
-
-      useEffect(() => {
-        (async () => {
-          await axios
-            .post<{ userLang: string }>(
-              `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-            )
-            .then((res) => {
-              setTranslatedData(res.data);
-              // console.log(
-              //   "===============translateadData=============",
-              //   translatedData
-              // );
-            });
-        })();
-      }, []);
+      (async () => {
+        await axios
+          .post<{ userLang: string }>(
+            `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+          )
+          .then((res) => {
+            setTranslatedData(res.data);
+            AsyncStorage.setItem('translatedData', JSON.stringify(res.data));
+            
+          });
+      })();
     }
   };
 
@@ -231,6 +226,7 @@ export default function Index() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
+      setUserLanguage()
     })();
   }, []);
 
@@ -238,7 +234,6 @@ export default function Index() {
     const init = async () => {
       await registerForPushNotificationsAsync();
     };
-
     init();
   }, []);
 
@@ -382,9 +377,11 @@ export default function Index() {
         )
         .then((res) => {
           setCurrentUser(res.data);
+          // Stringify and store
+          AsyncStorage.setItem('currentUser', JSON.stringify(res.data));
         });
     })();
-  }, [alerts]);
+  }, []);
 
   const buttonFunction = (buttonText: string) => {
     setIntroComponent(buttonText);
@@ -488,7 +485,10 @@ export default function Index() {
               buttonFunction={buttonFunction}
             ></IntroTextButton>
           ) : (
-            <Dashboard user={currentUser} userLang={userLang}></Dashboard>
+            <Dashboard
+            user={currentUser}
+            
+            ></Dashboard>
           )}
         </ImageBackground>
       </View>

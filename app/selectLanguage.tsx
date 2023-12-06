@@ -9,6 +9,7 @@ import {
   Pressable,
   FlatList,
   ImageBackground,
+  Alert
 } from "react-native";
 import tw, { create } from "twrnc";
 
@@ -17,41 +18,96 @@ type LanguageType = {
   tag: string;
 };
 
+import { getDeviceId } from "./chat";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function SelectLanguages() {
   const [languages, setLanguages] = useState<LanguageType[]>([]);
-  const [userLang, setUserLang] = useState("fa");
+  const [userLang, setUserLang] = useState("");
   const [translatedData, setTranslatedData] = useState<any>([]);
 
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      setUserLang(currentUser.languagepreference);
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
     })();
   }, []);
 
   const setUserLanguage = async () => {
-    const updateUserRequest = {
-      username: "sam",
-      latitude: 49.26357,
-      longitude: -123.13857,
-      languagepreference: userLang, // Ensure that languageTag is defined and has a valid value
-      friends: [2, 3],
-      profile: "https://picsum.photos/200/300?grayscale",
-    };
+    let user = JSON.parse(
+      await AsyncStorage.getItem('currentUser') || ""
+    );
+    fetch(
+      `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: user.id,
+          deviceId: user.deviceId,
+          username: user.userName,
+          lat: user.lat,
+          long: user.long,
+          friends: user.friends,
+          languagepreference: userLang,
+          profile: user.profile,
+        }),
+      }
+    )
+      .then(async (response) => {
+        if (response.status == 200) {
+          Alert.alert(
+            "Profile Updated",
+            "Great Profile Updated Successfully"
+          );
+          AsyncStorage.setItem(
+            "currentUser",
+            JSON.stringify({
+              id: user.id,
+              deviceId: user.deviceId,
+              username: user.username,
+              lat: user.lat,
+              long: user.long,
+              friends: user.friends,
+              languagepreference: userLang,
+              profile: user.profile,
+            })
+          );
+
+          await axios
+            .post<{ userLang: string }>(
+              `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
+            )
+            .then((res) => {
+              setTranslatedData(res.data);
+              AsyncStorage.setItem(
+                "translatedData",
+                JSON.stringify(res.data)
+              );
+            });
+        } else {
+          Alert.alert("Error", "Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   useEffect(() => {
     (async () => {
       setLanguages([
+        {
+          name: "English",
+          tag: "en",
+        },
         {
           name: "Polski",
           tag: "pl",
@@ -68,30 +124,23 @@ export default function SelectLanguages() {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await axios
-  //       .get("https://oursos-backend-production.up.railway.app/languages")
-  //       .then((res) => {
-  //         setLanguages(res.data);
-  //       });
-  //   })();
-  // }, []);
-
   return (
-    <>
-      <ImageBackground
-        source={require("../assets/Intro/Map.png")}
-        style={styles.background}
-      >
+    <ImageBackground
+      source={require("../assets/Intro/Map.png")}
+      style={styles.background}
+    >
+      <View style={tw.style('px-2')}>
         <View>
-          <Link href="/settings">
-            <View
-              style={tw.style(
-                "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-              )}
-            >
-              <Text style={tw.style("text-white")}>Back</Text>
+          <Link
+            style={tw.style(
+              "flex px-4 py-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
+            href="/settings">
+            <View>
+              <Text style={tw.style("text-white")}>
+                {userLang !== "en"
+                  ? translatedData?.settings?.back
+                  : "Back"}</Text>
             </View>
           </Link>
         </View>
@@ -115,6 +164,7 @@ export default function SelectLanguages() {
               <Pressable
                 onPress={() => {
                   setUserLang(languages[index]?.tag);
+                  console.log(languages[index]?.tag);
                 }}
                 style={tw.style(
                   `px-7`,
@@ -135,18 +185,18 @@ export default function SelectLanguages() {
             onPress={() => {
               setUserLanguage();
             }}
-            style={tw.style(`text-white bg-[#003566] px-7 py-3 rounded-lg`)}
+            style={tw.style(`text-white bg-[#001d3d] px-7 py-3 rounded-lg`)}
           >
             <Text style={tw.style(`text-white`)}>
               {" "}
               {userLang !== "en"
                 ? translatedData?.settings?.continue
-                : "Continue"}
+                : "Select Your Language"}
             </Text>
           </Pressable>
         </IntroLayout>
-      </ImageBackground>
-    </>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -161,6 +211,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 24,
+    margin: "auto"
   },
   btnContinue: {
     backgroundColor: "#003566",

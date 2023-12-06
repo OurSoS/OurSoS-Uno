@@ -16,7 +16,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import * as FileSystem from "expo-file-system";
 import { getDeviceId } from "./chat";
 import axios from "axios";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function UpdateProfile() {
   const imgsrc = require("../assets/avatars/Avatar.png");
   const [profilePic, setProfilePic] = useState<string>("");
@@ -27,17 +27,16 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     (async () => {
-      await axios
-        .post<{ userLang: string }>(
-          `https://oursos-backend-production.up.railway.app/translateobject/${userLang}`
-        )
-        .then((res) => {
-          setTranslatedData(res.data);
-          // console.log(
-          //   "===============translateadData=============",
-          //   translatedData
-          // );
-        });
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+      setUserLang(currentUser.languagepreference);
+      setProfilePic(currentUser.profile);
+
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
     })();
   }, []);
 
@@ -53,44 +52,46 @@ export default function UpdateProfile() {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      await axios
-        .get(
-          `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
-        )
-        .then(async (res) => {
-          setProfilePic(res.data.profile);
-        });
-    })();
-  }, []);
-
   const updateProfile = async () => {
-    getDeviceId();
+    let user = JSON.parse(
+      await AsyncStorage.getItem('currentUser') || ""
+    );
     await axios
-      .get(
-        `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
+      .post(
+        "https://oursos-backend-production.up.railway.app/uploadimage",
+        {
+          imagefile: `data:image/png;base64,${image}`,
+        }
       )
       .then(async (res) => {
-        return res.data;
-      })
-      .then(async (user) => {
-        await axios
-          .post(
-            "https://oursos-backend-production.up.railway.app/uploadimage",
-            {
-              imagefile: `data:image/png;base64,${image}`,
-            }
-          )
-          .then(async (res) => {
-            fetch(
-              `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
+        fetch(
+          `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: user.id,
+              deviceId: user.deviceId,
+              username: userName,
+              lat: user.lat,
+              long: user.long,
+              friends: user.friends,
+              languagepreference: user.languagepreference,
+              profile: res.data.url,
+            }),
+          }
+        )
+          .then((response) => {
+            if (response.status == 200) {
+              Alert.alert(
+                "Profile Updated",
+                "Great Profile Updated Successfully"
+              );
+              AsyncStorage.setItem(
+                "currentUser",
+                JSON.stringify({
                   id: user.id,
                   deviceId: user.deviceId,
                   username: userName,
@@ -99,22 +100,15 @@ export default function UpdateProfile() {
                   friends: user.friends,
                   languagepreference: user.languagepreference,
                   profile: res.data.url,
-                }),
-              }
-            )
-              .then((response) => {
-                if (response.status == 200) {
-                  Alert.alert(
-                    "Profile Updated",
-                    "Great Profile Updated Successfully"
-                  );
-                } else {
-                  Alert.alert("Error", "Something went wrong");
-                }
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
+                })
+              );
+
+            } else {
+              Alert.alert("Error", "Something went wrong");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
           });
       });
   };
@@ -216,9 +210,8 @@ export default function UpdateProfile() {
             setUserName(val);
           }}
           value={userName}
-          placeholder={`${
-            userLang !== "en" ? translatedData?.settings?.username : "User Name"
-          }`}
+          placeholder={`${userLang !== "en" ? translatedData?.settings?.username : "User Name"
+            }`}
           placeholderTextColor="#4B5563"
         />
         <Pressable
