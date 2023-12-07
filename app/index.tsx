@@ -176,7 +176,6 @@ export default function Index() {
                 console.error("Error:", error);
               });
           } else {
-
             console.log("User already exists");
           }
         });
@@ -268,6 +267,7 @@ export default function Index() {
     const init = async () => {
       await registerForPushNotificationsAsync();
     };
+
     init();
     (async () => {
       let location = await Location.getCurrentPositionAsync({});
@@ -281,6 +281,18 @@ export default function Index() {
         );
       }
     })();
+    let deviceId = getDeviceId();
+
+    fetch(
+      `https://oursos-backend-production.up.railway.app/users/${deviceId}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === null) {
+          AsyncStorage.setItem('currentUser', JSON.stringify({}))
+        }
+      })
+
   }, []);
 
   Notification.setNotificationHandler({
@@ -458,7 +470,6 @@ export default function Index() {
               (
                 <Dashboard
                   user={currentUser}
-
                 ></Dashboard>
               )
 

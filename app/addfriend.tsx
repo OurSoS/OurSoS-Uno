@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Share, Pressable, View, Text, TextInput, ImageBackground } from "react-native";
+import { FlatList, Alert, StyleSheet, Share, Pressable, View, Text, TextInput, ImageBackground } from "react-native";
 import { router } from "expo-router";
+import { Image } from "react-native";
 import tw from "twrnc";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import 
 export default function AddFriend() {
   const [userId, setUserId] = useState<string>();
   const [addFriendUrl, setAddFriendUrl] = useState<string>("");
   const [userLang, setUserLang] = useState("en");
   const [translatedData, setTranslatedData] = useState<any>([]);
+  const [friends, setFriends] = useState<any>([]);
 
   useEffect(() => {
     (async () => {
       let data = JSON.parse(
-        await AsyncStorage.getItem('translatedData') ||""
+        await AsyncStorage.getItem('translatedData') || ""
       );
       setTranslatedData(data);
+
+      let currentUser = JSON.parse(await AsyncStorage.getItem('currentUser') || "");
+
+      const res = await fetch(
+        `https://oursos-backend-production.up.railway.app/getfriendsforuser/${currentUser.id}`
+      );
+      const myFriends = await res.json();
+      setFriends(myFriends);
     })();
   }, []);
 
@@ -25,13 +36,53 @@ export default function AddFriend() {
       return;
     }
 
-    (async()=>{
-        await axios
+    (async () => {
+      await axios
         .post(`${addFriendUrl}/${userId}`)
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          if (res.status == 200) {
+            Alert.alert(
+              "Added Friend",
+              "Great Added Successfully"
+            );
+            (async () => {
+              let currentUser = JSON.parse(await AsyncStorage.getItem('currentUser') || "");
+  
+              const res = await fetch(
+                `https://oursos-backend-production.up.railway.app/getfriendsforuser/${currentUser.id}`
+              );
+              const myFriends = await res.json();
+              setFriends(myFriends);
+            })()
+          }
+        })
         .catch((err) => console.log(err));
     })()
   };
+
+  const handleRemoveFriend = async (friendId: number) => {
+    await axios
+      .post(`https://oursos-backend-production.up.railway.app/removefriend/${userId}/${friendId}`)
+      .then((res) => {
+        if (res.status == 200) {
+          Alert.alert(
+            "Friend Removed",
+            "Great Friend Removed Successfully"
+          );
+          (async () => {
+            let currentUser = JSON.parse(await AsyncStorage.getItem('currentUser') || "");
+
+            const res = await fetch(
+              `https://oursos-backend-production.up.railway.app/getfriendsforuser/${currentUser.id}`
+            );
+            const myFriends = await res.json();
+            setFriends(myFriends);
+          })()
+        }
+      })
+      .catch((err) => { console.log(err) })
+  }
+
 
   const handleShareButtonPress = async () => {
     const url = `https://oursos-backend-production.up.railway.app/addfriend/${userId}`;
@@ -43,10 +94,10 @@ export default function AddFriend() {
   React.useEffect(() => {
     (async () => {
       let currentUser = JSON.parse(
-        await AsyncStorage.getItem('currentUser')||""
-      );  
+        await AsyncStorage.getItem('currentUser') || ""
+      );
       setUserId(currentUser.id);
-      setUserLang(currentUser.languagepreference);  
+      setUserLang(currentUser.languagepreference);
     })();
   }, []);
 
@@ -69,53 +120,106 @@ export default function AddFriend() {
             )}
           >
             <Text style={tw.style("text-white")}>
-              {userLang !=="en"
-              ?translatedData?.settings?.back:
-              "Back"
+              {userLang !== "en"
+                ? translatedData?.settings?.back :
+                "Back"
               }
             </Text>
           </Pressable>
+          <Pressable
+            onPress={handleShareButtonPress}
+            style={tw.style(
+              "flex flex-col p-2 bg-transparent rounded-md justify-center items-center"
+            )}
+          >
+            <Text style={tw.style("text-white")}>
+              {/* Fathema Khanom */}
+              <Image
+                alt="Fathema Khanom free icon Image to add friend"
+                source={require("../assets/add-friend.png")}
+                style={tw.style(
+                  `w-6 h-6`,
+                )}
+              />
+            </Text>
+          </Pressable>
         </View>
+
         <View style={tw.style("p-4 flex flex-col gap-3")}>
           <Text style={tw.style("text-2xl")}>
             {
               userLang !== "en"
-              ? translatedData.settings.friendurl
-              :"Friend Request Url"
+                ? translatedData.settings.friendurl
+                : "Friend Request Url"
             }
           </Text>
-          <TextInput
-            placeholder={`${userLang !== 'en' ? translatedData?.settings?.friendurl :'Enter Friend Url'}`}
-            style={tw.style("border border-primary")}
-            value={addFriendUrl}
-            onChangeText={setAddFriendUrl}
-          ></TextInput>
-          <Pressable
-            onPress={handleAddFriendSubmit}
-            style={tw.style(
-              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-            )}
-          >
-            <Text style={tw.style("text-white")}>{userLang !== "en"
-              ? translatedData?.settings?.addfriend
-              : "Add Friend"}</Text>
-          </Pressable>
+          <View style={tw.style("w-full flex flex-row justify-between")}>
+            <TextInput
+              style={tw.style("border border-primary px-2 py-1 w-[60%] rounded-md")}
+              placeholder={`${userLang !== 'en' ? translatedData?.settings?.friendurl : 'Enter Friend Url'}`}
+              // style={tw.style("border border-primary")}
+              value={addFriendUrl}
+              onChangeText={setAddFriendUrl}
+            ></TextInput>
+            <Pressable
+              onPress={handleAddFriendSubmit}
+              style={tw.style(
+                "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+              )}
+            >
+              <Text style={tw.style("text-white")}>{userLang !== "en"
+                ? translatedData?.settings?.addfriend
+                : "Add Friend"}</Text>
+            </Pressable>
+
+          </View>
 
         </View>
-
-        <View style={tw.style("flex-1 justify-center items-center")}>
-          <Pressable
-            onPress={handleShareButtonPress}
-            style={tw.style(
-              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-            )}
-          >
-            <Text style={tw.style("text-white")}>{`${userLang !== "en"
-              ? translatedData?.settings?.addfriend
-              : "Share Friend Request URL"
-              }`}</Text>
-          </Pressable>
-        </View>
+        <Text style={tw.style("text-2xl p-4")}>
+          Friend List
+        </Text>
+        <FlatList
+          style={tw.style(`w-full`, `flex`, `flex-col`)}
+          data={friends}
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: any
+            index: number;
+          }) => (
+            <View style={tw.style("flex flex-row w-[30%] gap-3 items-center justify-between p-4 fit-content")}>
+              <View style={tw.style("flex flex-col justify-center items-center gap-2")}>
+                <Image
+                  source={{ uri: item.profile }}
+                  style={tw.style(
+                    `w-15 h-15 rounded-full border-2 border-[#001D3D]`
+                  )}
+                />
+                <Text style={styles.text}>{item.username}</Text>
+              </View>
+              <Pressable
+                onPress={() => {
+                  handleRemoveFriend(item.id);
+                }}
+                style={tw.style(
+                  `px-7`,
+                  `py-3`,
+                  `rounded-lg`,
+                  `text-white`,
+                )}
+              >
+                <Image
+                  alt="Fathema Khanom free icon Image to add friend"
+                  source={require("../assets/delete-account.png")}
+                  style={tw.style(
+                    `w-6 h-6`,
+                  )}
+                />
+              </Pressable>
+            </View>
+          )}
+        />
       </View>
     </ImageBackground>
   );
