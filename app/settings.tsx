@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  Image,
-  ImageBackground,
-} from "react-native";
+import { Text, View, Image, ImageBackground } from "react-native";
 import { Link } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import tw from "twrnc";
@@ -19,11 +14,11 @@ export default function Settings() {
   useEffect(() => {
     (async () => {
       let currentUser = JSON.parse(
-        await AsyncStorage.getItem('currentUser') || ""
+        (await AsyncStorage.getItem("currentUser")) || ""
       );
       setUserLang(currentUser.languagepreference);
       let data = JSON.parse(
-        await AsyncStorage.getItem('translatedData') || ""
+        (await AsyncStorage.getItem("translatedData")) || ""
       );
       setTranslatedData(data);
       setProfileImage(currentUser.profile);
@@ -53,18 +48,22 @@ export default function Settings() {
                   ? translatedData?.menu?.settings
                   : "Settings"}
               </Text>
-              <View style={tw.style("pt-8 pl-4 pr-4")}>
+              <View
+                style={tw.style(
+                  "flex justify-center items-center pt-8 pl-4 pr-4"
+                )}
+              >
                 {profileImage ? (
                   <Image
                     source={{ uri: profileImage }}
-                    style={tw.style(`w-full h-20`)}
-                    resizeMode="contain"
+                    style={tw.style(`w-20 h-20 rounded-full`)}
+                    resizeMode="cover"
                   />
                 ) : (
                   <Image
                     source={require("../assets/avatars/Avatar.png")}
-                    style={tw.style(`w-full h-20`)}
-                    resizeMode="contain"
+                    style={tw.style(`w-20 h-20 rounded-full`)}
+                    resizeMode="cover"
                   />
                 )}
 

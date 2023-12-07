@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { FlatList, Alert, StyleSheet, Share, Pressable, View, Text, TextInput, ImageBackground } from "react-native";
+=======
+import {
+  StyleSheet,
+  Share,
+  Pressable,
+  View,
+  Text,
+  TextInput,
+  ImageBackground,
+} from "react-native";
+>>>>>>> acff719fc266cc410f4ef8f363e503a96c7ef9d2
 import { router } from "expo-router";
 import { Image } from "react-native";
 import tw from "twrnc";
@@ -16,7 +28,11 @@ export default function AddFriend() {
   useEffect(() => {
     (async () => {
       let data = JSON.parse(
+<<<<<<< HEAD
         await AsyncStorage.getItem('translatedData') || ""
+=======
+        (await AsyncStorage.getItem("translatedData")) || ""
+>>>>>>> acff719fc266cc410f4ef8f363e503a96c7ef9d2
       );
       setTranslatedData(data);
 
@@ -57,7 +73,7 @@ export default function AddFriend() {
           }
         })
         .catch((err) => console.log(err));
-    })()
+    })();
   };
 
   const handleRemoveFriend = async (friendId: number) => {
@@ -94,7 +110,11 @@ export default function AddFriend() {
   React.useEffect(() => {
     (async () => {
       let currentUser = JSON.parse(
+<<<<<<< HEAD
         await AsyncStorage.getItem('currentUser') || ""
+=======
+        (await AsyncStorage.getItem("currentUser")) || ""
+>>>>>>> acff719fc266cc410f4ef8f363e503a96c7ef9d2
       );
       setUserId(currentUser.id);
       setUserLang(currentUser.languagepreference);
@@ -111,7 +131,6 @@ export default function AddFriend() {
       style={styles.background}
     >
       <View style={tw.style("flex-1")}>
-
         <View style={tw.style("flex-row justify-between items-center p-4")}>
           <Pressable
             onPress={handleBackButtonPress}
@@ -120,10 +139,14 @@ export default function AddFriend() {
             )}
           >
             <Text style={tw.style("text-white")}>
+<<<<<<< HEAD
               {userLang !== "en"
                 ? translatedData?.settings?.back :
                 "Back"
               }
+=======
+              {userLang !== "en" ? translatedData?.settings?.back : "Back"}
+>>>>>>> acff719fc266cc410f4ef8f363e503a96c7ef9d2
             </Text>
           </Pressable>
           <Pressable
@@ -147,6 +170,7 @@ export default function AddFriend() {
 
         <View style={tw.style("p-4 flex flex-col gap-3")}>
           <Text style={tw.style("text-2xl")}>
+<<<<<<< HEAD
             {
               userLang !== "en"
                 ? translatedData.settings.friendurl
@@ -220,6 +244,50 @@ export default function AddFriend() {
             </View>
           )}
         />
+=======
+            {userLang !== "en"
+              ? translatedData.settings.friendurl
+              : "Friend Request Url"}
+          </Text>
+          <TextInput
+            placeholder={`${
+              userLang !== "en"
+                ? translatedData?.settings?.friendurl
+                : "Enter Friend Url"
+            }`}
+            style={tw.style("border border-primary")}
+            value={addFriendUrl}
+            onChangeText={setAddFriendUrl}
+          ></TextInput>
+          <Pressable
+            onPress={handleAddFriendSubmit}
+            style={tw.style(
+              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
+          >
+            <Text style={tw.style("text-white")}>
+              {userLang !== "en"
+                ? translatedData?.settings?.addfriend
+                : "Add Friend"}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={tw.style("flex-1 justify-center items-center")}>
+          <Pressable
+            onPress={handleShareButtonPress}
+            style={tw.style(
+              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
+          >
+            <Text style={tw.style("text-white")}>{`${
+              userLang !== "en"
+                ? translatedData?.settings?.addfriend
+                : "Share Friend Request URL"
+            }`}</Text>
+          </Pressable>
+        </View>
+>>>>>>> acff719fc266cc410f4ef8f363e503a96c7ef9d2
       </View>
     </ImageBackground>
   );
@@ -265,4 +333,3 @@ const styles = StyleSheet.create({
     color: "black",
   },
 });
-

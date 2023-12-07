@@ -144,7 +144,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
         return null;
     }
   };
-
+  console.log(alert);
   return (
     <View style={tw.style("p-4")}>
       <View style={tw.style("")}>
@@ -200,9 +200,8 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
               </Text>
             </View>
 
-            {/* Message or title in italic text */}
-            <Text style={tw.style("italic mt-1")}>
-              {alert.message || alert.properties?.title || ""}
+            <Text style={tw.style("ml-2 mt-1")}>
+              {alert.desc || alert.properties?.title || ""}
             </Text>
           </View>
 

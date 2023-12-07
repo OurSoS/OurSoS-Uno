@@ -17,14 +17,16 @@ export default function IntroTextButton({
 }) {
   return (
     <IntroLayout>
-      <Text style={tw.style(`text-[2rem] text-center mb-10`)}>{heading}</Text>
-      <Text style={tw.style(`text-[1rem] text-left mb-10`)}>{details}</Text>
-      <Pressable
-        style={tw.style(`text-white bg-[#003566] px-7 py-3 rounded-lg`)}
-        onPress={() => buttonFunction(buttonNext)}
-      >
-        <Text style={tw.style(`text-white`)}>{buttonText}</Text>
-      </Pressable>
+      <View style={tw.style(`flex justify-center items-center`)}>
+        <Text style={tw.style(`text-[2rem] text-center mb-10`)}>{heading}</Text>
+        <Text style={tw.style(`text-[1rem] text-left mb-10`)}>{details}</Text>
+        <Pressable
+          style={tw.style(`text-white bg-[#003566] px-7 py-3 rounded-lg`)}
+          onPress={() => buttonFunction(buttonNext)}
+        >
+          <Text style={tw.style(`text-white`)}>{buttonText}</Text>
+        </Pressable>
+      </View>
     </IntroLayout>
   );
 }

@@ -27,13 +27,13 @@ export default function UpdateProfile() {
   useEffect(() => {
     (async () => {
       let currentUser = JSON.parse(
-        await AsyncStorage.getItem('currentUser') || ""
+        (await AsyncStorage.getItem("currentUser")) || ""
       );
       setUserLang(currentUser.languagepreference);
       setProfilePic(currentUser.profile);
 
       let data = JSON.parse(
-        await AsyncStorage.getItem('translatedData') || ""
+        (await AsyncStorage.getItem("translatedData")) || ""
       );
       setTranslatedData(data);
     })();
@@ -52,66 +52,60 @@ export default function UpdateProfile() {
   };
 
   const updateProfile = async () => {
-    let user = JSON.parse(
-      await AsyncStorage.getItem('currentUser') || ""
-    );
+    let user = JSON.parse((await AsyncStorage.getItem("currentUser")) || "");
     await axios
-    .post(
-      "https://oursos-backend-production.up.railway.app/uploadimage",
-      {
+      .post("https://oursos-backend-production.up.railway.app/uploadimage", {
         imagefile: `data:image/png;base64,${image}`,
-      }
-    )
-    .then(async (res) => {
-      fetch(
-        `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: user.id,
-            deviceId: user.deviceId,
-            username: userName,
-            lat: user.lat,
-            long: user.long,
-            friends: user.friends,
-            languagepreference: user.languagepreference,
-            profile: res.data.url,
-          }),
-        }
-      )
-        .then((response) => {
-          if (response.status == 200) {
-            Alert.alert(
-              "Profile Updated",
-              "Great Profile Updated Successfully"
-            );
-            AsyncStorage.setItem(
-              "currentUser",
-              JSON.stringify({
-                id: user.id,
-                deviceId: user.deviceId,
-                username: userName,
-                lat: user.lat,
-                long: user.long,
-                friends: user.friends,
-                languagepreference: user.languagepreference,
-                profile: res.data.url,
-              })
-            );
-
-          } else {
-            Alert.alert("Error", "Something went wrong");
+      })
+      .then(async (res) => {
+        fetch(
+          `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: user.id,
+              deviceId: user.deviceId,
+              username: userName,
+              lat: user.lat,
+              long: user.long,
+              friends: user.friends,
+              languagepreference: user.languagepreference,
+              profile: res.data.url,
+            }),
           }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    });
+        )
+          .then((response) => {
+            if (response.status == 200) {
+              Alert.alert(
+                "Profile Updated",
+                "Great Profile Updated Successfully"
+              );
+              AsyncStorage.setItem(
+                "currentUser",
+                JSON.stringify({
+                  id: user.id,
+                  deviceId: user.deviceId,
+                  username: userName,
+                  lat: user.lat,
+                  long: user.long,
+                  friends: user.friends,
+                  languagepreference: user.languagepreference,
+                  profile: res.data.url,
+                })
+              );
+            } else {
+              Alert.alert("Error", "Something went wrong");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
   };
- const handleBackButtonPress = () => {
+  const handleBackButtonPress = () => {
     router.push("/settings");
   };
 
@@ -130,21 +124,18 @@ export default function UpdateProfile() {
           `px-2`
         )}
       >
-          <View style={tw.style("flex-row justify-between items-center p-4")}>
-            <Pressable
-              onPress={handleBackButtonPress}
-              style={tw.style(
-                "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
-              )}
-            >
-              <Text style={tw.style("text-white")}>
-                {userLang !=="en"
-                  ?translatedData?.settings?.back:
-                  "Back"
-                }
-              </Text>
-            </Pressable>
-          </View>
+        <View style={tw.style("flex-row justify-between items-center p-4")}>
+          <Pressable
+            onPress={handleBackButtonPress}
+            style={tw.style(
+              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
+          >
+            <Text style={tw.style("text-white")}>
+              {userLang !== "en" ? translatedData?.settings?.back : "Back"}
+            </Text>
+          </Pressable>
+        </View>
         <View
           style={tw.style(`
 w-[50] h-[50px]] overflow-hidden rounded-full self-center p-5
@@ -152,29 +143,38 @@ flex flex-col items-center justify-center`)}
         >
           {!profilePic && !image ? (
             <Image
-              style={[tw.style(`w-full h-full`), { objectFit: "contain" }]}
+              style={[
+                tw.style(`w-full h-full rounded-full`),
+                { objectFit: "cover" },
+              ]}
               source={imgsrc}
               alt=""
               width={100}
               height={100}
             />
           ) : image ? (
-              <Image
-                source={{ uri: `data:image/png;base64,${image}` }}
-                alt=""
-                width={100}
-                height={100}
-                style={[tw.style(`w-full h-full`), { objectFit: "contain" }]}
-              />
-            ) : (
-                <Image
-                  source={{ uri: profilePic }}
-                  alt=""
-                  width={100}
-                  height={100}
-                  style={[tw.style(`w-full h-full`), { objectFit: "contain" }]}
-                />
-              )}
+            <Image
+              source={{ uri: `data:image/png;base64,${image}` }}
+              alt=""
+              width={100}
+              height={100}
+              style={[
+                tw.style(`w-full h-full rounded-full`),
+                { objectFit: "cover" },
+              ]}
+            />
+          ) : (
+            <Image
+              source={{ uri: profilePic }}
+              alt=""
+              width={100}
+              height={100}
+              style={[
+                tw.style(`w-full h-full rounded-full`),
+                { objectFit: "cover" },
+              ]}
+            />
+          )}
         </View>
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
@@ -215,8 +215,9 @@ flex flex-col items-center justify-center`)}
             setUserName(val);
           }}
           value={userName}
-          placeholder={`${userLang !== "en" ? translatedData?.settings?.username : "User Name"
-}`}
+          placeholder={`${
+            userLang !== "en" ? translatedData?.settings?.username : "User Name"
+          }`}
           placeholderTextColor="#4B5563"
         />
         <Pressable
