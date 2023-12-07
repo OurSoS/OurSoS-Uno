@@ -255,7 +255,7 @@ export default function Index() {
 
       let user = JSON.parse(await AsyncStorage.getItem('currentUser') || "");
 
-      await axios.post(`https://oursos-backend-production.up.railway.app/translateobject/${user.languagepreference}`)
+      await axios.post(`https://oursos-backend-production.up.railway.app/translateobject/${userLang}`)
         .then((res) => {
           setTranslatedData(res.data);
           AsyncStorage.setItem('translatedData', JSON.stringify(res.data))

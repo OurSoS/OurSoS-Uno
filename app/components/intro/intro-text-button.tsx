@@ -18,8 +18,8 @@ export default function IntroTextButton({
   return (
     <IntroLayout>
       <View style={tw.style(`flex justify-center items-center`)}>
-        <Text style={tw.style(`text-[2rem] text-center mb-10`)}>{heading}</Text>
-        <Text style={tw.style(`text-[1rem] text-left mb-10`)}>{details}</Text>
+        <Text style={tw.style(`text-[2rem] text-center mb-10 max-w-[85%]`)}>{heading}</Text>
+        <Text style={tw.style(`text-[1rem] text-left mb-10 max-w-[85%] text-center`)}>{details}</Text>
         <Pressable
           style={tw.style(`text-white bg-[#003566] px-7 py-3 rounded-lg`)}
           onPress={() => buttonFunction(buttonNext)}
