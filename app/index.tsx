@@ -124,16 +124,84 @@ export default function Index() {
   const [fires, setFires] = useState<any>([]);
   const [tsunamis, setTsunamis] = useState<any>([]);
 
-  const [translatedStaticContent, setTranslatedStaticContent] =
-    useState<any>(staticText);
+  const [translatedData, setTranslatedData] =
+    useState<any>({});
   const [userLang, setUserLang] = useState("en");
-  const [introComponent, setIntroComponent] = useState("dashboard");
+
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<any>(null);
-
+  const [introComponent, setIntroComponent] = useState("");
   const tw = create(require("../tailwind.config.ts"));
+
+  useEffect(() => {
+    let deviceId = getDeviceId();
+    console.log(deviceId);
+    if (introComponent === "dashboard") {
+      fetch(
+        `https://oursos-backend-production.up.railway.app/users/${deviceId}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data === null) {
+            //IF the user does not exist, create a new user and display the INTRO rather than Dashboard.
+            let userData = {
+              deviceId: deviceId,
+              username: deviceId,
+              lat: location?.coords?.latitude,
+              long: location?.coords?.longitude,
+              languagepreference: userLang,
+              profile: "https://picsum.photos/200/300?grayscale",
+            };
+
+            fetch(
+              "https://oursos-backend-production.up.railway.app/createuser",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+              }
+            )
+              .then((response) => response.json())
+              .then((data) => {
+
+                AsyncStorage.setItem('currentUser', JSON.stringify(data))
+
+                console.log({ data });
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          } else {
+
+            console.log("User already exists");
+          }
+        });
+    }
+  }, [introComponent]);
+
+
+  useEffect(() => {
+    (async () => {
+      let currentUser = JSON.parse(
+        await AsyncStorage.getItem('currentUser') || ""
+      );
+
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
+
+      setCurrentUser(currentUser);
+      setUserLang(currentUser.languagepreference);
+    })();
+  }, [userLang]);
+
+
+
   const setUserLanguage = async () => {
     if (userLang) {
       setUserLang(userLang);
@@ -157,51 +225,15 @@ export default function Index() {
       );
       return;
     }
-    // Here you might want to save the token if you plan to use remote notifications
   }
 
   useEffect(() => {
     (async () => {
-      let deviceId = getDeviceId();
-      fetch(
-        `https://oursos-backend-production.up.railway.app/users/${deviceId}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data === null) {
-            //IF the user does not exist, create a new user and display the INTRO rather than Dashboard.
-            setIntroComponent("welcome");
-            let userData = {
-              deviceId: deviceId,
-              username: deviceId,
-              lat: location?.coords?.latitude,
-              long: location?.coords?.longitude,
-              languagepreference: "en",
-              profile: "https://picsum.photos/200/300?grayscale",
-            };
-            fetch(
-              "https://oursos-backend-production.up.railway.app/createuser",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userData),
-              }
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                console.log(data);
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-          } else {
-            setIntroComponent("dashboard");
-          }
-        });
-
       setLanguages([
+        {
+          name: "English",
+          tag: "en",
+        },
         {
           name: "Polski",
           tag: "pl",
@@ -221,7 +253,14 @@ export default function Index() {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-      setUserLanguage()
+
+      let user = JSON.parse(await AsyncStorage.getItem('currentUser') || "");
+
+      await axios.post(`https://oursos-backend-production.up.railway.app/translateobject/${user.languagepreference}`)
+        .then((res) => {
+          setTranslatedData(res.data);
+          AsyncStorage.setItem('translatedData', JSON.stringify(res.data))
+        })
     })();
   }, []);
 
@@ -230,6 +269,18 @@ export default function Index() {
       await registerForPushNotificationsAsync();
     };
     init();
+    (async () => {
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+
+      if (location && location.coords) {
+        checkAndNotifyForAlerts(
+          location.coords.latitude,
+          location.coords.longitude,
+          alerts
+        );
+      }
+    })();
   }, []);
 
   Notification.setNotificationHandler({
@@ -335,13 +386,7 @@ export default function Index() {
         alert.long
       );
       if (distance <= 100) {
-        // Longitude/Latitude is in degrees, so 0.1 is about 11km where as before our radius was 550km distances which was too far to alert users
         ++i;
-        // console.log(
-        //   "==============alert================",
-        //   alert.type,
-        //   alert.id
-        // );
         await sendLocalNotification(
           `Emergency Alert: There is a ${alert.type} in your area due to ${alert.message}. Seek safety immediately as per local guidelines and stay informed.`
         );
@@ -370,12 +415,22 @@ export default function Index() {
           `https://oursos-backend-production.up.railway.app/users/${getDeviceId()}`
         )
         .then((res) => {
+
           setCurrentUser(res.data);
           // Stringify and store
           AsyncStorage.setItem('currentUser', JSON.stringify(res.data));
         });
     })();
+
   }, []);
+
+  useEffect(() => {
+    if (currentUser?.deviceId) {
+      setIntroComponent("dashboard")
+    } else {
+      setIntroComponent("welcome")
+    }
+  }, [currentUser]);
 
   const buttonFunction = (buttonText: string) => {
     setIntroComponent(buttonText);
@@ -398,92 +453,97 @@ export default function Index() {
             { resizeMode: "cover" },
           ]}
         >
-          {introComponent === "welcome" ? (
-            <IntroTextButton
-              heading="Welcome To OurSOS!"
-              details="Empowering Your Safety, Connecting Our World"
-              buttonNext="selectLocation"
-              buttonText="Select Language"
-              buttonFunction={buttonFunction}
-            ></IntroTextButton>
-          ) : introComponent === "selectLocation" ? (
-            <IntroLayout>
-              <Text style={styles.header}>Select your language</Text>
-              <FlatList
-                style={tw.style(`w-full`, `flex`, `flex-col`)}
-                data={languages}
-                renderItem={({
-                  item,
-                  index,
-                }: {
-                  item: LanguageType;
-                  index: number;
-                }) => (
+          {
+            introComponent === "dashboard" ?
+              (
+                <Dashboard
+                  user={currentUser}
+
+                ></Dashboard>
+              )
+
+              : introComponent === "welcome" ? (
+                <IntroTextButton
+                  heading="Welcome To OurSOS!"
+                  details="Empowering Your Safety, Connecting Our World"
+                  buttonNext="selectLocation"
+                  buttonText="Select Language"
+                  buttonFunction={buttonFunction}
+                ></IntroTextButton>
+              ) : introComponent === "selectLocation" ? (
+                <IntroLayout>
+                  <Text style={styles.header}>Select your language</Text>
+                  <FlatList
+                    style={tw.style(`w-full`, `flex`, `flex-col`)}
+                    data={languages}
+                    renderItem={({
+                      item,
+                      index,
+                    }: {
+                      item: LanguageType;
+                      index: number;
+                    }) => (
+                      <Pressable
+                        onPress={() => {
+                          setUserLang(languages[index]?.tag);
+                        }}
+                        style={tw.style(
+                          `px-7`,
+                          `py-3`,
+                          `rounded-lg`,
+                          `border`,
+                          `mb-3`,
+                          userLang === languages[index]?.tag
+                            ? `bg-gray-400`
+                            : `bg-white`
+                        )}
+                      >
+                        <Text style={styles.text}>{item.name}</Text>
+                      </Pressable>
+                    )}
+                  />
                   <Pressable
                     onPress={() => {
-                      setUserLang(languages[index]?.tag);
+                      setUserLanguage();
+                      setIntroComponent("newsFeed");
                     }}
                     style={tw.style(
+                      `text-white`,
+                      `bg-[#003566]`,
                       `px-7`,
                       `py-3`,
-                      `rounded-lg`,
-                      `border`,
-                      `mb-3`,
-                      userLang === languages[index]?.tag
-                        ? `bg-gray-400`
-                        : `bg-white`
+                      `rounded-lg`
                     )}
                   >
-                    <Text style={styles.text}>{item.name}</Text>
+                    <Text style={tw.style(`text-white`)}>Continue</Text>
                   </Pressable>
-                )}
-              />
-              <Pressable
-                onPress={() => {
-                  setUserLanguage();
-                  setIntroComponent("newsFeed");
-                }}
-                style={tw.style(
-                  `text-white`,
-                  `bg-[#003566]`,
-                  `px-7`,
-                  `py-3`,
-                  `rounded-lg`
-                )}
-              >
-                <Text style={tw.style(`text-white`)}>Continue</Text>
-              </Pressable>
-            </IntroLayout>
-          ) : introComponent === "newsFeed" ? (
-            <IntroTextButton
-              heading={translatedStaticContent["intro-newsfeed"].heading}
-              details={translatedStaticContent["intro-newsfeed"].details}
-              buttonNext="introMap"
-              buttonText={translatedStaticContent["button-text"].continue}
-              buttonFunction={buttonFunction}
-            ></IntroTextButton>
-          ) : introComponent === "introMap" ? (
-            <IntroTextButton
-              heading={translatedStaticContent["intro-map"].heading}
-              details={translatedStaticContent["intro-map"].details}
-              buttonNext="introFriends"
-              buttonText={translatedStaticContent["button-text"].continue}
-              buttonFunction={buttonFunction}
-            ></IntroTextButton>
-          ) : introComponent === "introFriends" ? (
-            <IntroTextButton
-              heading={translatedStaticContent["intro-friends"].heading}
-              details={translatedStaticContent["intro-friends"].details}
-              buttonNext="dashboard"
-              buttonText={translatedStaticContent["button-text"].continue}
-              buttonFunction={buttonFunction}
-            ></IntroTextButton>
-          ) : (
-            <Dashboard
-            user={currentUser}
-            
-            ></Dashboard>
-          )}
+                </IntroLayout>
+              ) : introComponent === "newsFeed" ? (
+                <IntroTextButton
+                  heading={translatedData?.intro?.newsfeed}
+                  details={translatedData?.intro?.newsfeedtext}
+                  buttonNext="introMap"
+                  buttonText={translatedData?.settings?.continue}
+                  buttonFunction={buttonFunction}
+                ></IntroTextButton>
+              ) : introComponent === "introMap" ? (
+                <IntroTextButton
+                  heading={translatedData?.dashboard?.map}
+                  details={translatedData?.intro["intro-map-text"]}
+                  buttonNext="introFriends"
+                  buttonText={translatedData?.settings?.continue}
+                  buttonFunction={buttonFunction}
+                ></IntroTextButton>
+              ) : introComponent === "introFriends" ? (
+                <IntroTextButton
+                  heading={translatedData?.intro["friends-family"]}
+                  details={translatedData.intro["friends-family-text"]}
+                  buttonNext="dashboard"
+                  buttonText={translatedData?.settings?.continue}
+                  buttonFunction={buttonFunction}
+                ></IntroTextButton>
+              ) : <></>
+          }
         </ImageBackground>
       </View>
       {introComponent === "dashboard" && <Footer />}

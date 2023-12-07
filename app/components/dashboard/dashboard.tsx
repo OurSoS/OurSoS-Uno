@@ -32,7 +32,7 @@ type newsItemType = {
   title: string;
 };
 
-export default function Dashboard({user}: {user: any}) {
+export default function Dashboard({ user }: { user: any }) {
   const [news, setNews] = useState<newsItemType[]>([]);
   const [translatedNews, setTranslatedNews] = useState<any[]>([]);
   const [visible, setVisible] = useState(false);
@@ -46,7 +46,7 @@ export default function Dashboard({user}: {user: any}) {
   const [currentUser, setCurrentUser] = useState<any>(user);
   useEffect(() => {
     (async () => {
-     
+
 
     })();
   }, []);
@@ -91,13 +91,13 @@ export default function Dashboard({user}: {user: any}) {
           setNews(response.data);
         });
 
-        let data = JSON.parse(
-          await AsyncStorage.getItem('translatedData') || ""
-        );
-        setTranslatedData(data);
-     
-        setCurrentUser(currentUser);
-        setUserLang(currentUser.languagepreference);
+      let data = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(data);
+
+      setCurrentUser(currentUser);
+      setUserLang(currentUser.languagepreference);
     })();
   }, [userLang]);
 
@@ -123,7 +123,7 @@ export default function Dashboard({user}: {user: any}) {
         ]);
       });
 
-      
+
       await axios
         .post(
           `https://oursos-backend-production.up.railway.app/news/${currentUser.languagepreference}`
@@ -132,13 +132,13 @@ export default function Dashboard({user}: {user: any}) {
           setNews(response.data);
         });
 
-        let translatedData = JSON.parse(
-          await AsyncStorage.getItem('translatedData') || ""
-        );
-        setTranslatedData(translatedData);
-     
-        setCurrentUser(currentUser);
-        setUserLang(currentUser.languagepreference);
+      let translatedData = JSON.parse(
+        await AsyncStorage.getItem('translatedData') || ""
+      );
+      setTranslatedData(translatedData);
+
+      setCurrentUser(currentUser);
+      setUserLang(currentUser.languagepreference);
     })();
   }, []);
   return (
@@ -198,10 +198,10 @@ export default function Dashboard({user}: {user: any}) {
             {" "}
             {userLang !== "en" ? translatedData?.dashboard?.news : "News"}
           </Text>
-          <Suspense fallback={<CardLoading/>}>
+          <Suspense fallback={<CardLoading />}>
             <Slider
-                  onToggleSnackBar={onToggleSnackBar}
-                  data={news}
+              onToggleSnackBar={onToggleSnackBar}
+              data={news}
             />
           </Suspense>
           <View style={tw.style(`w-full`, `pt-0`, `pb-2`)}>
@@ -209,22 +209,22 @@ export default function Dashboard({user}: {user: any}) {
               {" "}
               {userLang !== "en" ? translatedData?.dashboard?.map : "Map"}
             </Text>
-            <Suspense fallback={<MapLoading/>}>
-                  <View
-                  style={tw.style(
+            <Suspense fallback={<MapLoading />}>
+              <View
+                style={tw.style(
                   "border-solid border-[3] rounded-md border-[#001D3D] h-{300} w-full"
-                  )}
-                  >
-                        <MapComp
-                        zoomEnabled={false}
-                        pitchEnabled={false}
-                        scrollEnabled={false}
-                        toolbarEnabled={false}
-                        height={300}
-                        longTo={goToFriendLong}
-                        latTo={goToFriendLat}
-                        />
-                  </View>
+                )}
+              >
+                <MapComp
+                  zoomEnabled={false}
+                  pitchEnabled={false}
+                  scrollEnabled={false}
+                  toolbarEnabled={false}
+                  height={300}
+                  longTo={goToFriendLong}
+                  latTo={goToFriendLat}
+                />
+              </View>
             </Suspense>
             <Pressable
               onPress={() => {
@@ -246,10 +246,12 @@ export default function Dashboard({user}: {user: any}) {
             </Pressable>
           </View>
           <View style={tw.style("bg-primary h-[17rem] mt-2")}>
-            <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>
-            {userLang !== "en" ? translatedData?.dashboard?.map : "Friends"}
-            </Text>
-
+            {friendsLocation?.length ?
+              <Text style={tw.style(`text-2xl font-bold mt-2 mb-2`)}>
+                {userLang !== "en" ? translatedData?.intro["friends-family"] : "Friends"}
+              </Text>
+              : <></>
+            }
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -257,7 +259,7 @@ export default function Dashboard({user}: {user: any}) {
               style={{ paddingVertical: 5 }}
               contentContainerStyle={{ justifyContent: "center" }}
             >
-              {friendsLocation.map((item: any, i: any) => {
+              {friendsLocation?.map((item: any, i: any) => {
                 const displayData =
                   friendsLocation && friendsLocation[i]
                     ? friendsLocation[i]
