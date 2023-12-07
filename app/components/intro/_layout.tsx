@@ -16,7 +16,7 @@ const backgroundImage = {
 export default function IntroLayout({
 	children,
 }: {
-	children: React.ReactNode[];
+	children: React.ReactNode[] | React.ReactNode;
 }) {
 	let [fontsLoaded] = useFonts({
 		NotoSans_400Regular,

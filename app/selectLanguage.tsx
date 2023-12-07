@@ -9,8 +9,9 @@ import {
   Pressable,
   FlatList,
   ImageBackground,
-  Alert
+  Alert,
 } from "react-native";
+import { router } from "expo-router";
 import tw, { create } from "twrnc";
 
 type LanguageType = {
@@ -28,21 +29,19 @@ export default function SelectLanguages() {
   useEffect(() => {
     (async () => {
       let currentUser = JSON.parse(
-        await AsyncStorage.getItem('currentUser') || ""
+        (await AsyncStorage.getItem("currentUser")) || ""
       );
       setUserLang(currentUser.languagepreference);
       let data = JSON.parse(
-        await AsyncStorage.getItem('translatedData') || ""
+        (await AsyncStorage.getItem("translatedData")) || ""
       );
       setTranslatedData(data);
     })();
   }, []);
 
   const setUserLanguage = async () => {
-    let user = JSON.parse(
-      await AsyncStorage.getItem('currentUser') || ""
-    );
-    console.log({user});
+    let user = JSON.parse((await AsyncStorage.getItem("currentUser")) || "");
+    console.log({ user });
     fetch(
       `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
       {
@@ -64,10 +63,7 @@ export default function SelectLanguages() {
     )
       .then(async (response) => {
         if (response.status == 200) {
-          Alert.alert(
-            "Profile Updated",
-            "Great Profile Updated Successfully"
-          );
+          Alert.alert("Profile Updated", "Great Profile Updated Successfully");
           AsyncStorage.setItem(
             "currentUser",
             JSON.stringify({
@@ -88,10 +84,7 @@ export default function SelectLanguages() {
             )
             .then((res) => {
               setTranslatedData(res.data);
-              AsyncStorage.setItem(
-                "translatedData",
-                JSON.stringify(res.data)
-              );
+              AsyncStorage.setItem("translatedData", JSON.stringify(res.data));
             });
         } else {
           Alert.alert("Error", "Something went wrong");
@@ -125,77 +118,81 @@ export default function SelectLanguages() {
     })();
   }, []);
 
+  const handleBackButtonPress = () => {
+    router.push("/settings");
+  };
+
   return (
     <ImageBackground
       source={require("../assets/Intro/Map.png")}
       style={styles.background}
     >
-      <View style={tw.style('px-2')}>
-        <View>
-          <Link
-            style={tw.style(
-              "flex px-4 py-2 bg-[#001d3d] rounded-md justify-center items-center"
-            )}
-            href="/settings">
-            <View>
-              <Text style={tw.style("text-white")}>
-                {userLang !== "en"
-                  ? translatedData?.settings?.back
-                  : "Back"}</Text>
-            </View>
-          </Link>
-        </View>
-        <IntroLayout>
-          <Text style={styles.header}>
-            {" "}
-            {userLang !== "en"
-              ? translatedData?.settings?.selectlanguage
-              : "Select Your Language"}
-          </Text>
-          <FlatList
-            style={tw.style(`w-full`, `flex`, `flex-col`)}
-            data={languages}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: LanguageType;
-              index: number;
-            }) => (
-              <Pressable
-                onPress={() => {
-                  setUserLang(languages[index]?.tag);
-                  console.log(languages[index]?.tag);
-                }}
-                style={tw.style(
-                  `px-7`,
-                  `py-3`,
-                  `rounded-lg`,
-                  `border`,
-                  `mb-3`,
-                  userLang === languages[index]?.tag
-                    ? `bg-gray-400`
-                    : `bg-white`
-                )}
-              >
-                <Text style={styles.text}>{item.name}</Text>
-              </Pressable>
-            )}
-          />
+      <View style={tw.style("flex-1")}>
+        <View style={tw.style("flex-row justify-between items-center p-4")}>
           <Pressable
-            onPress={() => {
-              setUserLanguage();
-            }}
-            style={tw.style(`text-white bg-[#001d3d] px-7 py-3 rounded-lg`)}
+            onPress={handleBackButtonPress}
+            style={tw.style(
+              "flex flex-col p-2 bg-[#001d3d] rounded-md justify-center items-center"
+            )}
           >
-            <Text style={tw.style(`text-white`)}>
-              {" "}
-              {userLang !== "en"
-                ? translatedData?.settings?.continue
-                : "Select Your Language"}
+            <Text style={tw.style("text-white")}>
+              {userLang !== "en" ? translatedData?.settings?.back : "Back"}
             </Text>
           </Pressable>
-        </IntroLayout>
+        </View>
+        <View style={tw.style("p-4 flex flex-col gap-3 items-center")}>
+          <IntroLayout>
+            <Text style={styles.header}>
+              {" "}
+              {userLang !== "en"
+                ? translatedData?.settings?.selectlanguage
+                : "Select Your Language"}
+            </Text>
+            <FlatList
+              style={tw.style(`w-full`, `flex`, `flex-col`)}
+              data={languages}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: LanguageType;
+                index: number;
+              }) => (
+                <Pressable
+                  onPress={() => {
+                    setUserLang(languages[index]?.tag);
+                    console.log(languages[index]?.tag);
+                  }}
+                  style={tw.style(
+                    `px-7`,
+                    `py-3`,
+                    `rounded-lg`,
+                    `border`,
+                    `mb-3`,
+                    userLang === languages[index]?.tag
+                      ? `bg-gray-400`
+                      : `bg-white`
+                  )}
+                >
+                  <Text style={styles.text}>{item.name}</Text>
+                </Pressable>
+              )}
+            />
+            <Pressable
+              onPress={() => {
+                setUserLanguage();
+              }}
+              style={tw.style(`text-white bg-[#001d3d] px-7 py-3 rounded-lg`)}
+            >
+              <Text style={tw.style(`text-white`)}>
+                {" "}
+                {userLang !== "en"
+                  ? translatedData?.settings?.continue
+                  : "Select Your Language"}
+              </Text>
+            </Pressable>
+          </IntroLayout>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -212,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 24,
-    margin: "auto"
+    margin: "auto",
   },
   btnContinue: {
     backgroundColor: "#003566",
