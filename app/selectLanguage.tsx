@@ -42,6 +42,7 @@ export default function SelectLanguages() {
     let user = JSON.parse(
       await AsyncStorage.getItem('currentUser') || ""
     );
+    console.log({user});
     fetch(
       `https://oursos-backend-production.up.railway.app/updateuser/${user?.id}`,
       {
@@ -50,14 +51,14 @@ export default function SelectLanguages() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: user.id,
-          deviceId: user.deviceId,
-          username: user.userName,
-          lat: user.lat,
-          long: user.long,
-          friends: user.friends,
+          id: user?.id,
+          deviceId: user?.deviceId,
+          username: user?.userName,
+          lat: user?.lat,
+          long: user?.long,
+          friends: user?.friends,
           languagepreference: userLang,
-          profile: user.profile,
+          profile: user?.profile,
         }),
       }
     )
