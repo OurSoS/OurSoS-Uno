@@ -201,7 +201,7 @@ const ModalViewAlerts = React.memo((props: ModalViewAlertsProps) => {
             </View>
 
             <Text style={tw.style("ml-2 mt-1")}>
-              {alert.desc || alert.properties?.title || ""}
+              {alert?.desc || alert.properties?.title || ""}
             </Text>
           </View>
 
