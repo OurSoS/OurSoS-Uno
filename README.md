@@ -1,18 +1,26 @@
-# Guidelines for Front-End Development on OurSOS
+# OurSOS
 
-## Fork the Repository
 
-Dear developers, to contribute to the OurSoS front-end, follow these guidelines:
+Your lifeline in times of crisis. The app provides accessibility using language translation—and Alerts users when an emergency is near them. It also includes AI help in case of crisis.
 
-1. **Fork the Repository:** Before you start making changes, fork the OurSoS front-end repository on GitHub. Make sure to uncheck the "main branch" checkmark when forking.
-    After forking, clone the forked repository locally.
+## Overview
 
-## GitHub Workflow
+This public safety app was designed to aid individuals in potentially dangerous situations. With real-time data and AI-powered insights, this app delivers critical assistance. Key features include:
 
-2. **Push to Your Fork:** Please do not push your changes directly to the main OurSoS repository. Instead, push your changes to your forked repository.
+`Emergency Alerts:` Real-time updates on local emergencies, keeping users informed.
+`Multilingual Support:` Ensures accessibility for non-native English speakers.
+`Friends Network:` Allows users to monitor the safety of loved ones, even at a distance.
+Origins
 
-3. **Make a Pull Request:** Once you've made your changes and are ready to contribute, create a pull request from your forked repository to the main SOS repository. Provide a clear description of the changes you've made and the problem they solve.
+`Inspiration:` Developed in collaboration with D3 students (Meelaud, Neema, and Parker) to address public safety concerns.
 
-4. **Sync with the Main Branch:** It's important to regularly synchronize your forked repository with the main branch of the OurSoS repository. This helps you stay up-to-date with the latest changes in the main branch.
+## Technical Details
 
-By following these guidelines, you'll help us maintain a clean and organized development process for the OurSoS front-end. Thank you for your contributions!
+Frontend: Expo, Typescript, and Tailwind for a seamless mobile experience.
+Backend: Golang for high-performance data processing and API integration.
+Data Storage: Redis for fast caching and PostgreSQL for user data management.
+Image Hosting: Azure Blobs
+Optimization: Geolocation-based filtering for relevant emergency display.
+Contributions
+
+We welcome contributions to refine and enhance this public safety project. Feel free to submit pull requests or raise issues
