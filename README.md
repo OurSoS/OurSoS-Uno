@@ -8,7 +8,9 @@ Your lifeline in times of crisis. The app provides accessibility using language 
 This public safety app was designed to aid individuals in potentially dangerous situations. With real-time data and AI-powered insights, this app delivers critical assistance. Key features include:
 
 `Emergency Alerts:` Real-time updates on local emergencies, keeping users informed.
+
 `Multilingual Support:` Ensures accessibility for non-native English speakers.
+
 `Friends Network:` Allows users to monitor the safety of loved ones, even at a distance.
 Origins
 
